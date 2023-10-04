@@ -23,7 +23,7 @@ jobs:
       - name: Install package.
         run: pip install .
       - name: Build the test site.
-        run: aip-site-gen tests/test_data/ /out/
+        run: aep_site-site-gen tests/test_data/ /out/
   lint:
     runs-on: ubuntu-latest
     container: python:3.10
