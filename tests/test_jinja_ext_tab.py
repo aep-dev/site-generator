@@ -16,7 +16,7 @@ import textwrap
 
 import jinja2
 
-from aip_site.jinja.ext.tab import TabExtension
+from aep_site.jinja.ext.tab import TabExtension
 
 
 def test_tab():
