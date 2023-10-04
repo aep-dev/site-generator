@@ -16,7 +16,7 @@ import os
 
 import pytest
 
-from aip_site.models.site import Site
+from aep_site.models.site import Site
 
 
 @pytest.fixture

@@ -16,8 +16,8 @@ from __future__ import annotations
 
 import click
 
-from aip_site import server
-from aip_site.publisher import Publisher
+from aep_site import server
+from aep_site.publisher import Publisher
 
 
 @click.command()

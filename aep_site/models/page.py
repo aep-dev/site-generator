@@ -21,9 +21,9 @@ import typing
 
 import yaml
 
-from aip_site import md
-from aip_site.jinja.env import jinja_env
-from aip_site.utils import cached_property
+from aep_site import md
+from aep_site.jinja.env import jinja_env
+from aep_site.utils import cached_property
 
 
 @dataclasses.dataclass(frozen=True)
@@ -130,4 +130,4 @@ class Collection:
 
 
 if typing.TYPE_CHECKING:
-    from aip_site.models.site import Site
+    from aep_site.models.site import Site

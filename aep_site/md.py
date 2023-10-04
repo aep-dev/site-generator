@@ -18,7 +18,7 @@ import markdown              # type: ignore
 import pymdownx.highlight    # type: ignore
 import pymdownx.superfences  # type: ignore
 
-from aip_site.utils import cached_property
+from aep_site.utils import cached_property
 
 
 class MarkdownDocument(str):
