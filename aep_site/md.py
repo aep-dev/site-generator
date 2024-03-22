@@ -32,6 +32,7 @@ class MarkdownDocument(str):
                 "toc": {
                     "title": toc_title,
                     "toc_depth": "2-3",
+                    "anchorlink": True,
                 },
             },
             tab_length=2,
