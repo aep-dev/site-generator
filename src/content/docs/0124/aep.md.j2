@@ -1,0 +1,144 @@
+# Resource association
+
+APIs sometimes have resource relationships that can not be cleanly expressed in
+a hierarchical structure. For example, a resource may have a many-to-one
+relationship with two other resource types instead of just one. Alternatively,
+a resource may have a many-to-many relationship with another resource type.
+
+## Guidance
+
+A resource **must** have at most one canonical parent, and `List` requests
+**must not** require two distinct "parents".
+
+### Multiple many-to-one associations
+
+If a resource has a many-to-one relationship with multiple resource types, it
+**must** choose at most one of them to be the parent. The resource **may** be
+associated with other resources through other fields on the resource.
+
+{% tab proto %}
+
+{% sample 'multiple_many_to_one.proto', 'message Book' %}
+
+{% tab oas %}
+
+{% sample 'multiple_many_to_one.oas.yaml', 'Book' %}
+
+{% endtabs %}
+
+When listing resources with multiple associations in this way, the RPC **must**
+treat the `string parent` field as required as discussed in [list](/list), and
+**must not** add additional required arguments. The RPC **should** include a
+`string filter` field that allows users to filter by other resource
+associations as discussed in [filtering](/filtering).
+
+**Note:** Resource reference fields **must** accept the
+[resource path](/resource-path) of the referenced resource.
+
+### Many-to-many associations
+
+Many-to-many associations are less common in APIs than they are in relational
+databases, in part because they are more difficult to model and present over
+network interfaces.
+
+An API **may** contain many-to-many relationships, and **should** use a
+repeated field containing a list of resource paths, following the principles
+described for repeated fields in [arrays][/arrays].
+
+{% tab proto %}
+
+{% sample 'many_to_many_repeated.proto', 'message Book' %}
+
+{% tab oas %}
+
+{% sample 'many_to_many_repeated.oas.yaml', 'Book' %}
+
+{% endtabs %}
+
+**Note:** See [arrays](/arrays) for more information on repeated fields,
+including how to handle common issues such as atomic changes.
+
+If the use of a repeated field is too restrictive, or if more metadata is
+required along with the association, an API **may** model a many-to-many
+relationship using a sub-resource with two one-to-many associations.
+
+{% tab proto %}
+
+{% sample 'many_to_many_subresource.proto', 'message BookAuthor' %}
+
+{% tab oas %}
+
+{% sample 'many_to_many_subresource.oas.yaml', 'BookAuthor' %}
+
+{% endtabs %}
+
+**Note:** Using subresources to model an association between resources is only
+recommended if additional metadata is required in the relationship, or if the
+restrictions around the use of a repeated field preclude the use of that
+approach.
+
+### Embedded resources
+
+Resource references as described use string references rather than embedding
+one resource inside another because embedding resources can lead to a number of
+issues. Retrieving resources with arbitrarily deep nesting may require multiple
+serial internal RPCs, leading to complex service dependencies, latency, and
+reliability issues.
+
+However, sometimes dereferencing resource references is useful, or even
+necessary.
+
+For example, an API may wish to allow filtering of a resource based on a field
+of a resource it references. This can be necessary in order to satisfy a query
+expressing something like "list books written by authors who were born before
+1950", where the author's birth date is a field on the `Author` resource
+referenced by the `Book` resource.
+
+In other cases, it may be much cheaper and/or faster for the server to perform
+the dereferencing than for the client to make multiple serial requests.
+
+In these cases, an alternative resource association pattern **may** be used,
+where the resource reference field is not a string, but is instead the
+referenced resource itself.
+
+The default behavior **should** be to populate only the `path` field of the
+referenced resource, making it equivalent to a string-based resource reference.
+Additional fields **may** be included based on the request: for example, if the
+request includes a [view or read mask](./partial-responses) that specifies that
+additional fields should be included, or if the request contains a filter that
+specifies fields other than `path` within the referenced resource.
+
+Fields other than `path` in embedded resource references **must** be treated as
+[output-only](./field-behavior); mutating API methods **must not** allow
+creating or mutation of embedded resources. For example, if a `Book` resource
+has an embedded resource reference to `Author`, the `UpdateBook` method **must
+not** allow updating any fields of the `Author` resource other than
+`Author.path` (which updates the reference itself, rather than the referenced
+resource).
+
+APIs **must** always fully document their behavior with embedded resources,
+even if the only supported behavior is populating only the `path` field. If the
+referenced resource itself contains embedded resources, the API **must**
+include clear documentation about the depth to which embedded resources may be
+dereferenced.
+
+**Note:** There is no need for the _referenced_ resource to define a
+`PATH_ONLY` [view](./partial-responses) corresponding to the default behavior
+of populating only the `path` field. This is because a resource should not have
+to define a view enum simply because another resource references it.
+
+{% tab proto %}
+
+{% sample 'embedded_resource.proto', 'message Book' %}
+
+{% tab oas %}
+
+{% sample 'embedded_resource.oas.yaml', 'Book' %}
+
+{% endtabs %}
+
+<!-- prettier-ignore-start -->
+[aep-132]: ./0132.md
+[aep-144]: ./0144.md
+[aep-160]: ./0160.md
+<!-- prettier-ignore-end -->

@@ -1,0 +1,167 @@
+# Long-running operations
+
+Occasionally, a service may need to expose an operation that takes a
+significant amount of time to complete. In these situations, it is often a poor
+user experience to simply block while the task runs; rather, it is better to
+return some kind of promise to the user, and allow the user to check back in
+later.
+
+The long-running request pattern is roughly analogous to a [Future][] in Python
+or Java, or a [Node.js Promise][]. Essentially, the user is given a token that
+can be used to track progress and retrieve the result.
+
+## Guidance
+
+Operations that might take a significant amount of time to complete **should**
+return a `202 Accepted` response along with an `Operation` resource that can be
+used to track the status of the request and ultimately retrieve the result.
+
+Any single operation defined in an API surface **must** either _always_ return
+`202 Accepted` along with an `Operation`, or _never_ do so. A service **must
+not** return a `200 OK` response with the result if it is "fast enough", and
+`202 Accepted` if it is not fast enough, because such behavior adds significant
+burdens for clients.
+
+**Note:** User expectations can vary on what is considered "a significant
+amount of time" depending on what work is being done. A good rule of thumb is
+10 seconds.
+
+### Operation representation
+
+The response to a long-running request **must** be an [`Operation`][].
+
+{% tab proto %}
+
+Protocol buffer APIs **must** use the common component [`aep.api.Operation`][].
+
+{% tab oas %}
+
+OpenAPI services **must** use this [`JSON Schema Operation`][] schema.
+
+{% endtabs %}
+
+### Querying an operation
+
+The service **must** provide an endpoint to query the status of the operation,
+which **must** accept the operation path and **should not** include other
+parameters:
+
+```http
+GET /v1/operations/{operation} HTTP/2
+Host: library.example.com
+Accept: application/json
+```
+
+The endpoint **must** return a `Operation` as described above.
+
+### Standard methods
+
+APIs **may** return an `Operation` from the [`Create`][aip-133],
+[`Update`][aip-134], or [`Delete`][aip-135] standard methods if appropriate. In
+this case, the `response` field **must** be the standard and expected response
+type for that standard method.
+
+When creating or deleting a resource with a long-running request, the resource
+**should** be included in [`List`][aip-132] and [`Get`][aip-131] calls;
+however, the resource **should** indicate that it is not usable, generally with
+a [state enum][aip-216].
+
+### Parallel requests
+
+A resource **may** accept multiple requests that will work on it in parallel,
+but is not obligated to do so:
+
+- Resources that accept multiple parallel requests **may** place them in a
+  queue rather than work on the requests simultaneously.
+- Resource that does not permit multiple requests in parallel (denying any new
+  request until the one that is in progress finishes) **must** return
+  `409 Conflict` if a user attempts a parallel request, and include an error
+  message explaining the situation.
+
+### Expiration
+
+APIs **may** allow their operation resources to expire after sufficient time
+has elapsed after the request completed.
+
+**Note:** A good rule of thumb for operation expiry is 30 days.
+
+### Errors
+
+Errors that prevent a long-running request from _starting_ **must** return an
+error response (AEP-193), similar to any other method.
+
+Errors that occur over the course of a request **may** be placed in the
+metadata message. The errors themselves **must** still be represented with a
+canonical error object.
+
+## Interface Definitions
+
+{% tab proto %}
+
+When using protocol buffers, the common component [`aep.api.Operation`][] is
+used.
+
+{% sample 'lro.proto', 'rpc WriteBook' %}
+
+- The response type **must** be `aep.api.Operation`. The `Operation` proto
+  definition **should not** be copied into individual APIs; prefer to use a
+  single copy (in monorepo code bases), or remote dependencies via a tool like
+  [Buf][buf.build].
+  - The response **must not** be a streaming response.
+- The method **must** include a [`aep.api.operation_info`][lro] annotation,
+  which **must** define both response and metadata types.
+  - The response and metadata types **must** be defined in the file where the
+    RPC appears, or a file imported by that file.
+  - If the response and metadata types are defined in another package, the
+    fully-qualified message name **must** be used.
+  - The response type **should not** be `google.protobuf.Empty` (except for
+    [`Delete`][aip-135] methods), unless it is certain that response data will
+    _never_ be needed. If response data might be added in the future, define an
+    empty message for the RPC response and use that.
+  - The metadata type is used to provide information such as progress, partial
+    failures, and similar information on each `GetOperation` call. The metadata
+    type **should not** be `google.protobuf.Empty`, unless it is certain that
+    metadata will _never_ be needed. If metadata might be added in the future,
+    define an empty message for the RPC metadata and use that.
+- APIs with messages that return `Operation` **must** implement the
+  `GetOperation` method of the [`Operations`][lro] service, and **may**
+  implement the other methods defined in that service. Individual APIs **must
+  not** define their own interfaces for long-running operations to avoid
+  inconsistency.
+
+{% tab oas %}
+
+{% sample 'lro.oas.yaml', 'paths' %}
+
+- `202` **must** be the only success status code defined.
+- The `202` response **must** define an `application/json` response body and no
+  other response content types.
+- The response body schema **must** be an object with `path`, `done`, `error`,
+  and `response` properties as described above for an `Operation`.
+- The response body schema **may** contain an object property named `metadata`
+  to hold service-specific metadata associated with the operation, for example
+  progress information and common metadata such as create time. The service
+  **should** define the contents of the `metadata` object in a separate schema,
+  which **should** specify `additionalProperties: true` to allow for future
+  extensibility.
+- The `response` property **must** be a schema that defines the success
+  response for the operation. For an operation that typically gives a
+  `204 No Content` response, such as a `Delete`, `response` should be defined
+  as an empty object schema. For a standard `Get/Create/Update` operation,
+  `response` should be a representation of the resource.
+- If a service has any long running operations, the service **must** define an
+  `Operation` resource with a `list` operation to retrieve a potentially
+  filtered list of operations and a `get` operation to retrieve a specific
+  operation by its `path`.
+
+{% endtabs %}
+
+<!-- prettier-ignore-start -->
+[google.rpc.Status]: https://github.com/googleapis/api-common-protos/blob/master/google/rpc/S.proto
+[lro]: https://github.com/aep-dev/aep/blob/main/proto/aep-api/aep/api/operations.proto
+[node.js promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
+[future]: https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Future
+[`Operation`]: https://github.com/aep-dev/aep/blob/main/schemas/api/operation.md
+[`aep.api.Operation`]: https://buf.build/aep/api/docs/main:aep.api#aep.api.Operation
+[`JSON Schema Operation`]: https://github.com/aep-dev/aep/blob/main/json_schema/api/operation.yaml
+<!-- prettier-ignore-end -->
