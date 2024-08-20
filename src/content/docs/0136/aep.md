@@ -1,0 +1,147 @@
+---
+id: 136
+state: approved
+slug: custom-methods
+created: 2019-01-25
+updated: 2024-03-08
+placement:
+  category: standard-methods
+  order: 100
+---
+# Custom methods
+
+Resource oriented design (AEP-121) uses custom methods to provide a means to
+express actions that are difficult to model using only the standard methods.
+Custom methods are important because they provide a means for an API's
+vocabulary to adhere to user intent.
+
+## Guidance
+
+Custom methods **should** only be used for functionality that can not be
+expressed via standard methods; prefer standard methods if possible, due to
+their consistent semantics. However, APIs **should not** contort things to
+endeavor to make the standard methods "sort of work".
+
+While custom methods vary widely in how they are designed, many principles
+apply consistently:
+
+- The HTTP method for custom methods **should** be selected based on the
+  semantics described by [RFC 7231 section 4.3] and [RFC 5789] for `PATCH`. In
+  practice, the vast majority of custom methods **should** use `POST` or `GET`.
+  - Custom methods that serve as an alternative to get or list methods (such as
+    `Search`) **should** use `GET`, and require no request body. These methods
+    **must** be idempotent and have no state changes or side effects (they
+    should be safe as defined in [RFC 7231 section 4.2.1][]).
+  - Custom methods **should not** use `PATCH` or `DELETE`.
+- The HTTP URI **must** use a `:` character followed by the custom verb
+  (`:archive` in the above example), and the verb in the URI **must** match the
+  verb in the name of the RPC.
+  - If word separation is required, `camelCase` **must** be used.
+
+{% tab proto %}
+
+{% sample 'library.proto', 'rpc ArchiveBook' %}
+
+- The name of the RPC **should** be a verb followed by a noun.
+  - The name **must not** contain prepositions ("for", "with", etc.).
+- The `body` clause in the `google.api.http` annotation **should** be `"*"`.
+  - However, if using `GET` or `DELETE`, the `body` clause **must** be absent.
+- Custom methods **must** take a request message exactly matching the RPC name,
+  with a `Request` suffix. For example, `ArchiveBookRequest`.
+- Custom methods **should** return a response message exactly matching the RPC
+  name, with a `Response` suffix. For example, `ArchiveBookResponse`.
+  - When operating on a specific resource, a custom method **may** return the
+    resource itself.
+
+{% tab oas %}
+
+{% sample 'library.oas.yaml', '/publishers/{publisherId}/books/{bookId}:archive' %}
+
+- The name of the RPC **should** be a verb followed by a noun.
+  - The name of the RPC **must not** contain prepositions ("for", "with",
+    etc.).
+
+{% endtabs %}
+
+**Note:** The pattern above shows a custom method that operates on a specific
+resource. Custom methods can be associated with resources, collections, or
+services.
+
+### Resource-based custom methods
+
+Custom methods **must** operate on a resource if the API can be modeled as
+such:
+
+{% tab proto %}
+
+{% sample 'library.proto', 'rpc ArchiveBook' %}
+
+- The parameter for the resource's path **must** be called `path`, and **must**
+  be the only variable in the URI path.
+
+{% tab oas %}
+
+**Note:** OAS example not yet written.
+
+{% endtabs %}
+
+### Collection-based custom methods
+
+While most custom methods operate on a single resource, some custom methods
+**may** operate on a collection instead:
+
+{% tab proto %}
+
+{% sample 'library.proto', 'rpc SortBooks' %}
+
+{% tab oas %}
+
+{% sample 'library.oas.yaml', '/publishers/{publisherId}/books:sort' %}
+
+{% endtabs %}
+
+- If the collection has a parent, the field name in the request message
+  **should** be `parent`.
+- The collection key (`books` in the above example) **must** be literal.
+
+### Stateless methods
+
+Some custom methods are not attached to resources at all. These methods are
+generally _stateless_: they accept a request and return a response, and have no
+permanent effect on data within the API.
+
+{% tab proto %}
+
+{% sample 'translate.proto', 'rpc TranslateText' %}
+
+{% tab oas %}
+
+{% sample 'translate.oas.yaml', '/projects/{projectId}:translateText' %}
+
+{% endtabs %}
+
+- If the method runs in a particular scope (such as a project, as in the above
+  example), the field name in the request message **should** be the name of the
+  scope resource. If word separators are necessary, `snake_case` **must** be
+  used.
+- The URI **should** place both the verb and noun after the `:` separator
+  (avoid a "faux collection key" in the URI in this case, as there is no
+  collection). For example, `:translateText` is preferable to `text:translate`.
+- Stateless methods **must** use `POST` if they involve billing.
+
+### Declarative-friendly resources
+
+Declarative-friendly resources usually **should not** employ custom methods
+(except specific declarative-friendly custom methods discussed in other AEPs),
+because declarative-friendly tools are unable to automatically determine what
+to do with them.
+
+An exception to this is for rarely-used, fundamentally imperative operations,
+such as a `Move`, `Rename`, or `Restart` operation, for which there would not
+be an expectation of declarative support.
+
+<!-- prettier-ignore-start -->
+[rfc 5789]: https://datatracker.ietf.org/doc/html/rfc5789
+[rfc 7231 section 4.2.1]: https://datatracker.ietf.org/doc/html/rfc7231#section-4.2.1
+[rfc 7231 section 4.3]: https://datatracker.ietf.org/doc/html/rfc7231#section-4.3
+<!-- prettier-ignore-end -->
