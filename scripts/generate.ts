@@ -58,9 +58,8 @@ ${md_text}`
 }
 
 function writeMarkdown(aep: AEP) {
-  const filePath = path.join("../src/content/docs", `${aep.id}.md`)
-  console.log(filePath);
-  // fs.writeFileSync(filePath, aep.contents);
+  const filePath = path.join("src/content/docs", `${aep.id}.md`)
+  fs.writeFileSync(filePath, aep.contents, {flag: "w"});
 }
 
 const aep_folders = await getFolders(path.join(AEP_LOC, "aep/general/"));
