@@ -71,7 +71,7 @@ ${md_text_with_tabs_and_samples}`
 function substituteTabs(contents: string) {
   return contents.replaceAll("{% tab proto %}", "<Tabs>\n  <TabItem label=\"Protocol Buffer\">")
                  .replaceAll("{% tab oas %}", "  </TabItem>\n  <TabItem label=\"OpenAPI 3.0\">")
-                 .replaceAll("{% endtabs %}", "  </TabItem>\n<\Tabs>");
+                 .replaceAll("{% endtabs %}", "  </TabItem>\n</Tabs>");
 }
 
 function substituteSamples(contents: string, folder: string) {
@@ -83,22 +83,26 @@ function substituteSamples(contents: string, folder: string) {
   // TODO: Do actual sample parsing.
   const matches = contents.matchAll(sample_regex);
   for(var match of matches) {
-    samples.push({'match': match[0], 'filename': match[1]})
+    if(match[1].endsWith('proto') || match[1].endsWith('yaml')) {
+      samples.push({'match': match[0], 'filename': match[1]})
+    }
   }
 
   const matches2 = contents.matchAll(sample2_regex);
   for(var match of matches2) {
-    samples.push({'match': match[0], 'filename': match[1]})
+    if(match[1].endsWith('proto') || match[1].endsWith('yaml')) {
+      samples.push({'match': match[0], 'filename': match[1]})
+    }
   }
 
   for(var sample of samples) {
     const sample_contents = readSample(folder, sample.filename)
     let formatted_sample = `
-      \`\`\`
+      \`\`\`proto
       ${sample_contents}
       \`\`\`
     `
-    contents.replace(sample.match, formatted_sample)
+    contents = contents.replace(sample.match, formatted_sample)
   }
 
   return contents
