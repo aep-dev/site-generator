@@ -2,6 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { load, dump } from "js-yaml";
 
+import * as nunjucks from 'nunjucks';
+
 interface AEP {
   title: string;
   id: string;
@@ -112,6 +114,8 @@ function writeMarkdown(aep: AEP) {
   const filePath = path.join("src/content/docs", `${aep.id}.mdx`)
   fs.writeFileSync(filePath, aep.contents, {flag: "w"});
 }
+
+var env = new nunjucks.Environment();
 
 const aep_folders = await getFolders(path.join(AEP_LOC, "aep/general/"));
 for(var folder of aep_folders) {
