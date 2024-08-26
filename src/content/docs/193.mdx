@@ -77,23 +77,32 @@ A JSON representation of an error response might look like the following:
 }
 ```
 
-{% tab oas -%}
 
-The media-type for an error response should be "application/problem+json".
-
-{% tab proto -%}
-
-Services **must** return a [`google.rpc.Status`][Status] message when an API
-error occurs, and **must** use the canonical error codes defined in
-[`google.rpc.Code`][Code]. More information about the particular codes is
-available in the [gRPC status code documentation][].
-
-The error response structure defined above **should** be returned in the
-`details` field of the Status message. Services **should** use the
-[`aep.api.ProblemDetails`](https://buf.build/aep/api/docs/main:aep.api#aep.api.ProblemDetails)
-to define this field.
-
-{% endtabs %}
+<Tabs>
+  <TabItem label="Protocol Buffers">
+  
+  
+  Services **must** return a [`google.rpc.Status`][Status] message when an API
+  error occurs, and **must** use the canonical error codes defined in
+  [`google.rpc.Code`][Code]. More information about the particular codes is
+  available in the [gRPC status code documentation][].
+  
+  The error response structure defined above **should** be returned in the
+  `details` field of the Status message. Services **should** use the
+  [`aep.api.ProblemDetails`](https://buf.build/aep/api/docs/main:aep.api#aep.api.ProblemDetails)
+  to define this field.
+  
+  
+  </TabItem>
+  <TabItem label="OpenAPI 3.0">
+  
+  
+  The media-type for an error response should be "application/problem+json".
+  
+  
+  </TabItem>
+</Tabs>
+    
 
 #### Dynamic variables
 

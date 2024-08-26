@@ -70,8 +70,14 @@ function buildMarkdown(contents: string, folder: string): Contents {
   substituteSamples(result, folder);
   substituteTabs(result);
   substituteHTMLComments(result);
+  substituteEscapeCharacters(result);
 
   return result;
+}
+
+function substituteEscapeCharacters(contents: Contents) {
+  contents.contents = contents.contents.replaceAll('<=', '\<=')
+                                       .replaceAll('>=', '\>=');
 }
 
 function createAEP(files: string[], folder: string): AEP {
