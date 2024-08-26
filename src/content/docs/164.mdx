@@ -1,0 +1,267 @@
+---
+id: 164
+state: approved
+slug: soft-delete
+created: 2020-10-06T00:00:00.000Z
+placement:
+  category: design-patterns
+  order: 95
+title: Soft delete
+
+--- 
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+# Soft delete
+
+There are several reasons why a client could desire soft delete and undelete
+functionality, but one over-arching reason stands out: recovery from mistakes.
+A service that supports undelete makes it possible for users to recover
+resources that were deleted by accident.
+
+## Guidance
+
+Services **may** support the ability to "undelete", to allow for situations
+where users mistakenly delete resources and need the ability to recover.
+
+If a resource needs to support undelete, the `Delete` method **must** simply
+mark the resource as having been deleted, but not completely remove it from the
+system. If the method behaves this way, it **should** return `200 OK` with the
+updated resource instead of `204 No Content`.
+
+Resources that support soft delete **should** have an `expire_time` field as
+described in AEP-148. Additionally, resources **should** include a `DELETED`
+state value if the resource includes a `state` field (AEP-216).
+
+### Undelete
+
+A resource that supports soft delete **should** provide an `Undelete` method:
+
+
+<Tabs>
+  <TabItem label="Protocol Buffers">
+  
+  
+  
+        ```protobuf
+        // Copyright 2021 Google LLC
+  //
+  // Licensed under the Apache License, Version 2.0 (the "License");
+  // you may not use this file except in compliance with the License.
+  // You may obtain a copy of the License at
+  //
+  //     https://www.apache.org/licenses/LICENSE-2.0
+  //
+  // Unless required by applicable law or agreed to in writing, software
+  // distributed under the License is distributed on an "AS IS" BASIS,
+  // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  // See the License for the specific language governing permissions and
+  // limitations under the License.
+  
+  syntax = "proto3";
+  
+  import "google/api/annotations.proto";
+  import "google/api/client.proto";
+  import "google/api/field_behavior.proto";
+  import "google/api/resource.proto";
+  
+  service Library {
+    // Undelete a single book.
+    rpc UndeleteBook(UndeleteBookRequest) returns (Book) {
+      option (google.api.http) = {
+        post: "/v1/{name=publishers/*/books/*}:undelete"
+        body: "*"
+      };
+      option (google.api.method_signature) = "name";
+    }
+  }
+  
+  // Request message to undelete a single book.
+  message UndeleteBookRequest {
+    // The name of the book to undelete.
+    // The book must exist and currently be deleted (but not expunged).
+    string name = 1 [
+      (google.api.field_behavior) = REQUIRED,
+      (google.api.resource_reference) = {
+        type: "library.googleapis.com/Book"
+      }];
+  }
+  
+  // A representation of a single book.
+  message Book {
+    option (google.api.resource) = {
+      type: "library.googleapis.com/Book"
+      pattern: "publishers/{publisher}/books/{book}"
+    };
+  
+    // The name of the book.
+    // Format: publishers/{publisher}/books/{book}
+    string name = 1;
+  
+    // The ISBN (International Standard Book Number) for this book.
+    string isbn = 2;
+  
+    // The title of the book.
+    string title = 3;
+  
+    // The author or authors of the book.
+    repeated string authors = 4;
+  
+    // The rating assigned to the book.
+    float rating = 5;
+  }
+  
+        ```
+      
+  
+  - The HTTP method **must** be `POST`.
+  - The `body` clause **must** be `"*"`.
+  - The response message **must** be the resource itself. There is no
+    `UndeleteBookResponse`.
+    - The response **should** include the fully-populated resource unless it is
+      infeasible to do so.
+    - If the undelete RPC is [long-running](#long-running-undelete), the response
+      message **must** be a `google.longrunning.Operation` which resolves to the
+      resource itself.
+  - A `name` field **must** be included in the request message; it **should** be
+    called `name`.
+    - The field **should** be [annotated as required][aip-203].
+    - The field **should** identify the [resource type][aip-123] that it
+      references.
+    - The comment for the field **should** document the resource pattern.
+  - The request message **must not** contain any other required fields, and
+    **should not** contain other optional fields except those described in this
+    or another AEP.
+  
+  
+  </TabItem>
+  <TabItem label="OpenAPI 3.0">
+  
+  
+  
+        ```yml
+        ---
+  openapi: 3.0.3
+  info:
+    title: Library
+    version: 1.0.0
+  paths:
+    /publishers/{publisherId}/books/{bookId}:undelete:
+      post:
+        operationId: undeleteBook
+        description: Undelete a single book.
+        responses:
+          200:
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Book'
+  components:
+    schema:
+      Book:
+        description: A representation of a single book.
+        properties:
+          name:
+            type: string
+            description: |
+              The name of the book.
+              Format: publishers/{publisher}/books/{book}
+          isbn:
+            type: string
+            description: |
+              The ISBN (International Standard Book Number) for this book.
+          title:
+            type: string
+            description: The title of the book.
+          authors:
+            type: array
+            items:
+              type: string
+            description: The author or authors of the book.
+          rating:
+            type: float
+            description: The rating assigned to the book.
+  
+        ```
+      
+  
+  - The HTTP method **must** be `POST`.
+  - The response message **must** be the resource itself.
+    - The response **should** include the fully-populated resource unless it is
+      infeasible to do so.
+  - The operation **must not** require any other fields, and **should not**
+    contain other optional query parameters except those described in this or
+    another AEP.
+  
+  
+  </TabItem>
+</Tabs>
+    
+
+### Long-running undelete
+
+Some resources take longer to undelete a resource than is reasonable for a
+regular API request. In this situation, the API **should** follow the
+long-running request pattern (AEP-151).
+
+### List and Get
+
+Soft-deleted resources **should not** be returned in `List` (AEP-132) responses
+by default (unless `bool show_deleted` is true).
+
+A `Get` (AEP-131) request for a soft deleted resource **should** error with
+`410 Gone` unless `bool show_deleted` is true, in which case soft-deleted
+resources **must** return the resource.
+
+Services that soft delete resources **may** choose a reasonable strategy for
+purging those resources, including automatic purging after a reasonable time
+(such as 30 days), allowing users to set an expiry time (AEP-214), or retaining
+the resources indefinitely. Regardless of what strategy is selected, the
+service **should** document when soft deleted resources will be completely
+removed.
+
+### Declarative-friendly resources
+
+A resource that is declarative-friendly (AEP-128) **should** support soft
+delete and undelete.
+
+**Important:** There is an ambiguity in declarative tooling between "create"
+and "undelete". When given an alias which was previously deleted and a
+directive to make it exist, tooling usually does not know if the intent is to
+restore the previously-deleted resource, or create a new one with the same
+alias. Declarative tools **should** resolve this ambiguity in favor of creating
+a new resource: the only way to undelete is to explicitly use the undelete RPC
+(an imperative operation), and declarative tools **may** elect not to map
+anything to undelete at all.
+
+Declarative-friendly resources **must** use long-running operations for both
+soft delete and undelete. The service **may** return an LRO that is already set
+to done if the request is effectively immediate.
+
+Declarative-friendly resources **must** include `validate_only` (AEP-163) and
+`etag` (AEP-154) in their `Undelete` methods.
+
+### Errors
+
+If the user does not have permission to access the resource, regardless of
+whether or not it exists, the service **must** error with `403 Forbidden`.
+Permission **must** be checked prior to checking if the resource exists.
+
+If the user does have proper permission, but the requested resource does not
+exist (either it was never created or already expunged), the service **must**
+error with `404 Not Found`.
+
+If the user calling a soft `Delete` has proper permission, but the requested
+resource is already deleted, the service **must** succeed if `allow_missing` is
+`true`, and **should** error with `404 Not Found` if `allow_missing` is
+`false`.
+
+If the user calling `Undelete` has proper permission, but the requested
+resource is not deleted, the service **must** error with `409 Conflict`.
+
+## Further reading
+
+- For the `Delete` standard method, see AEP-135.
+- For long-running operations, see AEP-151.
+- For resource freshness validation (`etag`), see AEP-154.
+- For change validation (`validate_only`), see AEP-163.
