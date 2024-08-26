@@ -41,6 +41,18 @@ async function getFolders(dirPath: string): Promise<string[]> {
     return folders;
 }
 
+async function writePages(dirPath: string) {
+    const entries = await fs.promises.readdir(path.join(dirPath, "pages/general/"), { withFileTypes: true });
+  
+    let files = entries
+      .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
+
+    for(var file of files) {
+      let contents = fs.readFileSync(path.join(dirPath, "pages/general/", file.name))
+      fs.writeFileSync(path.join("src/content/docs", file.name), contents, {flag: 'w'});
+    }
+}
+
 function readAEP(dirPath: string): string[] {
     const md_path = path.join(dirPath, "aep.md.j2");
     const yaml_path = path.join(dirPath, "aep.yaml");
@@ -76,8 +88,8 @@ function buildMarkdown(contents: string, folder: string): Contents {
 }
 
 function substituteEscapeCharacters(contents: Contents) {
-  contents.contents = contents.contents.replaceAll('<=', '\<=')
-                                       .replaceAll('>=', '\>=');
+  contents.contents = contents.contents.replaceAll('<=', '\\<=')
+                                       .replaceAll('>=', '\\>=');
 }
 
 function createAEP(files: string[], folder: string): AEP {
@@ -225,3 +237,5 @@ writeSidebar(sidebar);
 for(var aep of aeps) {
   writeMarkdown(aep);
 }
+
+writePages(AEP_LOC);
