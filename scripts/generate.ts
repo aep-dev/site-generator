@@ -2,15 +2,24 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { load, dump } from "js-yaml";
 
-import * as nunjucks from 'nunjucks';
-
 interface AEP {
   title: string;
   id: string;
-
+  frontmatter: object;
   contents: string;
+  category: string;
+  order: number;
+  slug: string;
 }
 
+interface GroupFile {
+  categories: Group[]
+}
+
+interface Group {
+  code: string;
+  title: string;
+}
 
 
 const AEP_LOC = process.env.AEP_LOCATION!;
@@ -40,7 +49,13 @@ function readSample(dirPath: string, sample: string) {
   return fs.readFileSync(sample_path, "utf-8");
 }
 
-function createMarkdown(files: string[], folder: string): AEP {
+function readGroupFile(dirPath: string): GroupFile {
+  const group_path = path.join(dirPath, "aep/general/scope.yaml")
+  const yaml_contents = fs.readFileSync(group_path, "utf-8");
+  return load(yaml_contents) as GroupFile;
+}
+
+function createAEP(files: string[], folder: string): AEP {
   const md_text = files[0];
   const yaml_text = files[1];
 
@@ -63,6 +78,10 @@ function createMarkdown(files: string[], folder: string): AEP {
   return {
     title: title,
     id: yaml.id,
+    frontmatter: yaml,
+    category: yaml.placement.category,
+    order: yaml.placement.order,
+    slug: yaml.slug,
     contents: `---
 ${dump(yaml)}
 --- 
@@ -142,18 +161,48 @@ function writeMarkdown(aep: AEP) {
   fs.writeFileSync(filePath, aep.contents, {flag: "w"});
 }
 
-var env = new nunjucks.Environment();
-
-const aep_folders = await getFolders(path.join(AEP_LOC, "aep/general/"));
-for(var folder of aep_folders) {
-  try {
-    const files = readAEP(folder);
-    const new_file = createMarkdown(files, folder);
-    writeMarkdown(new_file);
-  }
-  catch(e) {
-    console.log(`AEP ${folder} failed with error ${e}`)
-  }
+function writeSidebar(sideBar: object[]) {
+  const filePath = "sidebar.json";
+  fs.writeFileSync(filePath, JSON.stringify(sideBar), {flag: "w"});
 }
 
+async function assembleAEPs(): Promise<AEP[]> {
+  let AEPs = [];
+  const aep_folders = await getFolders(path.join(AEP_LOC, "aep/general/"));
+  for(var folder of aep_folders) {
+    try {
+      const files = readAEP(folder);
+      AEPs.push(createAEP(files, folder));
+    }
+    catch(e) {
+      console.log(`AEP ${folder} failed with error ${e}`)
+    }
+  }
+  return AEPs;
+}
 
+function buildSidebar(aeps: AEP[]): object[] {
+  let response = [];
+  let groups = readGroupFile(AEP_LOC);
+
+  for(var group of groups.categories) {
+    response.push({
+      'label': group.title,
+      'items': aeps.filter((aep) => aep.category == group.code).sort((a1, a2) => a1.order > a2.order ? 1 : -1).map((aep) => aep.slug)
+    })
+  }
+  return response;
+}
+
+// Build out AEPs.
+let aeps = await assembleAEPs();
+
+// Build sidebar.
+let sidebar = buildSidebar(aeps);
+writeSidebar(sidebar);
+
+
+// Write AEPs to files.
+for(var aep of aeps) {
+  writeMarkdown(aep);
+}
