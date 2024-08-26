@@ -53,9 +53,11 @@ function createMarkdown(files: string[], folder: string): AEP {
 
   yaml.title = title;
 
-  const md_text_with_tabs = substituteTabs(md_text);
+  const md_text_with_samples = substituteSamples(md_text, folder);
+  const md_text_with_tabs_and_samples = substituteTabs(md_text_with_samples);
 
-  const md_text_with_tabs_and_samples = substituteSamples(md_text_with_tabs, folder);
+  const md_text_with_prettier_subs = substitutePrettier(md_text_with_tabs_and_samples);
+
 
   // Write everything to a markdown file.
   return {
@@ -66,12 +68,17 @@ ${dump(yaml)}
 --- 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-${md_text_with_tabs_and_samples}`
+${md_text_with_prettier_subs}`
   }
 }
 
+function substitutePrettier(contents: string) {
+  return contents.replace("<!-- prettier-ignore-start -->", "{/* prettier-ignore-start */}")
+                 .replace("<!-- prettier-ignore-end -->", "{/* prettier-ignore-end */}")
+}
+
 function substituteTabs(contents: string) {
-  var tab_regex = /\{% tab proto %\}([\s\S]*?)\{% tab oas %\}([\s\S]*?)\{% endtabs %\}/g
+  var tab_regex = /\{% tab proto -?%\}([\s\S]*?)\{% tab oas -?%\}([\s\S]*?)\{% endtabs -?%\}/g
   let tabs = []
   
   let matches = contents.matchAll(tab_regex);
