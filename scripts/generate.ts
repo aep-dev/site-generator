@@ -56,7 +56,7 @@ function createMarkdown(files: string[], folder: string): AEP {
   const md_text_with_samples = substituteSamples(md_text, folder);
   const md_text_with_tabs_and_samples = substituteTabs(md_text_with_samples);
 
-  const md_text_with_prettier_subs = substitutePrettier(md_text_with_tabs_and_samples);
+  const md_text_with_prettier_subs = substituteHTMLComments(md_text_with_tabs_and_samples);
 
 
   // Write everything to a markdown file.
@@ -72,9 +72,9 @@ ${md_text_with_prettier_subs}`
   }
 }
 
-function substitutePrettier(contents: string) {
-  return contents.replace("<!-- prettier-ignore-start -->", "{/* prettier-ignore-start */}")
-                 .replace("<!-- prettier-ignore-end -->", "{/* prettier-ignore-end */}")
+function substituteHTMLComments(contents: string) {
+  return contents.replaceAll("<!-- ", "{/* ")
+                 .replaceAll("-->", " */}")
 }
 
 function substituteTabs(contents: string) {
