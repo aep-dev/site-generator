@@ -12,6 +12,11 @@ interface AEP {
   slug: string;
 }
 
+interface Contents {
+  contents: string;
+  components: string[];
+}
+
 interface GroupFile {
   categories: Group[]
 }
@@ -23,6 +28,8 @@ interface Group {
 
 
 const AEP_LOC = process.env.AEP_LOCATION!;
+
+const callouts = ['Important', 'Note', 'TL;DR', 'Warning', 'Summary'];
 
 async function getFolders(dirPath: string): Promise<string[]> {
     const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
@@ -55,6 +62,18 @@ function readGroupFile(dirPath: string): GroupFile {
   return load(yaml_contents) as GroupFile;
 }
 
+function buildMarkdown(contents: string, folder: string): Contents {
+  let result = {
+    'contents': contents,
+    'components': []
+  }
+  substituteSamples(result, folder);
+  substituteTabs(result);
+  substituteHTMLComments(result);
+
+  return result;
+}
+
 function createAEP(files: string[], folder: string): AEP {
   const md_text = files[0];
   const yaml_text = files[1];
@@ -68,11 +87,7 @@ function createAEP(files: string[], folder: string): AEP {
 
   yaml.title = title;
 
-  const md_text_with_samples = substituteSamples(md_text, folder);
-  const md_text_with_tabs_and_samples = substituteTabs(md_text_with_samples);
-
-  const md_text_with_prettier_subs = substituteHTMLComments(md_text_with_tabs_and_samples);
-
+  let contents = buildMarkdown(md_text, folder);
 
   // Write everything to a markdown file.
   return {
@@ -87,20 +102,20 @@ ${dump(yaml)}
 --- 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-${md_text_with_prettier_subs}`
+${contents.contents}`
   }
 }
 
-function substituteHTMLComments(contents: string) {
-  return contents.replaceAll("<!-- ", "{/* ")
-                 .replaceAll("-->", " */}")
+function substituteHTMLComments(contents: Contents) {
+  contents.contents = contents.contents.replaceAll("<!-- ", "{/* ")
+                                       .replaceAll("-->", " */}")
 }
 
-function substituteTabs(contents: string) {
+function substituteTabs(contents: Contents) {
   var tab_regex = /\{% tab proto -?%\}([\s\S]*?)\{% tab oas -?%\}([\s\S]*?)\{% endtabs -?%\}/g
   let tabs = []
   
-  let matches = contents.matchAll(tab_regex);
+  let matches = contents.contents.matchAll(tab_regex);
   for(var match of matches) {
     tabs.push({'match': match[0],
        'proto': match[1].split('\n').map((x) => '  ' + x).join('\n'),
@@ -117,26 +132,25 @@ ${tab['oas']}
   </TabItem>
 </Tabs>
     `
-    contents = contents.replace(tab.match, new_tab);
+    contents.contents = contents.contents.replace(tab.match, new_tab);
   }
-  return contents;
 }
 
-function substituteSamples(contents: string, folder: string) {
+function substituteSamples(contents: Contents, folder: string) {
   var sample_regex = /\{% sample '(.*)', '(.*)', '(.*)' %}/g
   var sample2_regex = /\{% sample '(.*)', '(.*)' %}/g
 
   
   let samples = []
   // TODO: Do actual sample parsing.
-  const matches = contents.matchAll(sample_regex);
+  const matches = contents.contents.matchAll(sample_regex);
   for(var match of matches) {
     if(match[1].endsWith('proto') || match[1].endsWith('yaml')) {
       samples.push({'match': match[0], 'filename': match[1]})
     }
   }
 
-  const matches2 = contents.matchAll(sample2_regex);
+  const matches2 = contents.contents.matchAll(sample2_regex);
   for(var match of matches2) {
     if(match[1].endsWith('proto') || match[1].endsWith('yaml')) {
       samples.push({'match': match[0], 'filename': match[1]})
@@ -151,10 +165,8 @@ function substituteSamples(contents: string, folder: string) {
       ${sample_contents}
       \`\`\`
     `
-    contents = contents.replace(sample.match, formatted_sample)
+    contents.contents = contents.contents.replace(sample.match, formatted_sample)
   }
-
-  return contents
 }
 
 function writeMarkdown(aep: AEP) {
