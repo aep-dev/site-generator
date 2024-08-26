@@ -71,9 +71,29 @@ ${md_text_with_tabs_and_samples}`
 }
 
 function substituteTabs(contents: string) {
-  return contents.replaceAll("{% tab proto %}", "<Tabs>\n  <TabItem label=\"Protocol Buffer\">")
-                 .replaceAll("{% tab oas %}", "  </TabItem>\n  <TabItem label=\"OpenAPI 3.0\">")
-                 .replaceAll("{% endtabs %}", "  </TabItem>\n</Tabs>");
+  var tab_regex = /\{% tab proto %\}([\s\S]*?)\{% tab oas %\}([\s\S]*?)\{% endtabs %\}/g
+  let tabs = []
+  
+  let matches = contents.matchAll(tab_regex);
+  for(var match of matches) {
+    tabs.push({'match': match[0],
+       'proto': match[1].split('\n').map((x) => '  ' + x).join('\n'),
+        'oas': match[2].split('\n').map((x) => '  ' + x).join('\n')});
+  }
+  for(var tab of tabs) {
+    var new_tab = `
+<Tabs>
+  <TabItem label="Protocol Buffers">
+${tab['proto']}
+  </TabItem>
+  <TabItem label="OpenAPI 3.0">
+${tab['oas']}
+  </TabItem>
+</Tabs>
+    `
+    contents = contents.replace(tab.match, new_tab);
+  }
+  return contents;
 }
 
 function substituteSamples(contents: string, folder: string) {
