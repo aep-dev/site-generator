@@ -145,8 +145,9 @@ function substituteSamples(contents: string, folder: string) {
 
   for(var sample of samples) {
     const sample_contents = readSample(folder, sample.filename)
+    let type = sample.filename.endsWith('proto') ? 'protobuf' : 'yml';
     let formatted_sample = `
-      \`\`\`proto
+      \`\`\`${type}
       ${sample_contents}
       \`\`\`
     `
