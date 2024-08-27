@@ -1,3 +1,7 @@
+---
+title: Content licensing
+
+---
 # Content licensing
 
 We are pleased to license much of the AEP content under terms that explicitly

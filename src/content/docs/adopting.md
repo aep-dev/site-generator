@@ -1,3 +1,7 @@
+---
+title: Adopting AEPs for your company
+
+---
 # Adopting AEPs for your company
 
 Currently, we encourage adoption of AEPs via having your APIs adhere to the

@@ -12,6 +12,10 @@ interface AEP {
   slug: string;
 }
 
+interface Page {
+  title: string;
+}
+
 interface Contents {
   contents: string;
   components: string[];
@@ -41,6 +45,18 @@ async function getFolders(dirPath: string): Promise<string[]> {
     return folders;
 }
 
+async function writePage(dirPath: string, filename: string) {
+      let contents = fs.readFileSync(path.join(dirPath, filename), 'utf-8')
+      let frontmatter = {
+        'title': getTitle(contents.toString())
+      }
+      let final = `---
+${dump(frontmatter)}
+---
+${contents}`
+      fs.writeFileSync(path.join("src/content/docs", filename), final, {flag: 'w'});
+}
+
 async function writePages(dirPath: string) {
     const entries = await fs.promises.readdir(path.join(dirPath, "pages/general/"), { withFileTypes: true });
   
@@ -48,9 +64,9 @@ async function writePages(dirPath: string) {
       .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
 
     for(var file of files) {
-      let contents = fs.readFileSync(path.join(dirPath, "pages/general/", file.name))
-      fs.writeFileSync(path.join("src/content/docs", file.name), contents, {flag: 'w'});
+      writePage(path.join(dirPath, "pages/general"), file.name);
     }
+    writePage(dirPath, "CONTRIBUTING.md");
 }
 
 function readAEP(dirPath: string): string[] {
@@ -92,24 +108,25 @@ function substituteEscapeCharacters(contents: Contents) {
                                        .replaceAll('>=', '\\>=');
 }
 
+function getTitle(contents: string): string {
+  var title_regex = /^# (.*)\n/
+  const matches = contents.match(title_regex);
+  return matches[1]!;
+}
+
 function createAEP(files: string[], folder: string): AEP {
   const md_text = files[0];
   const yaml_text = files[1];
 
   const yaml = load(yaml_text);
 
-  // Add title to yaml
-  var title_regex = /^# (.*)\n/
-  const matches = md_text.match(title_regex);
-  const title = matches[1]!;
-
-  yaml.title = title;
+  yaml.title = getTitle(md_text);
 
   let contents = buildMarkdown(md_text, folder);
 
   // Write everything to a markdown file.
   return {
-    title: title,
+    title: yaml.title,
     id: yaml.id,
     frontmatter: yaml,
     category: yaml.placement.category,
