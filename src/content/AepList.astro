@@ -1,0 +1,15 @@
+---
+import sideBar from '../../sidebar.json';
+---
+
+{
+    sideBar.map((item) => (
+        <h1>{item.label}</h1>
+        <ul>
+            {item.items.map((aep) => (
+                <a href={"/" + aep}>{aep}</a>
+                <br />
+            ))}
+        </ul>
+    ))
+}
