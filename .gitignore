@@ -21,3 +21,6 @@ pnpm-debug.log*
 .DS_Store
 
 src/contents/docs/*.mdx
+
+# Local Netlify folder
+.netlify

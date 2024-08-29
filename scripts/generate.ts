@@ -22,9 +22,9 @@ interface LinterRule {
   slug: string;
 }
 
-interface Contents {
+interface Markdown {
   contents: string;
-  components: string[];
+  components: Set<string>;
 }
 
 interface GroupFile {
@@ -105,10 +105,10 @@ function readGroupFile(dirPath: string): GroupFile {
   return load(yaml_contents) as GroupFile;
 }
 
-function buildMarkdown(contents: string, folder: string): Contents {
+function buildMarkdown(contents: string, folder: string): Markdown {
   let result = {
     'contents': contents,
-    'components': []
+    'components': new Set<string>()
   }
   substituteSamples(result, folder);
   substituteTabs(result);
@@ -118,7 +118,7 @@ function buildMarkdown(contents: string, folder: string): Contents {
   return result;
 }
 
-function substituteEscapeCharacters(contents: Contents) {
+function substituteEscapeCharacters(contents: Markdown) {
   contents.contents = contents.contents.replaceAll('<=', '\\<=')
     .replaceAll('>=', '\\>=');
 }
@@ -156,12 +156,12 @@ ${contents.contents}`
   }
 }
 
-function substituteHTMLComments(contents: Contents) {
+function substituteHTMLComments(contents: Markdown) {
   contents.contents = contents.contents.replaceAll("<!-- ", "{/* ")
     .replaceAll("-->", " */}")
 }
 
-function substituteTabs(contents: Contents) {
+function substituteTabs(contents: Markdown) {
   var tab_regex = /\{% tab proto -?%\}([\s\S]*?)\{% tab oas -?%\}([\s\S]*?)\{% endtabs -?%\}/g
   let tabs = []
 
@@ -188,7 +188,7 @@ ${tab['oas']}
   }
 }
 
-function substituteSamples(contents: Contents, folder: string) {
+function substituteSamples(contents: Markdown, folder: string) {
   var sample_regex = /\{% sample '(.*)', '(.*)', '(.*)' %}/g
   var sample2_regex = /\{% sample '(.*)', '(.*)' %}/g
 
