@@ -8,7 +8,7 @@ placement:
 title: Field behavior documentation
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Field behavior documentation
 
@@ -34,13 +34,17 @@ RecognitionAudio audio = 2 [(aep.api.field_behavior) = REQUIRED];
   - `FIELD_BEHAVIOR_UNSPECIFIED` **must not** be used.
 - APIs **must** at minimum use one of `REQUIRED`, `OPTIONAL`, or `OUTPUT_ONLY`.
 
-**Warning:** Although `field_behavior` does not impact proto-level behavior,
-many clients (e.g. CLIs and SDKs) rely on them to generate code. Thoroughly
-review and consider which values are relevant when adding a new field.
+<Aside type="danger" title="Warning">
+  Although `field_behavior` does not impact proto-level behavior,
+  many clients (e.g. CLIs and SDKs) rely on them to generate code. Thoroughly
+  review and consider which values are relevant when adding a new field.
+</Aside>
 
-**Note:** The vocabulary given in this document is for _descriptive_ purposes
-only, and does not itself add any validation. The purpose is to consistently
-document this behavior for clients.
+<Aside type="note" title="Note">
+  The vocabulary given in this document is for _descriptive_ purposes
+  only, and does not itself add any validation. The purpose is to consistently
+  document this behavior for clients.
+</Aside>
 
 ### field behavior of nested messages
 
@@ -95,8 +99,10 @@ Potential use cases for immutable fields (this is not an exhaustive list) are:
 - Attributes of resources that are not modifiable for the lifetime of the
   application (e.g. a disk type).
 
-**Note:** Fields which are "conditionally immutable" **must not** be given the
-immutable annotation.
+<Aside type="note" title="Note">
+  Fields which are "conditionally immutable" **must not** be given the
+  immutable annotation.
+</Aside>
 
 ### Input only
 
@@ -113,8 +119,10 @@ Potential use cases for input only fields (this is not an exhaustive list) are:
 
 - The `ttl` field as described in AEP-214.
 
-**Warning:** Input only fields are rare and should be considered carefully
-before use.
+<Aside type="danger" title="Warning">
+  Input only fields are rare and should be considered carefully
+  before use.
+</Aside>
 
 ### Optional
 
@@ -173,10 +181,12 @@ Fields **should not** be described as required in order to signify:
 - A field on any message (including messages that are resources) which is never
   used as user input.
 
-**Note:** In most cases, empty values (such as `false` for booleans, `0` for
-integers, or the unspecified value for enums) are indistinguishable from unset
-values, and therefore setting a required field to a falsy value yields an
-error. A corollary to this is that a required boolean must be set to `true`.
+<Aside type="note" title="Note">
+  In most cases, empty values (such as `false` for booleans, `0` for
+  integers, or the unspecified value for enums) are indistinguishable from unset
+  values, and therefore setting a required field to a falsy value yields an
+  error. A corollary to this is that a required boolean must be set to `true`.
+</Aside>
 
 ### Unordered List
 

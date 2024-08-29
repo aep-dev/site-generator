@@ -10,7 +10,7 @@ placement:
 title: Pagination
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Pagination
 
@@ -147,8 +147,10 @@ deconstruct these, _they will do so_. This effectively makes the implementation
 details of your API's pagination become part of the API surface, and it becomes
 impossible to update those details without breaking users.
 
-**Warning:** Base-64 encoding an otherwise-transparent page token is **not** a
-sufficient obfuscation mechanism.
+<Aside type="danger" title="Warning">
+  Base-64 encoding an otherwise-transparent page token is **not** a
+  sufficient obfuscation mechanism.
+</Aside>
 
 For page tokens which do not need to be stored in a database, and which do not
 contain sensitive data, an API **may** obfuscate the page token by defining an
@@ -168,8 +170,10 @@ Many APIs store page tokens in a database internally. In this situation, APIs
 order not to needlessly store large amounts of data that is unlikely to be
 used. It is not necessary to document this behavior.
 
-**Note:** While a reasonable time may vary between APIs, a good rule of thumb
-is three days.
+<Aside type="note" title="Note">
+  While a reasonable time may vary between APIs, a good rule of thumb
+  is three days.
+</Aside>
 
 ### Backwards compatibility
 
@@ -188,10 +192,12 @@ For this reason, it is important to always add pagination to RPCs returning
 collections _up front_; they are consistently important, and they can not be
 added later without causing problems for existing users.
 
-**Warning:** This also entails that, in addition to presenting the pagination
-fields, they **must** be _actually implemented_ with a non-infinite default
-value. Implementing an in-memory version (which might fetch everything then
-paginate) is reasonable for initially-small collections.
+<Aside type="danger" title="Warning">
+  This also entails that, in addition to presenting the pagination
+  fields, they **must** be _actually implemented_ with a non-infinite default
+  value. Implementing an in-memory version (which might fetch everything then
+  paginate) is reasonable for initially-small collections.
+</Aside>
 
 [list]: ./list
 

@@ -9,7 +9,7 @@ placement:
 title: Resource freshness validation
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Resource freshness validation
 
@@ -40,8 +40,10 @@ conform to [RFC 7232][]. Resources **must** support the `If-Match` header (and
 **may** support the `If-None-Match` header) if and only if resources provide
 the ETag.
 
-**Note:** ETag values **must** include quotes as described in [RFC 7232][]. For
-example, a valid ETag is `"foo"`, not `foo`.
+<Aside type="note" title="Note">
+  ETag values **must** include quotes as described in [RFC 7232][]. For
+  example, a valid ETag is `"foo"`, not `foo`.
+</Aside>
 
 ETags **must** be based on an opaque checksum or hash of the resource that
 guarantees it will change if the resource changes.

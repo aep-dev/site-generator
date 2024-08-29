@@ -8,7 +8,7 @@ placement:
 title: Reading across collections
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Reading across collections
 
@@ -38,10 +38,12 @@ GET /v1/publishers/-/books?filter=...
   requests introduce ambiguity around ordering, especially if there is
   difficulty reaching a parent (see [unreachable resources]).
 
-**Important:** If listing across multiple collections introduces the
-possibility of partial failures due to unreachable parents (such as when
-listing across locations), the method **must** indicate this following the
-guidance in [unreachable resources].
+<Aside type="caution" title="Important">
+  If listing across multiple collections introduces the
+  possibility of partial failures due to unreachable parents (such as when
+  listing across locations), the method **must** indicate this following the
+  guidance in [unreachable resources].
+</Aside>
 
 
 <Tabs>

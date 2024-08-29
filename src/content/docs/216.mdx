@@ -8,7 +8,7 @@ placement:
 title: States
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # States
 
@@ -25,8 +25,10 @@ Resources needing to communicate their state **should** use an enum, which
 word `State`). This enum **should** be nested within the message it describes
 when only used as a field within that message.
 
-**Important:** We use the term `State`, and _not_ `Status` (which is reserved
-for the HTTP and gRPC statuses).
+<Aside type="caution" title="Important">
+  We use the term `State`, and _not_ `Status` (which is reserved
+  for the HTTP and gRPC statuses).
+</Aside>
 
 ### Enum values
 
@@ -48,10 +50,12 @@ At a high level:
   temporary and will resolve to another state on its own, with no further user
   action.
 
-**Note:** Only add states that are useful to customers. Exposing a
-large number of states simply because they exist in your internal system is
-unnecessary and adds confusion for customers. Each state **must** come with a
-use case for why it is necessary.
+<Aside type="note" title="Note">
+  Only add states that are useful to customers. Exposing a
+  large number of states simply because they exist in your internal system is
+  unnecessary and adds confusion for customers. Each state **must** come with a
+  use case for why it is necessary.
+</Aside>
 
 ### Output only
 
@@ -163,8 +167,10 @@ Using a `STATE_` prefix on every enum value is unnecessary. State enum values
 
 ### Breaking changes
 
-**TL;DR:** Clearly communicate to users that state enums may receive new values
-in the future, and be conscientious about adding states to an existing enum.
+<Aside type="tip" title="undefined">
+  Clearly communicate to users that state enums may receive new values
+  in the future, and be conscientious about adding states to an existing enum.
+</Aside>
 
 Even though adding states to an existing states enum _can_ break existing user
 code, adding states is not considered a breaking change. Consider a state with
@@ -216,10 +222,12 @@ resource in a resting state into certain other states (resting or active).
 "Active states" are lifecycle states that typically resolve on their own into a
 single expected resting state.
 
-**Note:** Remember only to expose states that are useful to customers. Active
-states are valuable only if the resource will be in that state for a sufficient
-period of time. If state changes are immediate, active states are not
-necessary.
+<Aside type="note" title="Note">
+  Remember only to expose states that are useful to customers. Active
+  states are valuable only if the resource will be in that state for a sufficient
+  period of time. If state changes are immediate, active states are not
+  necessary.
+</Aside>
 
 - `CREATING` (usually becomes `ACTIVE`)
 - `DELETING` (usually becomes `DELETED`)

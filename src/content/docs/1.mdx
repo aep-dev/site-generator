@@ -13,7 +13,7 @@ js_scripts:
 title: AEP Purpose and Guidelines
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # AEP Purpose and Guidelines
 
@@ -74,8 +74,10 @@ sentence structure, markup, etc.).
 Committee membership is by invitation of the current committee. The committee
 **must not** include more than two members from the same company.
 
-**Note:** Companies that maintain their own fork of [aep.dev][] select their
-own leadership and have full control of their fork's content.
+<Aside type="note" title="Note">
+  Companies that maintain their own fork of [aep.dev][] select their
+  own leadership and have full control of their fork's content.
+</Aside>
 
 ## States
 
@@ -97,10 +99,12 @@ An AEP **must** be in the reviewing state for at least 14 days before being
 approved, and the committee **should** send appropriate communication regarding
 the pending approval.
 
-**Note:** As a formal matter, one AEP approver (other than the author) **must**
-provide formal signoff to advance an AEP to the reviewing state. Additionally,
-there **must not** be formal objections ("changes requested" on the GitHub PR)
-from other approvers.
+<Aside type="note" title="Note">
+  As a formal matter, one AEP approver (other than the author) **must**
+  provide formal signoff to advance an AEP to the reviewing state. Additionally,
+  there **must not** be formal objections ("changes requested" on the GitHub PR)
+  from other approvers.
+</Aside>
 
 ### Approved
 
@@ -114,10 +118,12 @@ questions). In rare occasions, new guidance **may** be added.
 Clarifications and new guidance **must** be reflected in the changelog.
 Correction of typos or minor language alterations **may** be done silently.
 
-**Note:** As a formal matter, two AEP approvers (other than the author)
-**must** provide formal signoff to advance an AEP to the approved state.
-Additionally, there **must not** be formal objections ("changes requested" on
-the GitHub PR) from other approvers.
+<Aside type="note" title="Note">
+  As a formal matter, two AEP approvers (other than the author)
+  **must** provide formal signoff to advance an AEP to the approved state.
+  Additionally, there **must not** be formal objections ("changes requested" on
+  the GitHub PR) from other approvers.
+</Aside>
 
 ### Final
 
@@ -129,9 +135,11 @@ AEPs in the final state **must not** be amended with new guidance. They **may**
 be editied to correct spelling, grammar, or clarity provided there are no
 semantic changes.
 
-**Note:** As a formal matter, two AEP approvers **must** provide formal signoff
-to advance an AEP to the final state. Additionally, there **must not** be
-formal objections ("changes requested" on the GItHub PR) from other approvers.
+<Aside type="note" title="Note">
+  As a formal matter, two AEP approvers **must** provide formal signoff
+  to advance an AEP to the final state. Additionally, there **must not** be
+  formal objections ("changes requested" on the GItHub PR) from other approvers.
+</Aside>
 
 ### Replaced
 
@@ -185,7 +193,9 @@ two pages if printed out.
 If the technical steering committee has suggested an AEP number, use that;
 otherwise use 99 (and expect to change it during the course of the review).
 
-**Important:** Ensure that the PR is editable by maintainers.
+<Aside type="caution" title="Important">
+  Ensure that the PR is editable by maintainers.
+</Aside>
 
 In most circumstances, the committee will assign the proposal an AEP number and
 begin discussion. Once there is consensus, the committee will merge the PR, and
@@ -205,8 +215,10 @@ of the technical steering committee. Additionally, there **should not** be any
 committee members requesting significant changes (indicated by the use of the
 "changes requested" feature on GitHub).
 
-**Note:** If an AEP editor is the primary author of an AEP, then at least two
-_other_ editors must approve it.
+<Aside type="note" title="Note">
+  If an AEP editor is the primary author of an AEP, then at least two
+  _other_ editors must approve it.
+</Aside>
 
 ### Withdrawing or Rejecting an AEP
 

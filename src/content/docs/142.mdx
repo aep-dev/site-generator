@@ -9,7 +9,7 @@ placement:
 title: Time and duration
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Time and duration
 
@@ -55,9 +55,11 @@ time zone or calendar) **should** use an `int` field if there is a single
 canonical unit (for example, `ttl_seconds` for an expiring resource, or
 `offset_seconds` for position in a video).
 
-**Note:** A `float` field **may** be used if fractional seconds are needed.
-However, only fractional seconds are permitted; other fractional units (such as
-hours or days) **must not** be used.
+<Aside type="note" title="Note">
+  A `float` field **may** be used if fractional seconds are needed.
+  However, only fractional seconds are permitted; other fractional units (such as
+  hours or days) **must not** be used.
+</Aside>
 
 If there is no canonical unit, the service **should** use a `string` field with
 [ISO 8601][] duration values, such as `P3Y6M4DT12H30M5S`. The field name
@@ -77,9 +79,11 @@ but **should not** support precision more granular than the nanosecond.
 Services **may** also limit the supported precision, and **may** _truncate_
 values received from the user to the supported precision.
 
-**Note:** Truncation is recommended rather than rounding because rounding to
-the nearest second has the potential to change day, month, year, etc., which is
-surprisingly significant.
+<Aside type="note" title="Note">
+  Truncation is recommended rather than rounding because rounding to
+  the nearest second has the potential to change day, month, year, etc., which is
+  surprisingly significant.
+</Aside>
 
 ### Civil dates and times
 

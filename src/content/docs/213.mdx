@@ -8,7 +8,7 @@ placement:
 title: Common components
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Common components
 
@@ -63,7 +63,9 @@ representations of the following concepts:
 
 #### gRPC-specific API design patterns
 
-**Note:** These common components apply to protobuf APIs only.
+<Aside type="note" title="Note">
+  These common components apply to protobuf APIs only.
+</Aside>
 
 - [`google.api.*`][api] (but _not_ subpackages of `google.api`): Annotations
   useful for gRPC/JSON transcoding, supported by frameworks including .NET 7.
@@ -76,9 +78,11 @@ representations of the following concepts:
 This section provides examples for the sake of illustration; it may not be
 exhaustive. The [AEP common components][] repo is canonical.
 
-**Note:** Some of these types are not yet defined, but are expected to be
-adopted based on their existence in `google.type`, which has historically had a
-very high barrier to entry.
+<Aside type="note" title="Note">
+  Some of these types are not yet defined, but are expected to be
+  adopted based on their existence in `google.type`, which has historically had a
+  very high barrier to entry.
+</Aside>
 
 #### General common types
 
@@ -120,7 +124,9 @@ very high barrier to entry.
 
 ##### Protobuf well-known types
 
-**Note:** These common components apply to protobuf APIs only.
+<Aside type="note" title="Note">
+  These common components apply to protobuf APIs only.
+</Aside>
 
 The [`google.protobuf`][protobuf] package is shipped with protocol buffers
 itself, rather than with API tooling. The Well-Known Types defined in this

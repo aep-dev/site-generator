@@ -10,7 +10,7 @@ redirect_from: /resource-paths
 title: Resource paths
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Resource paths
 
@@ -52,11 +52,13 @@ publishers/123/books/les-miserables users/vhugo1802
     resource identification.
   - All ID fields **must** be strings.
 
-**Note:** Resource paths as described here are used within the scope of a
-single API (or else in situations where the owning API is clear from the
-context), and are only required to be unique within that scope. For this
-reason, they are sometimes called _relative resource paths_ to distinguish them
-from _full resource paths_ (discussed below).
+<Aside type="note" title="Note">
+  Resource paths as described here are used within the scope of a
+  single API (or else in situations where the owning API is clear from the
+  context), and are only required to be unique within that scope. For this
+  reason, they are sometimes called _relative resource paths_ to distinguish them
+  from _full resource paths_ (discussed below).
+</Aside>
 
 [aep-210]: ./0210.md
 [uri path schema]: https://datatracker.ietf.org/doc/html/rfc3986#appendix-A
@@ -98,8 +100,10 @@ users/vhugo1802/events/birthday-dinner-226/guests/123
 In this situation, the _message_ is still called `UserEvent` or
 `UserEventGuest`; only the collection name is shortened.
 
-**Note:** APIs wishing to do this **must** follow this format consistently
-throughout the API, or else not at all.
+<Aside type="note" title="Note">
+  APIs wishing to do this **must** follow this format consistently
+  throughout the API, or else not at all.
+</Aside>
 
 ### Resource ID segments
 
@@ -162,9 +166,11 @@ relative resource path:
 //apis.example.com/calendar/users/vhugo1802
 ```
 
-**Note:** The full resource path **should not** be used for cross-API
-references where the owning API is clear; it is only used if a field refers to
-resources in multiple APIs where ambiguity is possible.
+<Aside type="note" title="Note">
+  The full resource path **should not** be used for cross-API
+  references where the owning API is clear; it is only used if a field refers to
+  resources in multiple APIs where ambiguity is possible.
+</Aside>
 
 ### Resource URIs
 
@@ -182,10 +188,12 @@ path is expected to persist from version to version. Even though the API
 surface may change between major versions, multiple major versions of the same
 API are expected to use the same underlying data.
 
-**Note:** The correlation between the full resource path and the service's
-hostname is by convention. In particular, one service is able to have multiple
-hostnames (example use cases include regionalization or staging environments),
-and the full resource path does not change between these.
+<Aside type="note" title="Note">
+  The correlation between the full resource path and the service's
+  hostname is by convention. In particular, one service is able to have multiple
+  hostnames (example use cases include regionalization or staging environments),
+  and the full resource path does not change between these.
+</Aside>
 
 ### Fields representing resource paths
 
@@ -232,9 +240,11 @@ string path = 1 [
 }
 ```
 
-**Note:** Fields **must not** be called `path` except for this purpose. For
-other use cases, either use a different term or prepend an adjective (for
-example: `file_path`).
+<Aside type="note" title="Note">
+  Fields **must not** be called `path` except for this purpose. For
+  other use cases, either use a different term or prepend an adjective (for
+  example: `file_path`).
+</Aside>
 
 [aep-123]: ./0123.md
 
@@ -281,8 +291,10 @@ string parent = 1 [
 }
 ```
 
-**Note:** Fields **should not** be called `parent` except for this purpose. For
-other use cases, use a synonymous term if possible.
+<Aside type="note" title="Note">
+  Fields **should not** be called `parent` except for this purpose. For
+  other use cases, use a synonymous term if possible.
+</Aside>
 
 ### Fields representing another resource
 
@@ -320,11 +332,13 @@ string shelf = 2 [(google.api.resource_reference) = {
 }
 ```
 
-**Note:** When referring to other resources in this way, we use the resource
-path as the value, not just the ID component. Services **should** use the
-resource path to reference resources when possible. If using the ID component
-alone is strictly necessary, the field **should** use an `_id` suffix (e.g.
-`shelf_id`).
+<Aside type="note" title="Note">
+  When referring to other resources in this way, we use the resource
+  path as the value, not just the ID component. Services **should** use the
+  resource path to reference resources when possible. If using the ID component
+  alone is strictly necessary, the field **should** use an `_id` suffix (e.g.
+  `shelf_id`).
+</Aside>
 
 ## Further reading
 

@@ -10,7 +10,7 @@ redirect_from: /enums
 title: Enumerations
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Enumerations
 
@@ -56,9 +56,11 @@ change based on individual use cases, a good rule of thumb is no more than once
 a year. For enums that change frequently, the API **should** use a string and
 document the format.
 
-**Note:** If an enumerated value needs to be shared across APIs, an enum
-**may** be used, but the assignment between enum values and their wire
-representation **must** match.
+<Aside type="note" title="Note">
+  If an enumerated value needs to be shared across APIs, an enum
+  **may** be used, but the assignment between enum values and their wire
+  representation **must** match.
+</Aside>
 
 ### Alternatives
 

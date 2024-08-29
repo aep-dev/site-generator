@@ -8,7 +8,7 @@ placement:
 title: File and directory structure
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # File and directory structure
 
@@ -55,9 +55,11 @@ and customers use them in `import` or `use` statements. Therefore, choosing a
 descriptive and language keyword-free filename does matter. For example, a file
 called `import.proto` may be problematic in Python.
 
-**Note:** The version **must not** be used as a filename, because this creates
-bizarre imports in client libraries. Filenames such as `v3.proto` or
-`v1beta1.proto` are prohibited.
+<Aside type="note" title="Note">
+  The version **must not** be used as a filename, because this creates
+  bizarre imports in client libraries. Filenames such as `v3.proto` or
+  `v1beta1.proto` are prohibited.
+</Aside>
 
 ## File layout
 

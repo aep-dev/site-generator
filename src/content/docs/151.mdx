@@ -11,7 +11,7 @@ redirect_from: /lro
 title: Long-running operations
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Long-running operations
 
@@ -37,9 +37,11 @@ not** return a `200 OK` response with the result if it is "fast enough", and
 `202 Accepted` if it is not fast enough, because such behavior adds significant
 burdens for clients.
 
-**Note:** User expectations can vary on what is considered "a significant
-amount of time" depending on what work is being done. A good rule of thumb is
-10 seconds.
+<Aside type="note" title="Note">
+  User expectations can vary on what is considered "a significant
+  amount of time" depending on what work is being done. A good rule of thumb is
+  10 seconds.
+</Aside>
 
 ### Operation representation
 
@@ -109,7 +111,9 @@ but is not obligated to do so:
 APIs **may** allow their operation resources to expire after sufficient time
 has elapsed after the request completed.
 
-**Note:** A good rule of thumb for operation expiry is 30 days.
+<Aside type="note" title="Note">
+  A good rule of thumb for operation expiry is 30 days.
+</Aside>
 
 ### Errors
 

@@ -8,7 +8,7 @@ placement:
 title: Documentation
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Documentation
 
@@ -29,11 +29,13 @@ use them.
 Services, in particular, **should** have descriptive comments that explain what
 the service is and what users are able to do with it.
 
-**Note:** Many readers will not be native English speakers. Comments **should**
-avoid jargon, slang, complex metaphors, pop culture references, or anything
-else that will not easily translate. Additionally, many readers will have
-different backgrounds and viewpoints; if writing examples involving people,
-comments **should** use people who are non-controversial and no longer alive.
+<Aside type="note" title="Note">
+  Many readers will not be native English speakers. Comments **should**
+  avoid jargon, slang, complex metaphors, pop culture references, or anything
+  else that will not easily translate. Additionally, many readers will have
+  different backgrounds and viewpoints; if writing examples involving people,
+  comments **should** use people who are non-controversial and no longer alive.
+</Aside>
 
 ### Style
 
@@ -137,10 +139,12 @@ in `(--` and `--)`.
 Non-public links, internal implementation notes (such as `TODO` and `FIXME`
 directives), and other such material **must** be marked as internal.
 
-**Note:** Comments **should** use only leading comments (not trailing comments
-or detached comments). In particular, comments **must not** use both a leading
-and trailing comment to describe any component, because this is a common source
-of inadvertent omissions of the internal content annotation.
+<Aside type="note" title="Note">
+  Comments **should** use only leading comments (not trailing comments
+  or detached comments). In particular, comments **must not** use both a leading
+  and trailing comment to describe any component, because this is a common source
+  of inadvertent omissions of the internal content annotation.
+</Aside>
 
 [commonmark]: https://commonmark.org/
 [ibm]: https://en.wikipedia.org/wiki/IBM

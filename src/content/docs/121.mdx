@@ -8,7 +8,7 @@ placement:
 title: Resource-oriented design
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Resource-oriented design
 
@@ -44,13 +44,15 @@ A _collection_ contains resources of _the same type_. For example, a publisher
 has the collection of books that it publishes. A resource usually has fields,
 and resources may have any number of sub-resources (usually collections).
 
-**Note:** While there is some conceptual alignment between storage systems and
-APIs, a service with a resource-oriented API is not necessarily a database, and
-has enormous flexibility in how it interprets resources and methods. API
-designers **should not** expect that their API will be reflective of their
-database schema. In fact, having an API that is identical to the underlying
-database schema is actually an anti-pattern, as it tightly couples the surface
-to the underlying system.
+<Aside type="note" title="Note">
+  While there is some conceptual alignment between storage systems and
+  APIs, a service with a resource-oriented API is not necessarily a database, and
+  has enormous flexibility in how it interprets resources and methods. API
+  designers **should not** expect that their API will be reflective of their
+  database schema. In fact, having an API that is identical to the underlying
+  database schema is actually an anti-pattern, as it tightly couples the surface
+  to the underlying system.
+</Aside>
 
 ### Methods
 
@@ -83,9 +85,11 @@ validate the state of resources after performing a mutation such as [Create][],
 A resource **must** also support [List][], except for [singleton resources][]
 where more than one resource is not possible.
 
-**Note:** A custom method in resource-oriented design does _not_ entail
-defining a new or custom HTTP verb. Custom methods use traditional HTTP verbs
-(usually `POST`) and define the custom verb in the URI.
+<Aside type="note" title="Note">
+  A custom method in resource-oriented design does _not_ entail
+  defining a new or custom HTTP verb. Custom methods use traditional HTTP verbs
+  (usually `POST`) and define the custom verb in the URI.
+</Aside>
 
 APIs **should** prefer standard methods over custom methods; the purpose of
 custom methods is to define functionality that does not cleanly map to any of

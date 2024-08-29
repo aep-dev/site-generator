@@ -9,7 +9,7 @@ placement:
 title: Quantities
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Quantities
 
@@ -50,8 +50,10 @@ interface Cluster {
 }
 ```
 
-**Note:** Fields **must not** use unsigned integer types, because many
-programming languages and systems do not support them well.
+<Aside type="note" title="Note">
+  Fields **must not** use unsigned integer types, because many
+  programming languages and systems do not support them well.
+</Aside>
 
 ### Specialized messages
 

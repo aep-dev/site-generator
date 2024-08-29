@@ -9,7 +9,7 @@ redirect_from: /not-precedent
 title: Precedent
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Precedent
 
@@ -39,10 +39,12 @@ reason, there **must** be an internal comment linking to this document using
 its descriptive link ([aep.dev/not-precedent]()) to ensure others do not copy
 the violations or cite the errors as precedent of a "previously approved API".
 
-**Important:** APIs **must not** violate guidance specified with "**must**" or
-"**must not**", even with a link to this AEP. Tools such as documentation
-generators and client generators **may** assume full compliance with "**must**"
-and "**must not**" guidance.
+<Aside type="caution" title="Important">
+  APIs **must not** violate guidance specified with "**must**" or
+  "**must not**", even with a link to this AEP. Tools such as documentation
+  generators and client generators **may** assume full compliance with "**must**"
+  and "**must not**" guidance.
+</Aside>
 
 The comment should also include an explanation of what violates standards and
 why it is necessary. For example:
@@ -81,8 +83,10 @@ why it is necessary. For example:
 </Tabs>
     
 
-**Important:** APIs should only be considered to be precedent-setting if they
-are in beta or stable.
+<Aside type="caution" title="Important">
+  APIs should only be considered to be precedent-setting if they
+  are in beta or stable.
+</Aside>
 
 ### Local consistency
 

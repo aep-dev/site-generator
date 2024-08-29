@@ -8,7 +8,7 @@ placement:
 title: Resource association
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Resource association
 
@@ -98,8 +98,10 @@ treat the `string parent` field as required as discussed in [list](/list), and
 `string filter` field that allows users to filter by other resource
 associations as discussed in [filtering](/filtering).
 
-**Note:** Resource reference fields **must** accept the
-[resource path](/resource-path) of the referenced resource.
+<Aside type="note" title="Note">
+  Resource reference fields **must** accept the
+  [resource path](/resource-path) of the referenced resource.
+</Aside>
 
 ### Many-to-many associations
 
@@ -175,8 +177,10 @@ described for repeated fields in [arrays][/arrays].
 </Tabs>
     
 
-**Note:** See [arrays](/arrays) for more information on repeated fields,
-including how to handle common issues such as atomic changes.
+<Aside type="note" title="Note">
+  See [arrays](/arrays) for more information on repeated fields,
+  including how to handle common issues such as atomic changes.
+</Aside>
 
 If the use of a repeated field is too restrictive, or if more metadata is
 required along with the association, an API **may** model a many-to-many
@@ -251,10 +255,12 @@ relationship using a sub-resource with two one-to-many associations.
 </Tabs>
     
 
-**Note:** Using subresources to model an association between resources is only
-recommended if additional metadata is required in the relationship, or if the
-restrictions around the use of a repeated field preclude the use of that
-approach.
+<Aside type="note" title="Note">
+  Using subresources to model an association between resources is only
+  recommended if additional metadata is required in the relationship, or if the
+  restrictions around the use of a repeated field preclude the use of that
+  approach.
+</Aside>
 
 ### Embedded resources
 
@@ -301,10 +307,12 @@ referenced resource itself contains embedded resources, the API **must**
 include clear documentation about the depth to which embedded resources may be
 dereferenced.
 
-**Note:** There is no need for the _referenced_ resource to define a
-`PATH_ONLY` [view](./partial-responses) corresponding to the default behavior
-of populating only the `path` field. This is because a resource should not have
-to define a view enum simply because another resource references it.
+<Aside type="note" title="Note">
+  There is no need for the _referenced_ resource to define a
+  `PATH_ONLY` [view](./partial-responses) corresponding to the default behavior
+  of populating only the `path` field. This is because a resource should not have
+  to define a view enum simply because another resource references it.
+</Aside>
 
 
 <Tabs>

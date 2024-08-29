@@ -10,7 +10,7 @@ placement:
 title: List
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # List
 
@@ -93,13 +93,15 @@ result being a resource:
   - If filtering is used, the `totalSize` field **should** reflect the size of
     the collection _after_ the filter is applied.
 
-**Note:** List methods **may** return the complete collection to any user with
-permission to make a successful List request on the collection, _or_ **may**
-return a collection only containing resources for which the user has read
-permission. This behavior **should** be clearly documented either for each List
-method or as a standard convention in service-level documentation. Permission
-checks on individual resources may have a negative performance impact so should
-be used only where absolutely necessary.
+<Aside type="note" title="Note">
+  List methods **may** return the complete collection to any user with
+  permission to make a successful List request on the collection, _or_ **may**
+  return a collection only containing resources for which the user has read
+  permission. This behavior **should** be clearly documented either for each List
+  method or as a standard convention in service-level documentation. Permission
+  checks on individual resources may have a negative performance impact so should
+  be used only where absolutely necessary.
+</Aside>
 
 ### Errors
 
@@ -112,8 +114,10 @@ If the user does have proper permission, but the requested collection does not
 exist (generally because the parent does not exist), the service **must** reply
 with an HTTP 404 error.
 
-**Note:** An empty collection which the user has permission to access **must**
-return `200 OK` with an empty results array, and not `404 Not Found`.
+<Aside type="note" title="Note">
+  An empty collection which the user has permission to access **must**
+  return `200 OK` with an empty results array, and not `404 Not Found`.
+</Aside>
 
 ### Ordering
 
@@ -129,8 +133,10 @@ request message **should** contain a `string orderBy` field.
 - Subfields are specified with a `.` character, such as `foo.bar` or
   `address.street`.
 
-**Note:** Only include ordering if there is an established need to do so. It is
-always possible to add ordering later, but removing it is a breaking change.
+<Aside type="note" title="Note">
+  Only include ordering if there is an established need to do so. It is
+  always possible to add ordering later, but removing it is a breaking change.
+</Aside>
 
 ### Filtering
 
@@ -138,9 +144,11 @@ List methods **may** allow clients to specify filters; if they do, the request
 message **should** contain a `string filter` field. Filtering is described in
 more detail in AEP-160.
 
-**Note:** Only include filtering if there is an established need to do so. It
-is always possible to add filtering later, but removing it is a breaking
-change.
+<Aside type="note" title="Note">
+  Only include filtering if there is an established need to do so. It
+  is always possible to add filtering later, but removing it is a breaking
+  change.
+</Aside>
 
 ### Soft-deleted resources
 

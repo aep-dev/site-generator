@@ -40,6 +40,14 @@ interface Group {
 const AEP_LOC = process.env.AEP_LOCATION!;
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC!;
 
+const ASIDES = {
+  'Important': { 'title': 'Important', 'type': 'caution' },
+  'Note': { 'title': 'Note', 'type': 'note' },
+  'TL;DR': { 'title:': 'TL;DR', 'type': 'tip' },
+  'Warning': { 'title': 'Warning', 'type': 'danger' },
+  'Summary': { 'type': 'tip', 'title': 'Summary' }
+};
+
 async function getFolders(dirPath: string): Promise<string[]> {
   const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
 
@@ -114,8 +122,23 @@ function buildMarkdown(contents: string, folder: string): Markdown {
   substituteTabs(result);
   substituteHTMLComments(result);
   substituteEscapeCharacters(result);
+  substituteCallouts(result);
 
   return result;
+}
+
+function substituteCallouts(contents: Markdown) {
+  var paragraph_regex =  /(^|\n)\*\*(Note|Warning|Important|Summary|TL;DR):\*\*([\s\S]+?)(?=\n{2,}|$)/g;
+  var matches = contents.contents.matchAll(paragraph_regex);
+  for (var match of matches) {
+    const aside_info = ASIDES[match[2]];
+    const formatted_results = `
+<Aside type="${aside_info.type}" title="${aside_info.title}">
+${tabContents(match[3].trimStart())}
+</Aside>`
+    contents.contents = contents.contents.replace(match[0], formatted_results);
+    contents.components.add('Aside');
+  }
 }
 
 function substituteEscapeCharacters(contents: Markdown) {
@@ -129,7 +152,7 @@ function getTitle(contents: string): string {
   return matches[1]!.replaceAll(':', '-').replaceAll('`', '')
 }
 
-function createAEP(files: string[], folder: string): AEP {
+function buildAEP(files: string[], folder: string): AEP {
   const md_text = files[0];
   const yaml_text = files[1];
 
@@ -150,7 +173,7 @@ function createAEP(files: string[], folder: string): AEP {
     contents: `---
 ${dump(yaml)}
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 ${contents.contents}`
   }
@@ -161,6 +184,10 @@ function substituteHTMLComments(contents: Markdown) {
     .replaceAll("-->", " */}")
 }
 
+function tabContents(contents: string): string {
+  return contents.split('\n').map((x) => '  ' + x).join('\n');
+}
+
 function substituteTabs(contents: Markdown) {
   var tab_regex = /\{% tab proto -?%\}([\s\S]*?)\{% tab oas -?%\}([\s\S]*?)\{% endtabs -?%\}/g
   let tabs = []
@@ -169,8 +196,8 @@ function substituteTabs(contents: Markdown) {
   for (var match of matches) {
     tabs.push({
       'match': match[0],
-      'proto': match[1].split('\n').map((x) => '  ' + x).join('\n'),
-      'oas': match[2].split('\n').map((x) => '  ' + x).join('\n')
+      'proto': tabContents(match[1]),
+      'oas': tabContents(match[2]),
     });
   }
   for (var tab of tabs) {
@@ -236,7 +263,7 @@ async function assembleAEPs(): Promise<AEP[]> {
   for (var folder of aep_folders) {
     try {
       const files = readAEP(folder);
-      AEPs.push(createAEP(files, folder));
+      AEPs.push(buildAEP(files, folder));
     }
     catch (e) {
       console.log(`AEP ${folder} failed with error ${e}`)
@@ -299,21 +326,21 @@ function buildSidebar(aeps: AEP[]): object[] {
 
 function buildLinterSidebar(rules: LinterRule[]): object[] {
   return [
-      {
-        'label': 'Tooling',
-        'items': [
-          {
-            'label': 'Linter',
-            'items': [
-              'tooling/linter',
-              {
-                'label': 'Rules',
-                'items': rules.map((x) => `tooling/linter/rules/${x.slug}`),
-              }
-            ]
-          }
-        ]
-      }
+    {
+      'label': 'Tooling',
+      'items': [
+        {
+          'label': 'Linter',
+          'items': [
+            'tooling/linter',
+            {
+              'label': 'Rules',
+              'items': rules.map((x) => `tooling/linter/rules/${x.slug}`),
+            }
+          ]
+        }
+      ]
+    }
   ];
 }
 

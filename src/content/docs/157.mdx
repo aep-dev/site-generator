@@ -8,7 +8,7 @@ placement:
 title: Partial responses
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Partial responses
 
@@ -33,8 +33,10 @@ named `read_mask`.
 - An API **may** allow read masks with non-terminal repeated fields (unlike
   update masks), but is not obligated to do so.
 
-**Note:** Changing the default value of `read_mask` is a
-[breaking change](./backwards-compatibility#semantic-changes).
+<Aside type="note" title="Note">
+  Changing the default value of `read_mask` is a
+  [breaking change](./backwards-compatibility#semantic-changes).
+</Aside>
 
 
 <Tabs>
@@ -81,9 +83,11 @@ number of permutations to the user:
 - APIs **may** add fields to a given view over time. APIs **must not** remove a
   field from a given view (this is a breaking change).
 
-**Note:** The implicit `PATH_ONLY` view described by
-[resource association via embedded resources](.association/#embedded-resources)
-**should not** be explicitly defined in the view enum.
+<Aside type="note" title="Note">
+  The implicit `PATH_ONLY` view described by
+  [resource association via embedded resources](.association/#embedded-resources)
+  **should not** be explicitly defined in the view enum.
+</Aside>
 
 
 <Tabs>

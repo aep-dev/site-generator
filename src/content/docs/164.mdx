@@ -9,7 +9,7 @@ placement:
 title: Soft delete
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Soft delete
 
@@ -225,14 +225,16 @@ removed.
 A resource that is declarative-friendly (AEP-128) **should** support soft
 delete and undelete.
 
-**Important:** There is an ambiguity in declarative tooling between "create"
-and "undelete". When given an alias which was previously deleted and a
-directive to make it exist, tooling usually does not know if the intent is to
-restore the previously-deleted resource, or create a new one with the same
-alias. Declarative tools **should** resolve this ambiguity in favor of creating
-a new resource: the only way to undelete is to explicitly use the undelete RPC
-(an imperative operation), and declarative tools **may** elect not to map
-anything to undelete at all.
+<Aside type="caution" title="Important">
+  There is an ambiguity in declarative tooling between "create"
+  and "undelete". When given an alias which was previously deleted and a
+  directive to make it exist, tooling usually does not know if the intent is to
+  restore the previously-deleted resource, or create a new one with the same
+  alias. Declarative tools **should** resolve this ambiguity in favor of creating
+  a new resource: the only way to undelete is to explicitly use the undelete RPC
+  (an imperative operation), and declarative tools **may** elect not to map
+  anything to undelete at all.
+</Aside>
 
 Declarative-friendly resources **must** use long-running operations for both
 soft delete and undelete. The service **may** return an LRO that is already set

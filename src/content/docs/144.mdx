@@ -9,7 +9,7 @@ placement:
 title: Array fields
 
 --- 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 # Array fields
 
@@ -63,12 +63,14 @@ Resources **may** use array fields where appropriate.
     that the array will be too large to be reasonably returned in a single
     request), the API **should** use a sub-resource instead.
 
-**Note:** This document uses the term "array" to refer to a field on a resource
-that is a list of elements that have the same type. Some languages and IDLs use
-other terms, such as "list", "repeated", or "sequence", and these terms are all
-synonymous for the purposes of this document. The term "collection" is
-distinct, and refers to a group of resources under a single parent rather than
-a field on a resource.
+<Aside type="note" title="Note">
+  This document uses the term "array" to refer to a field on a resource
+  that is a list of elements that have the same type. Some languages and IDLs use
+  other terms, such as "list", "repeated", or "sequence", and these terms are all
+  synonymous for the purposes of this document. The term "collection" is
+  distinct, and refers to a group of resources under a single parent rather than
+  a field on a resource.
+</Aside>
 
 ### Scalars and structs
 
@@ -94,10 +96,12 @@ back. This is fine for many situations, particularly when the array field is
 expected to have a small size (fewer than 10 or so) and race conditions are not
 an issue, or can be guarded against with [ETags][aip-154].
 
-**Note:** Declarative-friendly resources (AEP-128) **must** use the standard
-`Update` method, and not introduce `Add` and `Remove` methods. If declarative
-tools need to reason about particular relationships while ignoring others,
-consider using a subresource instead.
+<Aside type="note" title="Note">
+  Declarative-friendly resources (AEP-128) **must** use the standard
+  `Update` method, and not introduce `Add` and `Remove` methods. If declarative
+  tools need to reason about particular relationships while ignoring others,
+  consider using a subresource instead.
+</Aside>
 
 If atomic modifications are required, and if the array is functionally a set
 (meaning that order does not matter, duplicate values are not meaningful, and
@@ -318,8 +322,10 @@ define custom methods using the verbs `Add` and `Remove`:
 </Tabs>
     
 
-**Note:** If both of these strategies are too restrictive, consider using a
-subresource instead.
+<Aside type="note" title="Note">
+  If both of these strategies are too restrictive, consider using a
+  subresource instead.
+</Aside>
 
 #### Request Structure
 
