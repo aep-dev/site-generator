@@ -20,9 +20,9 @@ completed, and so on.
 
 ## Guidance
 
-Resources needing to communicate their state <b class="text-yellow-700">should</b> use an enum, which
-<b class="text-yellow-700">should</b> be called `State` (or, if more specificity is required, end in the
-word `State`). This enum <b class="text-yellow-700">should</b> be nested within the message it describes
+Resources needing to communicate their state <b class="font-extrabold	text-yellow-700">should</b> use an enum, which
+<b class="font-extrabold	text-yellow-700">should</b> be called `State` (or, if more specificity is required, end in the
+word `State`). This enum <b class="font-extrabold	text-yellow-700">should</b> be nested within the message it describes
 when only used as a field within that message.
 
 <Aside type="caution" title="Important">
@@ -53,18 +53,18 @@ At a high level:
 <Aside type="note" title="Note">
   Only add states that are useful to customers. Exposing a
   large number of states simply because they exist in your internal system is
-  unnecessary and adds confusion for customers. Each state <b class="text-red-700">must</b> come with a
+  unnecessary and adds confusion for customers. Each state <b class="font-extrabold	text-red-700">must</b> come with a
   use case for why it is necessary.
 </Aside>
 
 ### Output only
 
-The field referencing the `State` enum in a resource <b class="text-red-700">must</b> behave and be
+The field referencing the `State` enum in a resource <b class="font-extrabold	text-red-700">must</b> behave and be
 documented as "Output only", in accordance with
 [field behavior documentation](./field-behavior-documentation).
 
-APIs <b class="text-red-700">must not</b> allow a `State` enum to be directly updated through an
-"update" method (or directly set through the "create" method), and <b class="text-red-700">must</b>
+APIs <b class="font-extrabold	text-red-700">must not</b> allow a `State` enum to be directly updated through an
+"update" method (or directly set through the "create" method), and <b class="font-extrabold	text-red-700">must</b>
 instead use custom state transition methods.
 
 This is because update methods are generally not expected to have side effects,
@@ -81,16 +81,16 @@ fields may also change, e.g. an `update_time` field. In addition to the general
 guidance for custom methods on resources, the following guidance applies for
 method definitions:
 
-- The name of the method <b class="text-yellow-700">should</b> be a verb followed by the singular form of
+- The name of the method <b class="font-extrabold	text-yellow-700">should</b> be a verb followed by the singular form of
   the resource's message name.
-- The HTTP verb <b class="text-red-700">must</b> be `POST`.
+- The HTTP verb <b class="font-extrabold	text-red-700">must</b> be `POST`.
 
 In addition to the general guidance for custom methods on resources, the
 following guidance applies for request definitions:
 
-- A resource path field <b class="text-red-700">must</b> be included. It <b class="text-yellow-700">should</b> be called `path`.
-- The comment for the field <b class="text-yellow-700">should</b> document the resource pattern.
-- Other fields <b class="text-green-700">may</b> be included.
+- A resource path field <b class="font-extrabold	text-red-700">must</b> be included. It <b class="font-extrabold	text-yellow-700">should</b> be called `path`.
+- The comment for the field <b class="font-extrabold	text-yellow-700">should</b> document the resource pattern.
+- Other fields <b class="font-extrabold text-green-700">may</b> be included.
 
 
 <Tabs>
@@ -110,17 +110,17 @@ following guidance applies for request definitions:
   }
   ```
   
-  - The request message <b class="text-red-700">must</b> match the RPC name, with a `Request` suffix.
-  - The response message <b class="text-yellow-700">should</b> be the resource itself.
-    - If the RPC is [long-running](./lro), the response message <b class="text-yellow-700">should</b> be an
+  - The request message <b class="font-extrabold	text-red-700">must</b> match the RPC name, with a `Request` suffix.
+  - The response message <b class="font-extrabold	text-yellow-700">should</b> be the resource itself.
+    - If the RPC is [long-running](./lro), the response message <b class="font-extrabold	text-yellow-700">should</b> be an
       `aep.api.Operation` which resolves to the resource itself.
-  - The `body` clause in the `google.api.http` annotation <b class="text-red-700">must</b> be `"*"`.
-  - The request message field receiving the resource path <b class="text-yellow-700">should</b> map to the
+  - The `body` clause in the `google.api.http` annotation <b class="font-extrabold	text-red-700">must</b> be `"*"`.
+  - The request message field receiving the resource path <b class="font-extrabold	text-yellow-700">should</b> map to the
     URI path.
-    - This field <b class="text-yellow-700">should</b> be called `path`.
-    - The `path` field <b class="text-yellow-700">should</b> be the only variable in the URI path. All
-      remaining parameters <b class="text-yellow-700">should</b> map to URI query parameters.
-  - If the state transition is not allowed, the service <b class="text-red-700">must</b> error with
+    - This field <b class="font-extrabold	text-yellow-700">should</b> be called `path`.
+    - The `path` field <b class="font-extrabold	text-yellow-700">should</b> be the only variable in the URI path. All
+      remaining parameters <b class="font-extrabold	text-yellow-700">should</b> map to URI query parameters.
+  - If the state transition is not allowed, the service <b class="font-extrabold	text-red-700">must</b> error with
     `FAILED_PRECONDITION` (HTTP 400).
   
   The request message should look like this:
@@ -153,16 +153,16 @@ following guidance applies for request definitions:
 
 ### Value uniqueness
 
-Multiple top-level enums within the same package <b class="text-red-700">must</b> not share the same
+Multiple top-level enums within the same package <b class="font-extrabold	text-red-700">must</b> not share the same
 values. This is because the C++ protoc code generator flattens top-level enum
 values into a single namespace.
 
-State enums <b class="text-yellow-700">should</b> live inside the resource definition.
+State enums <b class="font-extrabold	text-yellow-700">should</b> live inside the resource definition.
 
 ### Prefixes
 
 Using a `STATE_` prefix on every enum value is unnecessary. State enum values
-<b class="text-yellow-700">should not</b> be prefixed with the enum name, except for the default value
+<b class="font-extrabold	text-yellow-700">should not</b> be prefixed with the enum name, except for the default value
 `STATE_UNSPECIFIED`.
 
 ### Breaking changes
@@ -179,10 +179,10 @@ only two values: `ACTIVE` and `DELETED`. A user may add code that checks
 deleted. If the API later adds a new state for another purpose, that code will
 break.
 
-API documentation <b class="text-yellow-700">should</b> actively encourage users to code against state
+API documentation <b class="font-extrabold	text-yellow-700">should</b> actively encourage users to code against state
 enums with the expectation that they may receive new values in the future.
 
-APIs <b class="text-green-700">may</b> add new states to an existing State enum when appropriate, and
+APIs <b class="font-extrabold text-green-700">may</b> add new states to an existing State enum when appropriate, and
 adding a new state is _not_ considered a breaking change.
 
 ### When to avoid states
@@ -198,8 +198,8 @@ whether it is set to determine deletion.
 
 ### Common states
 
-The following is a list of states in common use. APIs <b class="text-yellow-700">should</b> consider prior
-art when determining state names, and <b class="text-yellow-700">should</b> value local consistency above
+The following is a list of states in common use. APIs <b class="font-extrabold	text-yellow-700">should</b> consider prior
+art when determining state names, and <b class="font-extrabold	text-yellow-700">should</b> value local consistency above
 global consistency in the case of conflicting precedent.
 
 #### Resting states

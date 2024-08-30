@@ -19,13 +19,13 @@ a resource may have a many-to-many relationship with another resource type.
 
 ## Guidance
 
-A resource <b class="text-red-700">must</b> have at most one canonical parent, and `List` requests
-<b class="text-red-700">must not</b> require two distinct "parents".
+A resource <b class="font-extrabold	text-red-700">must</b> have at most one canonical parent, and `List` requests
+<b class="font-extrabold	text-red-700">must not</b> require two distinct "parents".
 
 ### Multiple many-to-one associations
 
 If a resource has a many-to-one relationship with multiple resource types, it
-<b class="text-red-700">must</b> choose at most one of them to be the parent. The resource <b class="text-green-700">may</b> be
+<b class="font-extrabold	text-red-700">must</b> choose at most one of them to be the parent. The resource <b class="font-extrabold text-green-700">may</b> be
 associated with other resources through other fields on the resource.
 
 
@@ -92,14 +92,14 @@ associated with other resources through other fields on the resource.
 </Tabs>
     
 
-When listing resources with multiple associations in this way, the RPC <b class="text-red-700">must</b>
+When listing resources with multiple associations in this way, the RPC <b class="font-extrabold	text-red-700">must</b>
 treat the `string parent` field as required as discussed in [list](/list), and
-<b class="text-red-700">must not</b> add additional required arguments. The RPC <b class="text-yellow-700">should</b> include a
+<b class="font-extrabold	text-red-700">must not</b> add additional required arguments. The RPC <b class="font-extrabold	text-yellow-700">should</b> include a
 `string filter` field that allows users to filter by other resource
 associations as discussed in [filtering](/filtering).
 
 <Aside type="note" title="Note">
-  Resource reference fields <b class="text-red-700">must</b> accept the
+  Resource reference fields <b class="font-extrabold	text-red-700">must</b> accept the
   [resource path](/resource-path) of the referenced resource.
 </Aside>
 
@@ -109,7 +109,7 @@ Many-to-many associations are less common in APIs than they are in relational
 databases, in part because they are more difficult to model and present over
 network interfaces.
 
-An API <b class="text-green-700">may</b> contain many-to-many relationships, and <b class="text-yellow-700">should</b> use a
+An API <b class="font-extrabold text-green-700">may</b> contain many-to-many relationships, and <b class="font-extrabold	text-yellow-700">should</b> use a
 repeated field containing a list of resource paths, following the principles
 described for repeated fields in [arrays][/arrays].
 
@@ -183,7 +183,7 @@ described for repeated fields in [arrays][/arrays].
 </Aside>
 
 If the use of a repeated field is too restrictive, or if more metadata is
-required along with the association, an API <b class="text-green-700">may</b> model a many-to-many
+required along with the association, an API <b class="font-extrabold text-green-700">may</b> model a many-to-many
 relationship using a sub-resource with two one-to-many associations.
 
 
@@ -282,28 +282,28 @@ referenced by the `Book` resource.
 In other cases, it may be much cheaper and/or faster for the server to perform
 the dereferencing than for the client to make multiple serial requests.
 
-In these cases, an alternative resource association pattern <b class="text-green-700">may</b> be used,
+In these cases, an alternative resource association pattern <b class="font-extrabold text-green-700">may</b> be used,
 where the resource reference field is not a string, but is instead the
 referenced resource itself.
 
-The default behavior <b class="text-yellow-700">should</b> be to populate only the `path` field of the
+The default behavior <b class="font-extrabold	text-yellow-700">should</b> be to populate only the `path` field of the
 referenced resource, making it equivalent to a string-based resource reference.
-Additional fields <b class="text-green-700">may</b> be included based on the request: for example, if the
+Additional fields <b class="font-extrabold text-green-700">may</b> be included based on the request: for example, if the
 request includes a [view or read mask](./partial-responses) that specifies that
 additional fields should be included, or if the request contains a filter that
 specifies fields other than `path` within the referenced resource.
 
-Fields other than `path` in embedded resource references <b class="text-red-700">must</b> be treated as
-[output-only](./field-behavior); mutating API methods <b class="text-red-700">must not</b> allow
+Fields other than `path` in embedded resource references <b class="font-extrabold	text-red-700">must</b> be treated as
+[output-only](./field-behavior); mutating API methods <b class="font-extrabold	text-red-700">must not</b> allow
 creating or mutation of embedded resources. For example, if a `Book` resource
 has an embedded resource reference to `Author`, the `UpdateBook` method **must
 not** allow updating any fields of the `Author` resource other than
 `Author.path` (which updates the reference itself, rather than the referenced
 resource).
 
-APIs <b class="text-red-700">must</b> always fully document their behavior with embedded resources,
+APIs <b class="font-extrabold	text-red-700">must</b> always fully document their behavior with embedded resources,
 even if the only supported behavior is populating only the `path` field. If the
-referenced resource itself contains embedded resources, the API <b class="text-red-700">must</b>
+referenced resource itself contains embedded resources, the API <b class="font-extrabold	text-red-700">must</b>
 include clear documentation about the depth to which embedded resources may be
 dereferenced.
 

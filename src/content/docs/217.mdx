@@ -22,7 +22,7 @@ missing.
 ## Guidance
 
 If a method to retrieve data is capable of partially failing due to one or more
-resources being temporarily unreachable, the response message <b class="text-red-700">must</b> include
+resources being temporarily unreachable, the response message <b class="font-extrabold	text-red-700">must</b> include
 a field to indicate this:
 
 
@@ -56,28 +56,28 @@ a field to indicate this:
 </Tabs>
     
 
-- The field <b class="text-red-700">must</b> be a repeated string/string array, and <b class="text-red-700">must</b> be named
+- The field <b class="font-extrabold	text-red-700">must</b> be a repeated string/string array, and <b class="font-extrabold	text-red-700">must</b> be named
   `unreachable`.
-- The field <b class="text-red-700">must</b> be set to the paths of the resources which are the cause
+- The field <b class="font-extrabold	text-red-700">must</b> be set to the paths of the resources which are the cause
   of the issue, such as the parent or individual resources that could not be
-  reached. The objects listed as unreachable <b class="text-green-700">may</b> be _parents_ (or higher
+  reached. The objects listed as unreachable <b class="font-extrabold text-green-700">may</b> be _parents_ (or higher
   ancestors) rather than the individual resources being requested. For example,
   if a location is unreachable, the location is listed.
-  - The response <b class="text-red-700">must not</b> provide any other information about the issue,
+  - The response <b class="font-extrabold	text-red-700">must not</b> provide any other information about the issue,
     such as error details or codes. Toe enable users to discover what the
-    underlying issue is, APIs <b class="text-yellow-700">should</b> provide an API method that provides
+    underlying issue is, APIs <b class="font-extrabold	text-yellow-700">should</b> provide an API method that provides
     more specific information.
-  - The service <b class="text-red-700">must</b> provide a way for the user to get an error with
-    additional information, and <b class="text-yellow-700">should</b> allow the user to repeat the
+  - The service <b class="font-extrabold	text-red-700">must</b> provide a way for the user to get an error with
+    additional information, and <b class="font-extrabold	text-yellow-700">should</b> allow the user to repeat the
     original call with more restrictive parameters in order to do so.
-  - The resource paths provided in this field <b class="text-green-700">may</b> be heterogeneous. The
-    field <b class="text-yellow-700">should</b> document what potential resources may be provided in this
+  - The resource paths provided in this field <b class="font-extrabold text-green-700">may</b> be heterogeneous. The
+    field <b class="font-extrabold	text-yellow-700">should</b> document what potential resources may be provided in this
     field, and note that it might expand later.
 
 <Aside type="caution" title="Important">
   If a single unreachable location or resource prevents returning
   any data by definition (for example, a list request for a single publisher
-  where that publisher is unreachable), the service <b class="text-red-700">must</b> fail the entire
+  where that publisher is unreachable), the service <b class="font-extrabold	text-red-700">must</b> fail the entire
   request with an error.
 </Aside>
 
@@ -90,29 +90,29 @@ throughout the process of listing all the requested resources.
 
 These facts lead to the following guidance:
 
-- The response <b class="text-red-700">must</b> provide any outstanding unreachable locations or
+- The response <b class="font-extrabold	text-red-700">must</b> provide any outstanding unreachable locations or
   resources in the `unreachable` field on pages _following_ the final page that
   contains a resource.
-  - The response <b class="text-yellow-700">should not</b> include both requested data and unreachable
+  - The response <b class="font-extrabold	text-yellow-700">should not</b> include both requested data and unreachable
     resources on the same page.
     - For example, if there are two pages of books and one unavailable
       publisher, there should be three pages total: first the two pages of
       books, and then a final page with no books and the unavailable publisher.
   - If the number of unreachable resources to list is very large, the response
-    <b class="text-yellow-700">should</b> honor the `max_page_size` field in the same way as for
-    resources. In this case, all pages with requested information <b class="text-yellow-700">should</b>
+    <b class="font-extrabold	text-yellow-700">should</b> honor the `max_page_size` field in the same way as for
+    resources. In this case, all pages with requested information <b class="font-extrabold	text-yellow-700">should</b>
     precede all pages with unavailable resources or locations.
-  - The final page's `unreachable` field <b class="text-red-700">must</b> _only_ include resources or
+  - The final page's `unreachable` field <b class="font-extrabold	text-red-700">must</b> _only_ include resources or
     parents that were partially provided (or missing completely) across the
     entirety of the pagination process.
     - For example, if a parent or resource was unreachable at the beginning of
       pagination and it became reachable again and the entire set of previously
       unreachable data was provided to the user on any page, the `unreachable`
-      field <b class="text-red-700">must not</b> include the intermittently-unreachable parent or
+      field <b class="font-extrabold	text-red-700">must not</b> include the intermittently-unreachable parent or
       resource.
     - On the other hand, if only _some_ of the resources for a given parent are
       provided during such an incident as described above, the parent or
-      resource <b class="text-red-700">must</b> be included in the `unreachable` field.
+      resource <b class="font-extrabold	text-red-700">must</b> be included in the `unreachable` field.
 
 ## Further reading
 

@@ -22,26 +22,26 @@ potentially some other parameters), and return the created resource.
 
 ## Guidance
 
-APIs <b class="text-yellow-700">should</b> provide a create method for resources unless it is
+APIs <b class="font-extrabold	text-yellow-700">should</b> provide a create method for resources unless it is
 not valuable for users to do so. The purpose of the create method is to create
 a new resource in an already-existing collection.
 
 Create methods are specified using the following pattern:
 
-- The response <b class="text-red-700">must</b> be the resource itself. There is no separate response
+- The response <b class="font-extrabold	text-red-700">must</b> be the resource itself. There is no separate response
   schema.
-  - The response <b class="text-yellow-700">should</b> include the fully-populated resource, and <b class="text-red-700">must</b>
+  - The response <b class="font-extrabold	text-yellow-700">should</b> include the fully-populated resource, and <b class="font-extrabold	text-red-700">must</b>
     include any fields that were provided unless they are input only (see
     AEP-203).
   - If the create RPC is [long-running](#long-running-create), the response
-    message <b class="text-red-700">must</b> be an `Operation` for which the type of the `response`
+    message <b class="font-extrabold	text-red-700">must</b> be an `Operation` for which the type of the `response`
     field is the resource itself.
-- The HTTP verb <b class="text-red-700">must</b> be `POST`.
-- The collection where the resource is being added <b class="text-yellow-700">should</b> map to the URI
+- The HTTP verb <b class="font-extrabold	text-red-700">must</b> be `POST`.
+- The collection where the resource is being added <b class="font-extrabold	text-yellow-700">should</b> map to the URI
   path.
-  - The collection's parent resource <b class="text-yellow-700">should</b> be called `parent`, and
-    <b class="text-yellow-700">should</b> be the only variable in the URI path.
-  - The collection identifier (`books` in the above example) <b class="text-red-700">must</b> be a
+  - The collection's parent resource <b class="font-extrabold	text-yellow-700">should</b> be called `parent`, and
+    <b class="font-extrabold	text-yellow-700">should</b> be the only variable in the URI path.
+  - The collection identifier (`books` in the above example) <b class="font-extrabold	text-red-700">must</b> be a
     literal string.
 
 
@@ -59,21 +59,21 @@ Create methods are specified using the following pattern:
   }
   ```
   
-  - The RPC's name <b class="text-red-700">must</b> begin with the word `Create`. The remainder of the
-    RPC name <b class="text-yellow-700">should</b> be the singular form of the resource being created.
-    - The request message <b class="text-red-700">must</b> match the RPC name, with a `Request` suffix.
-  - The collection's parent resource <b class="text-red-700">must</b> be called `parent`, and
-    <b class="text-yellow-700">should</b> be the only variable in the URI path.
-    - The collection identifier (`books` in the above example) <b class="text-red-700">must</b> be a
+  - The RPC's name <b class="font-extrabold	text-red-700">must</b> begin with the word `Create`. The remainder of the
+    RPC name <b class="font-extrabold	text-yellow-700">should</b> be the singular form of the resource being created.
+    - The request message <b class="font-extrabold	text-red-700">must</b> match the RPC name, with a `Request` suffix.
+  - The collection's parent resource <b class="font-extrabold	text-red-700">must</b> be called `parent`, and
+    <b class="font-extrabold	text-yellow-700">should</b> be the only variable in the URI path.
+    - The collection identifier (`books` in the above example) <b class="font-extrabold	text-red-700">must</b> be a
       literal string.
-  - There <b class="text-red-700">must</b> be a `body` key in the `google.api.http` annotation, and it
-    <b class="text-red-700">must</b> map to the resource field in the request message.
-    - All remaining fields <b class="text-yellow-700">should</b> map to URI query parameters.
-  - There <b class="text-yellow-700">should</b> be exactly one `google.api.method_signature` annotation,
+  - There <b class="font-extrabold	text-red-700">must</b> be a `body` key in the `google.api.http` annotation, and it
+    <b class="font-extrabold	text-red-700">must</b> map to the resource field in the request message.
+    - All remaining fields <b class="font-extrabold	text-yellow-700">should</b> map to URI query parameters.
+  - There <b class="font-extrabold	text-yellow-700">should</b> be exactly one `google.api.method_signature` annotation,
     with a value of `"parent,{resource},id"`, or "`"parent,{resource}"` if the
     resource ID is not required.
   - If the API is operating on the [management plane][], the operation should have
-    [strong consistency][]: the completion of a create operation <b class="text-red-700">must</b> mean
+    [strong consistency][]: the completion of a create operation <b class="font-extrabold	text-red-700">must</b> mean
     that all user-settable values and the existence of the resource have reached a
     steady-state and reading resource state returns a consistent response.
   
@@ -93,11 +93,11 @@ Create methods are specified using the following pattern:
 
 Create methods implement a common request message pattern:
 
-- An `id` field <b class="text-red-700">must</b> be included for management plane resources, and
-  <b class="text-yellow-700">should</b> be included for data plane resources.
-- The resource field <b class="text-red-700">must</b> be included and <b class="text-red-700">must</b> map to the POST body.
-- The request message <b class="text-red-700">must not</b> contain any other required fields and
-  <b class="text-yellow-700">should not</b> contain other optional fields except those described in this
+- An `id` field <b class="font-extrabold	text-red-700">must</b> be included for management plane resources, and
+  <b class="font-extrabold	text-yellow-700">should</b> be included for data plane resources.
+- The resource field <b class="font-extrabold	text-red-700">must</b> be included and <b class="font-extrabold	text-red-700">must</b> map to the POST body.
+- The request message <b class="font-extrabold	text-red-700">must not</b> contain any other required fields and
+  <b class="font-extrabold	text-yellow-700">should not</b> contain other optional fields except those described in this
   or another AEP.
 
 
@@ -127,10 +127,10 @@ Create methods implement a common request message pattern:
   }
   ```
   
-  - A `parent` field <b class="text-red-700">must</b> be included unless the resource being created is a
-    top-level resource. It <b class="text-yellow-700">should</b> be called `parent`.
-    - The field <b class="text-yellow-700">should</b> be [annotated as `REQUIRED`][aep-203].
-    - The field <b class="text-red-700">must</b> identify the [resource type][aep-123] of the resource
+  - A `parent` field <b class="font-extrabold	text-red-700">must</b> be included unless the resource being created is a
+    top-level resource. It <b class="font-extrabold	text-yellow-700">should</b> be called `parent`.
+    - The field <b class="font-extrabold	text-yellow-700">should</b> be [annotated as `REQUIRED`][aep-203].
+    - The field <b class="font-extrabold	text-red-700">must</b> identify the [resource type][aep-123] of the resource
       being created.
   
   
@@ -148,10 +148,10 @@ Create methods implement a common request message pattern:
 ### Long-running create
 
 Some resources take longer to create a resource than is reasonable for a
-regular API request. In this situation, the API <b class="text-yellow-700">should</b> use a long-running
+regular API request. In this situation, the API <b class="font-extrabold	text-yellow-700">should</b> use a long-running
 operation (AEP-151) instead:
 
-- The response type <b class="text-red-700">must</b> be set to the resource (what the return type would
+- The response type <b class="font-extrabold	text-red-700">must</b> be set to the resource (what the return type would
   be if the RPC was not long-running).
 
 
@@ -171,7 +171,7 @@ operation (AEP-151) instead:
   }
   ```
   
-  - Both the `response_type` and `metadata_type` fields <b class="text-red-700">must</b> be specified.
+  - Both the `response_type` and `metadata_type` fields <b class="font-extrabold	text-red-700">must</b> be specified.
   
   
   </TabItem>
@@ -187,18 +187,18 @@ operation (AEP-151) instead:
 
 ### User-specified IDs
 
-An API <b class="text-red-700">must</b> allow a user to specify the ID component of a resource (the
+An API <b class="font-extrabold	text-red-700">must</b> allow a user to specify the ID component of a resource (the
 last segment of the resource path) on creation if the API is operating on the
 [management plane][].
 
-On the [data plane][], an API <b class="text-yellow-700">should</b> allow a user to specify the ID.
+On the [data plane][], an API <b class="font-extrabold	text-yellow-700">should</b> allow a user to specify the ID.
 Exceptional cases should have the following behavior:
 
 - The data plane resource allows identical records without a need to
   disambiguate between the two (e.g. rows in a table with no primary key).
 - The data plane resource will not be exposed in [Declarative clients][].
 
-An API <b class="text-green-700">may</b> allow the `id` field to be optional, and give the resource a
+An API <b class="font-extrabold text-green-700">may</b> allow the `id` field to be optional, and give the resource a
 system-generated ID if one is not specified.
 
 For example:
@@ -211,18 +211,18 @@ publishers/lacroix/books/les-miserables
 publishers/012345678-abcd-cdef/books/12341234-5678-abcd
 ```
 
-- The `id` field <b class="text-red-700">must</b> exist on the request message, not the resource
+- The `id` field <b class="font-extrabold	text-red-700">must</b> exist on the request message, not the resource
   itself.
-  - The field <b class="text-green-700">may</b> be required or optional. If it is required, it <b class="text-yellow-700">should</b>
+  - The field <b class="font-extrabold text-green-700">may</b> be required or optional. If it is required, it <b class="font-extrabold	text-yellow-700">should</b>
     include the corresponding annotation.
-- The `path` field on the resource <b class="text-red-700">must</b> be ignored.
-- The documentation <b class="text-yellow-700">should</b> explain what the acceptable format is, and the
-  format <b class="text-yellow-700">should</b> follow the guidance for resource path formatting in
+- The `path` field on the resource <b class="font-extrabold	text-red-700">must</b> be ignored.
+- The documentation <b class="font-extrabold	text-yellow-700">should</b> explain what the acceptable format is, and the
+  format <b class="font-extrabold	text-yellow-700">should</b> follow the guidance for resource path formatting in
   AEP-122.
 - If a user tries to create a resource with an ID that would result in a
-  duplicate resource path, the service <b class="text-red-700">must</b> error with `ALREADY_EXISTS`.
+  duplicate resource path, the service <b class="font-extrabold	text-red-700">must</b> error with `ALREADY_EXISTS`.
   - However, if the user making the call does not have permission to see the
-    duplicate resource, the service <b class="text-red-700">must</b> error with `PERMISSION_DENIED`
+    duplicate resource, the service <b class="font-extrabold	text-red-700">must</b> error with `PERMISSION_DENIED`
     instead.
 
 
@@ -230,7 +230,7 @@ publishers/012345678-abcd-cdef/books/12341234-5678-abcd
   <TabItem label="Protocol Buffers">
   
   
-  - There <b class="text-yellow-700">should</b> be exactly one `google.api.method_signature` annotation on
+  - There <b class="font-extrabold	text-yellow-700">should</b> be exactly one `google.api.method_signature` annotation on
     the RPC, with a value of `"parent,{resource},id"` if the resource being
     created is not a top-level resource, or with a value of `"{resource},id"` if
     the resource being created is a top-level resource.

@@ -20,10 +20,10 @@ concept of time.
 
 ## Guidance
 
-Fields representing time <b class="text-yellow-700">should</b> use a `string` field with values conforming
+Fields representing time <b class="font-extrabold	text-yellow-700">should</b> use a `string` field with values conforming
 to [RFC 3339][], such as `2012-04-21T15:00:00Z`.
 
-Services <b class="text-yellow-700">should</b> use IDL-specific timestamps or format indicators where
+Services <b class="font-extrabold	text-yellow-700">should</b> use IDL-specific timestamps or format indicators where
 applicable (such as [`google.protobuf.Timestamp`][timestamp] in protocol
 buffers, or `format: date-time` in OpenAPI) provided that the service converts
 values to RFC 3339 timestamp strings in JSON.
@@ -31,52 +31,52 @@ values to RFC 3339 timestamp strings in JSON.
 ### Timestamps
 
 Fields that represent an absolute point in time (independent of any time zone
-or calendar) <b class="text-yellow-700">should</b> use a `string` field with RFC 3339 values, and
-<b class="text-yellow-700">should</b> send values in UTC, with the `Z` time zone explicitly included.
+or calendar) <b class="font-extrabold	text-yellow-700">should</b> use a `string` field with RFC 3339 values, and
+<b class="font-extrabold	text-yellow-700">should</b> send values in UTC, with the `Z` time zone explicitly included.
 
-These fields <b class="text-yellow-700">should</b> have names ending in `_time`, such as `create_time` or
-`update_time`. For array fields, the names <b class="text-yellow-700">should</b> end in `_times` instead.
+These fields <b class="font-extrabold	text-yellow-700">should</b> have names ending in `_time`, such as `create_time` or
+`update_time`. For array fields, the names <b class="font-extrabold	text-yellow-700">should</b> end in `_times` instead.
 
 Many timestamp fields refer to an activity (for example, `create_time` refers
-to when the applicable resource was created). For these, the field <b class="text-yellow-700">should</b>
+to when the applicable resource was created). For these, the field <b class="font-extrabold	text-yellow-700">should</b>
 be named with the `{root_word}_time` form. For example, if a book is being
 published, the field storing the time when this happens would use the root form
 of the verb "to publish" ("publish"), resulting in a field called
-`publish_time`. Fields <b class="text-yellow-700">should not</b> be named using the past tense (such as
+`publish_time`. Fields <b class="font-extrabold	text-yellow-700">should not</b> be named using the past tense (such as
 `published_time`, `created_time` or `last_updated_time`).
 
-When accepting timestamps as input, services <b class="text-yellow-700">should</b> canonicalize the
+When accepting timestamps as input, services <b class="font-extrabold	text-yellow-700">should</b> canonicalize the
 timestamp into UTC, and return values in UTC.
 
 ### Durations
 
 Fields that represent a span between two points in time (independent of any
-time zone or calendar) <b class="text-yellow-700">should</b> use an `int` field if there is a single
+time zone or calendar) <b class="font-extrabold	text-yellow-700">should</b> use an `int` field if there is a single
 canonical unit (for example, `ttl_seconds` for an expiring resource, or
 `offset_seconds` for position in a video).
 
 <Aside type="note" title="Note">
-  A `float` field <b class="text-green-700">may</b> be used if fractional seconds are needed.
+  A `float` field <b class="font-extrabold text-green-700">may</b> be used if fractional seconds are needed.
   However, only fractional seconds are permitted; other fractional units (such as
-  hours or days) <b class="text-red-700">must not</b> be used.
+  hours or days) <b class="font-extrabold	text-red-700">must not</b> be used.
 </Aside>
 
-If there is no canonical unit, the service <b class="text-yellow-700">should</b> use a `string` field with
+If there is no canonical unit, the service <b class="font-extrabold	text-yellow-700">should</b> use a `string` field with
 [ISO 8601][] duration values, such as `P3Y6M4DT12H30M5S`. The field name
-<b class="text-yellow-700">should</b> end with `_duration`. Designators for zero values <b class="text-green-700">may</b> be omitted
+<b class="font-extrabold	text-yellow-700">should</b> end with `_duration`. Designators for zero values <b class="font-extrabold text-green-700">may</b> be omitted
 in accordance with ISO 8601 (for example: `PT12H` is sufficient to represent
-"12 hours"), but at least one designator <b class="text-red-700">must</b> be present (therefore, a zero
+"12 hours"), but at least one designator <b class="font-extrabold	text-red-700">must</b> be present (therefore, a zero
 duration is `PT0S` or `P0D`).
 
-Services <b class="text-yellow-700">should</b> use IDL-specific durations where applicable (such as
+Services <b class="font-extrabold	text-yellow-700">should</b> use IDL-specific durations where applicable (such as
 [`google.protobuf.Duration`][duration] in protocol buffers) provided that the
 service converts values to ISO 8601 duration strings in JSON.
 
 ### Fractional seconds
 
-Services <b class="text-green-700">may</b> support fractional seconds for both timestamps and durations,
-but <b class="text-yellow-700">should not</b> support precision more granular than the nanosecond.
-Services <b class="text-green-700">may</b> also limit the supported precision, and <b class="text-green-700">may</b> _truncate_
+Services <b class="font-extrabold text-green-700">may</b> support fractional seconds for both timestamps and durations,
+but <b class="font-extrabold	text-yellow-700">should not</b> support precision more granular than the nanosecond.
+Services <b class="font-extrabold text-green-700">may</b> also limit the supported precision, and <b class="font-extrabold text-green-700">may</b> _truncate_
 values received from the user to the supported precision.
 
 <Aside type="note" title="Note">
@@ -87,16 +87,16 @@ values received from the user to the supported precision.
 
 ### Civil dates and times
 
-Fields that represent a calendar date or wall-clock time <b class="text-yellow-700">should</b> use partial
+Fields that represent a calendar date or wall-clock time <b class="font-extrabold	text-yellow-700">should</b> use partial
 ISO 8601 strings.
 
-Fields representing civil dates <b class="text-yellow-700">should</b> have names ending in `_date`, while
-fields representing civil times or datetimes <b class="text-yellow-700">should</b> have names ending in
+Fields representing civil dates <b class="font-extrabold	text-yellow-700">should</b> have names ending in `_date`, while
+fields representing civil times or datetimes <b class="font-extrabold	text-yellow-700">should</b> have names ending in
 `_time`.
 
 ### Recurring time
 
-A service that needs to document a recurring event <b class="text-yellow-700">should</b> use cronspec if
+A service that needs to document a recurring event <b class="font-extrabold	text-yellow-700">should</b> use cronspec if
 cronspec is able to support the service's use case.
 
 ### Compatibility
@@ -105,12 +105,12 @@ Occasionally, APIs are unable to use RFC 3339 strings for legacy or
 compatibility reasons. For example, an API may conform to a separate
 specification that mandates that timestamps be Unix timestamp integers.
 
-In these situations, fields <b class="text-green-700">may</b> use other types. If possible, the following
+In these situations, fields <b class="font-extrabold text-green-700">may</b> use other types. If possible, the following
 naming conventions apply:
 
-- Unix timestamps <b class="text-yellow-700">should</b> use a `unix_time` suffix.
-  - Multipliers of Unix time (such as milliseconds) <b class="text-yellow-700">should not</b> be used; if
-    they are unavoidable, the field name <b class="text-yellow-700">should</b> use both `unix_time` and
+- Unix timestamps <b class="font-extrabold	text-yellow-700">should</b> use a `unix_time` suffix.
+  - Multipliers of Unix time (such as milliseconds) <b class="font-extrabold	text-yellow-700">should not</b> be used; if
+    they are unavoidable, the field name <b class="font-extrabold	text-yellow-700">should</b> use both `unix_time` and
     the unit, such as `unix_time_millis`.
 - For other integers, include the meaning (examples: `time`, `duration`,
   `delay`, `latency`) **and** the unit of measurement (valid values: `seconds`,

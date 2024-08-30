@@ -22,7 +22,7 @@ the canonical identifier for the resources.
 
 ## Guidance
 
-All resource paths defined by an API <b class="text-red-700">must</b> be unique within that API. (See
+All resource paths defined by an API <b class="font-extrabold	text-red-700">must</b> be unique within that API. (See
 the section on [full resource paths](#full-resource-paths) below for more
 information on referring to resources across APIs.)
 
@@ -31,26 +31,26 @@ the leading slash:
 
 publishers/123/books/les-miserables users/vhugo1802
 
-- Resource path components <b class="text-red-700">must</b> alternate between collection identifiers
+- Resource path components <b class="font-extrabold	text-red-700">must</b> alternate between collection identifiers
   (example: `publishers`, `books`, `users`) and resource IDs (example: `123`,
   `les-miserables`, `vhugo1802`), _except_ when [singleton resources][] are
   present.
-- Resource paths <b class="text-red-700">must</b> use the `/` character to separate individual segments
+- Resource paths <b class="font-extrabold	text-red-700">must</b> use the `/` character to separate individual segments
   of the resource path.
-- Each segment of a resource path <b class="text-red-700">must not</b> contain a `/` character.
-- Resource paths <b class="text-yellow-700">should</b> only use characters available in DNS names, as
+- Each segment of a resource path <b class="font-extrabold	text-red-700">must not</b> contain a `/` character.
+- Resource paths <b class="font-extrabold	text-yellow-700">should</b> only use characters available in DNS names, as
   defined by [RFC-1123](https://tools.ietf.org/html/rfc1123).
-  - Additionally, resource IDs <b class="text-yellow-700">should not</b> use upper-case letters.
-  - If additional characters are necessary, resource paths <b class="text-yellow-700">should not</b> use
+  - Additionally, resource IDs <b class="font-extrabold	text-yellow-700">should not</b> use upper-case letters.
+  - If additional characters are necessary, resource paths <b class="font-extrabold	text-yellow-700">should not</b> use
     characters that require URL-escaping, or characters outside of ASCII.
-  - If Unicode characters can not be avoided, resource paths <b class="text-red-700">must</b> be stored
+  - If Unicode characters can not be avoided, resource paths <b class="font-extrabold	text-red-700">must</b> be stored
     in Normalization Form C (see [AEP-210][]).
-- Each resource <b class="text-red-700">must</b> expose a `path` field that contains its resource path.
-  - Resources <b class="text-green-700">may</b> provide the resource ID, i.e. the last segment of the
+- Each resource <b class="font-extrabold	text-red-700">must</b> expose a `path` field that contains its resource path.
+  - Resources <b class="font-extrabold text-green-700">may</b> provide the resource ID, i.e. the last segment of the
     path, as a separate field named `id`.
-  - Resources <b class="text-red-700">must not</b> expose tuples, self-links, or other forms of
+  - Resources <b class="font-extrabold	text-red-700">must not</b> expose tuples, self-links, or other forms of
     resource identification.
-  - All ID fields <b class="text-red-700">must</b> be strings.
+  - All ID fields <b class="font-extrabold	text-red-700">must</b> be strings.
 
 <Aside type="note" title="Note">
   Resource paths as described here are used within the scope of a
@@ -66,32 +66,32 @@ publishers/123/books/les-miserables users/vhugo1802
 
 ### Collection identifiers
 
-The collection identifier segments in a resource path <b class="text-red-700">must</b> be the plural
+The collection identifier segments in a resource path <b class="font-extrabold	text-red-700">must</b> be the plural
 form of the noun used for the resource. (For example, a collection of
 `Publisher` resources is called `publishers` in the resource path.)
 
-- Collection identifiers <b class="text-red-700">must</b> be concise American English terms.
-- Collection identifiers <b class="text-red-700">must</b> be in `kebab-case`.
-- Collection identifiers <b class="text-red-700">must</b> begin with a lower-cased letter and contain
+- Collection identifiers <b class="font-extrabold	text-red-700">must</b> be concise American English terms.
+- Collection identifiers <b class="font-extrabold	text-red-700">must</b> be in `kebab-case`.
+- Collection identifiers <b class="font-extrabold	text-red-700">must</b> begin with a lower-cased letter and contain
   only lower-case ASCII letters, numbers. and hyphens (`/[a-z][a-z0-9-]*/`).
-- Collection identifiers <b class="text-red-700">must</b> be plural.
+- Collection identifiers <b class="font-extrabold	text-red-700">must</b> be plural.
 - In situations where there is no plural word ("info"), or where the singular
   and plural terms are the same ("moose"), the non-pluralized (singular) form
-  is correct. Collection segments <b class="text-red-700">must not</b> "coin" words by adding "s" in
+  is correct. Collection segments <b class="font-extrabold	text-red-700">must not</b> "coin" words by adding "s" in
   such cases (e.g. avoid "infos").
 
 #### Nested collections
 
 If a resource path contains multiple levels of a hierarchy, and a parent
 collection's path is used as a prefix for the child resource's path, the child
-collection's path <b class="text-green-700">may</b> omit the prefix. For example, given a collection of
+collection's path <b class="font-extrabold text-green-700">may</b> omit the prefix. For example, given a collection of
 `UserEvent` resources that would normally be nested underneath `users`:
 
 ```
 users/vhugo1802/user-events/birthday-dinner-226/user-event-guests/123
 ```
 
-An API <b class="text-green-700">may</b> use the less-redundant form:
+An API <b class="font-extrabold text-green-700">may</b> use the less-redundant form:
 
 ```
 users/vhugo1802/events/birthday-dinner-226/guests/123
@@ -101,7 +101,7 @@ In this situation, the _message_ is still called `UserEvent` or
 `UserEventGuest`; only the collection name is shortened.
 
 <Aside type="note" title="Note">
-  APIs wishing to do this <b class="text-red-700">must</b> follow this format consistently
+  APIs wishing to do this <b class="font-extrabold	text-red-700">must</b> follow this format consistently
   throughout the API, or else not at all.
 </Aside>
 
@@ -111,25 +111,25 @@ A resource ID segment identifies the resource within its parent collection. In
 the resource path `publishers/123/books/les-miserables`, `123` is the resource
 ID for the publisher, and `les-miserables` is the resource ID for the book.
 
-- Resource IDs <b class="text-green-700">may</b> be either always set by users (required on resource
+- Resource IDs <b class="font-extrabold text-green-700">may</b> be either always set by users (required on resource
   creation), optionally set by users (optional on resource creation,
   server-generated if unset), or never set by users (not accepted at resource
-  creation). They <b class="text-red-700">must</b> be immutable once created.
-- If resource IDs are user-settable, the API <b class="text-red-700">must</b> document and/or annotate
-  the field with the allowed formats. User-settable resource IDs <b class="text-yellow-700">should</b>
+  creation). They <b class="font-extrabold	text-red-700">must</b> be immutable once created.
+- If resource IDs are user-settable, the API <b class="font-extrabold	text-red-700">must</b> document and/or annotate
+  the field with the allowed formats. User-settable resource IDs <b class="font-extrabold	text-yellow-700">should</b>
   conform to [RFC-1034][]; which restricts to letters, numbers, and hyphen,
   with the first character a letter, the last a letter or a number, and a 63
   character maximum.
-  - Additionally, user-settable resource IDs <b class="text-yellow-700">should</b> restrict letters to
+  - Additionally, user-settable resource IDs <b class="font-extrabold	text-yellow-700">should</b> restrict letters to
     lower-case (`^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$`).
-  - Characters outside of ASCII <b class="text-yellow-700">should not</b> be permitted; however, if
-    Unicode characters are necessary, APIs <b class="text-red-700">must</b> follow guidance in
+  - Characters outside of ASCII <b class="font-extrabold	text-yellow-700">should not</b> be permitted; however, if
+    Unicode characters are necessary, APIs <b class="font-extrabold	text-red-700">must</b> follow guidance in
     [AEP-210][].
-  - User-settable IDs <b class="text-yellow-700">should not</b> be permitted to be a UUID (or any value
+  - User-settable IDs <b class="font-extrabold	text-yellow-700">should not</b> be permitted to be a UUID (or any value
     that syntactically appears to be a UUID).
-  - Field annotations <b class="text-yellow-700">should</b> use [protovalidate][] in protobuf and [JSON
+  - Field annotations <b class="font-extrabold	text-yellow-700">should</b> use [protovalidate][] in protobuf and [JSON
     Schema keywords][] like [`pattern`][pattern] with OAS/JSON Schema.
-- If resource IDs are not user-settable, the API <b class="text-yellow-700">should</b> document the basic
+- If resource IDs are not user-settable, the API <b class="font-extrabold	text-yellow-700">should</b> document the basic
   format, and any upper boundaries (for example, "at most 63 characters").
 - For more information, see the [create][] standard method.
 
@@ -147,8 +147,8 @@ resource IDs. For example, an API with `users` at the top of its resource
 hierarchy may wish to provide `users/me` as a shortcut for retrieving
 information for the authenticated user.
 
-APIs <b class="text-green-700">may</b> provide programmatic aliases for common lookup patterns. However,
-all data returned from the API <b class="text-red-700">must</b> use the canonical resource path.
+APIs <b class="font-extrabold text-green-700">may</b> provide programmatic aliases for common lookup patterns. However,
+all data returned from the API <b class="font-extrabold	text-red-700">must</b> use the canonical resource path.
 
 ### Full resource paths
 
@@ -157,7 +157,7 @@ are used in contexts where the owning API is clear (for example,
 `string pubsub_topic`).
 
 However, sometimes it is necessary for services to refer to resources in an
-arbitrary API. In this situation, the service <b class="text-yellow-700">should</b> use the _full resource
+arbitrary API. In this situation, the service <b class="font-extrabold	text-yellow-700">should</b> use the _full resource
 path_, a schemeless URI with the owning API's service endpoint, followed by the
 relative resource path:
 
@@ -167,7 +167,7 @@ relative resource path:
 ```
 
 <Aside type="note" title="Note">
-  The full resource path <b class="text-yellow-700">should not</b> be used for cross-API
+  The full resource path <b class="font-extrabold	text-yellow-700">should not</b> be used for cross-API
   references where the owning API is clear; it is only used if a field refers to
   resources in multiple APIs where ambiguity is possible.
 </Aside>
@@ -197,9 +197,9 @@ API are expected to use the same underlying data.
 
 ### Fields representing resource paths
 
-When defining a resource, the first field <b class="text-yellow-700">should</b> be the resource path,
-which <b class="text-red-700">must</b> be of type `string` and <b class="text-red-700">must</b> be called `path` for the
-resource path. The message <b class="text-yellow-700">should</b> include a `google.api.resource`
+When defining a resource, the first field <b class="font-extrabold	text-yellow-700">should</b> be the resource path,
+which <b class="font-extrabold	text-red-700">must</b> be of type `string` and <b class="font-extrabold	text-red-700">must</b> be called `path` for the
+resource path. The message <b class="font-extrabold	text-yellow-700">should</b> include a `google.api.resource`
 annotation declaring the type (see [AEP-123][] for more on this).
 
 ```proto
@@ -220,8 +220,8 @@ string path = 1;
 
 When defining a method that retrieves or acts on an already-existing resource
 (such as `GetBook` or `ArchiveBook`), the first field of the request message
-<b class="text-yellow-700">should</b> be the resource path, which <b class="text-red-700">must</b> be of type `string` and
-<b class="text-red-700">must</b> be called `path` for the resource path. The field <b class="text-yellow-700">should</b> also be
+<b class="font-extrabold	text-yellow-700">should</b> be the resource path, which <b class="font-extrabold	text-red-700">must</b> be of type `string` and
+<b class="font-extrabold	text-red-700">must</b> be called `path` for the resource path. The field <b class="font-extrabold	text-yellow-700">should</b> also be
 annotated with the `google.api.resource_reference` annotation, referencing the
 resource type ([AEP-123][]).
 
@@ -241,7 +241,7 @@ string path = 1 [
 ```
 
 <Aside type="note" title="Note">
-  Fields <b class="text-red-700">must not</b> be called `path` except for this purpose. For
+  Fields <b class="font-extrabold	text-red-700">must not</b> be called `path` except for this purpose. For
   other use cases, either use a different term or prepend an adjective (for
   example: `file_path`).
 </Aside>
@@ -252,8 +252,8 @@ string path = 1 [
 
 When defining a method that retrieves resources from a collection or adds a new
 resource to a collection (such as `ListBooks` or `CreateBook`), the first field
-of the request message <b class="text-yellow-700">should</b> be of type `string` and <b class="text-yellow-700">should</b> be called
-`parent` for the resource path of the collection. The `parent` field <b class="text-yellow-700">should</b>
+of the request message <b class="font-extrabold	text-yellow-700">should</b> be of type `string` and <b class="font-extrabold	text-yellow-700">should</b> be called
+`parent` for the resource path of the collection. The `parent` field <b class="font-extrabold	text-yellow-700">should</b>
 also be annotated with the `google.api.resource_reference` annotation,
 referencing the parent's resource type ([AEP-123][]).
 
@@ -270,7 +270,7 @@ string parent = 1 [(google.api.resource_reference) = {
 }
 ```
 
-If there is more than one possible parent type, the `parent` field <b class="text-yellow-700">should</b>
+If there is more than one possible parent type, the `parent` field <b class="font-extrabold	text-yellow-700">should</b>
 be annotated with the `child_type` key on `google.api.resource_reference`
 instead:
 
@@ -292,21 +292,21 @@ string parent = 1 [
 ```
 
 <Aside type="note" title="Note">
-  Fields <b class="text-yellow-700">should not</b> be called `parent` except for this purpose. For
+  Fields <b class="font-extrabold	text-yellow-700">should not</b> be called `parent` except for this purpose. For
   other use cases, use a synonymous term if possible.
 </Aside>
 
 ### Fields representing another resource
 
-When referencing a resource path for a different resource, the field <b class="text-yellow-700">should</b>
-be of type `string` for the resource path, and the field name <b class="text-yellow-700">should</b> be
+When referencing a resource path for a different resource, the field <b class="font-extrabold	text-yellow-700">should</b>
+be of type `string` for the resource path, and the field name <b class="font-extrabold	text-yellow-700">should</b> be
 equivalent to the corresponding message's name in snake case.
 
-- Field names <b class="text-green-700">may</b> include a leading adjective if appropriate (such as
+- Field names <b class="font-extrabold text-green-700">may</b> include a leading adjective if appropriate (such as
   `string dusty_book`).
-- Field names <b class="text-yellow-700">should not</b> use the `_path` suffix unless the field would be
+- Field names <b class="font-extrabold	text-yellow-700">should not</b> use the `_path` suffix unless the field would be
   ambiguous without it (e.g., `crypto_key_path`)
-- Fields representing another resource <b class="text-yellow-700">should</b> provide the
+- Fields representing another resource <b class="font-extrabold	text-yellow-700">should</b> provide the
   `google.api.resource_reference` annotation with the resource type being
   referenced.
 
@@ -334,9 +334,9 @@ string shelf = 2 [(google.api.resource_reference) = {
 
 <Aside type="note" title="Note">
   When referring to other resources in this way, we use the resource
-  path as the value, not just the ID component. Services <b class="text-yellow-700">should</b> use the
+  path as the value, not just the ID component. Services <b class="font-extrabold	text-yellow-700">should</b> use the
   resource path to reference resources when possible. If using the ID component
-  alone is strictly necessary, the field <b class="text-yellow-700">should</b> use an `_id` suffix (e.g.
+  alone is strictly necessary, the field <b class="font-extrabold	text-yellow-700">should</b> use an `_id` suffix (e.g.
   `shelf_id`).
 </Aside>
 

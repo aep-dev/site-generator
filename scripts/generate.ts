@@ -49,12 +49,12 @@ const ASIDES = {
 };
 
 const RULE_COLORS = {
-  'may': 'text-green-700',
-  'may not': 'text-green-700',
-  'should': 'text-yellow-700',
-  'should not': 'text-yellow-700',
-  'must': 'text-red-700',
-  'must not': 'text-red-700'
+  'may': 'font-extrabold text-green-700',
+  'may not': 'font-extrabold text-green-700',
+  'should': 'font-extrabold	text-yellow-700',
+  'should not': 'font-extrabold	text-yellow-700',
+  'must': 'font-extrabold	text-red-700',
+  'must not': 'font-extrabold	text-red-700'
 }
 
 async function getFolders(dirPath: string): Promise<string[]> {

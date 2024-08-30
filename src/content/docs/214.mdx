@@ -26,17 +26,17 @@ library.
 
 ## Guidance
 
-1.  APIs wishing to convey an expiration <b class="text-red-700">must</b> rely on a
+1.  APIs wishing to convey an expiration <b class="font-extrabold	text-red-700">must</b> rely on a
     `Timestamp` field called `expire_time`.
 2.  APIs wishing to allow a relative expiration time must define a `oneof`
     called `expiration` (or `{something}_expiration`) containing both the
     `expire_time` field and a separate `Duration`
     field called `ttl`, the latter marked as input only.
-3.  APIs <b class="text-red-700">must</b> always return the expiration time in the `expire_time` field
+3.  APIs <b class="font-extrabold	text-red-700">must</b> always return the expiration time in the `expire_time` field
     and leave the `ttl` field blank when retrieving the resource.
 4.  APIs that rely on the specific semantics of a "time to live" (e.g., DNS
-    which must represent the TTL as an integer) <b class="text-green-700">may</b> use an `int64 ttl`
-    field (and <b class="text-yellow-700">should</b> provide an [aep.dev/not-precedent](./0200.md) comment
+    which must represent the TTL as an integer) <b class="font-extrabold text-green-700">may</b> use an `int64 ttl`
+    field (and <b class="font-extrabold	text-yellow-700">should</b> provide an [aep.dev/not-precedent](./0200.md) comment
     in this case).
 
 ### Example

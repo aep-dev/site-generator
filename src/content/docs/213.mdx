@@ -28,22 +28,22 @@ Common components serve this use case.
 
 ## Guidance
 
-The public representation of APIs <b class="text-yellow-700">should</b> be self-contained (for protocol
+The public representation of APIs <b class="font-extrabold	text-yellow-700">should</b> be self-contained (for protocol
 buffers, this means that all API protos used by the API originate in the same
-proto `package`), except for common components, which <b class="text-green-700">may</b> be used freely in
+proto `package`), except for common components, which <b class="font-extrabold text-green-700">may</b> be used freely in
 any API.
 
-An API <b class="text-red-700">must not</b> define a set of API-specific common components which live
+An API <b class="font-extrabold	text-red-700">must not</b> define a set of API-specific common components which live
 outside of its versioning structure. This prevents independent movement of
 particular versions and also causes problems for client libraries in many
 languages that compile protobuf messages into classes.
 
-An API <b class="text-yellow-700">should not</b> define alternative representations of any of the existing
+An API <b class="font-extrabold	text-yellow-700">should not</b> define alternative representations of any of the existing
 common components described below, even within its versioning structure.
 
 ## Existing common components
 
-The common components, which public-facing APIs <b class="text-green-700">may</b> safely depend on, are
+The common components, which public-facing APIs <b class="font-extrabold text-green-700">may</b> safely depend on, are
 defined canonically in the [AEP common components][] repository. These include
 READMEs with canonical definitions for each component, and -- when applicable
 -- implementations of these definitions, in both JSON Schema and protobuf
@@ -156,7 +156,7 @@ components][] repo), namely:
   JSON.
 
 `google.protobuf.Struct` and `google.protobuf.Value` are designated common
-components by this AEP; proto-based APIs <b class="text-yellow-700">should</b> use them when representing
+components by this AEP; proto-based APIs <b class="font-extrabold	text-yellow-700">should</b> use them when representing
 arbitrary JSON-like structures.
 
 ## Libraries for common types
@@ -184,14 +184,14 @@ common components][] repository in GitHub.
 
 However, some general guidelines are worth noting for this:
 
-- Schemas <b class="text-yellow-700">should</b> only be granted common component status if it is certain
+- Schemas <b class="font-extrabold	text-yellow-700">should</b> only be granted common component status if it is certain
   that they will never change (at all -- even in ways that would normally be
   considered backwards compatible). Common components are not versioned, and it
   must be the case that API creators and consumers can rely on the component to
   be a complete and accurate representation indefinitely.
 - Schemas must be applicable to a significant number of APIs for consideration
   as common components.
-- Even after a common component is added, APIs using local versions <b class="text-red-700">must</b>
+- Even after a common component is added, APIs using local versions <b class="font-extrabold	text-red-700">must</b>
   continue to do so until they go to the next major version.
 
 {/* prettier-ignore-start  */}

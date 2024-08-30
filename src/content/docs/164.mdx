@@ -20,21 +20,21 @@ resources that were deleted by accident.
 
 ## Guidance
 
-Services <b class="text-green-700">may</b> support the ability to "undelete", to allow for situations
+Services <b class="font-extrabold text-green-700">may</b> support the ability to "undelete", to allow for situations
 where users mistakenly delete resources and need the ability to recover.
 
-If a resource needs to support undelete, the `Delete` method <b class="text-red-700">must</b> simply
+If a resource needs to support undelete, the `Delete` method <b class="font-extrabold	text-red-700">must</b> simply
 mark the resource as having been deleted, but not completely remove it from the
-system. If the method behaves this way, it <b class="text-yellow-700">should</b> return `200 OK` with the
+system. If the method behaves this way, it <b class="font-extrabold	text-yellow-700">should</b> return `200 OK` with the
 updated resource instead of `204 No Content`.
 
-Resources that support soft delete <b class="text-yellow-700">should</b> have an `expire_time` field as
-described in AEP-148. Additionally, resources <b class="text-yellow-700">should</b> include a `DELETED`
+Resources that support soft delete <b class="font-extrabold	text-yellow-700">should</b> have an `expire_time` field as
+described in AEP-148. Additionally, resources <b class="font-extrabold	text-yellow-700">should</b> include a `DELETED`
 state value if the resource includes a `state` field (AEP-216).
 
 ### Undelete
 
-A resource that supports soft delete <b class="text-yellow-700">should</b> provide an `Undelete` method:
+A resource that supports soft delete <b class="font-extrabold	text-yellow-700">should</b> provide an `Undelete` method:
 
 
 <Tabs>
@@ -113,23 +113,23 @@ A resource that supports soft delete <b class="text-yellow-700">should</b> provi
         ```
       
   
-  - The HTTP method <b class="text-red-700">must</b> be `POST`.
-  - The `body` clause <b class="text-red-700">must</b> be `"*"`.
-  - The response message <b class="text-red-700">must</b> be the resource itself. There is no
+  - The HTTP method <b class="font-extrabold	text-red-700">must</b> be `POST`.
+  - The `body` clause <b class="font-extrabold	text-red-700">must</b> be `"*"`.
+  - The response message <b class="font-extrabold	text-red-700">must</b> be the resource itself. There is no
     `UndeleteBookResponse`.
-    - The response <b class="text-yellow-700">should</b> include the fully-populated resource unless it is
+    - The response <b class="font-extrabold	text-yellow-700">should</b> include the fully-populated resource unless it is
       infeasible to do so.
     - If the undelete RPC is [long-running](#long-running-undelete), the response
-      message <b class="text-red-700">must</b> be a `google.longrunning.Operation` which resolves to the
+      message <b class="font-extrabold	text-red-700">must</b> be a `google.longrunning.Operation` which resolves to the
       resource itself.
-  - A `name` field <b class="text-red-700">must</b> be included in the request message; it <b class="text-yellow-700">should</b> be
+  - A `name` field <b class="font-extrabold	text-red-700">must</b> be included in the request message; it <b class="font-extrabold	text-yellow-700">should</b> be
     called `name`.
-    - The field <b class="text-yellow-700">should</b> be [annotated as required][aip-203].
-    - The field <b class="text-yellow-700">should</b> identify the [resource type][aip-123] that it
+    - The field <b class="font-extrabold	text-yellow-700">should</b> be [annotated as required][aip-203].
+    - The field <b class="font-extrabold	text-yellow-700">should</b> identify the [resource type][aip-123] that it
       references.
-    - The comment for the field <b class="text-yellow-700">should</b> document the resource pattern.
-  - The request message <b class="text-red-700">must not</b> contain any other required fields, and
-    <b class="text-yellow-700">should not</b> contain other optional fields except those described in this
+    - The comment for the field <b class="font-extrabold	text-yellow-700">should</b> document the resource pattern.
+  - The request message <b class="font-extrabold	text-red-700">must not</b> contain any other required fields, and
+    <b class="font-extrabold	text-yellow-700">should not</b> contain other optional fields except those described in this
     or another AEP.
   
   
@@ -185,11 +185,11 @@ A resource that supports soft delete <b class="text-yellow-700">should</b> provi
         ```
       
   
-  - The HTTP method <b class="text-red-700">must</b> be `POST`.
-  - The response message <b class="text-red-700">must</b> be the resource itself.
-    - The response <b class="text-yellow-700">should</b> include the fully-populated resource unless it is
+  - The HTTP method <b class="font-extrabold	text-red-700">must</b> be `POST`.
+  - The response message <b class="font-extrabold	text-red-700">must</b> be the resource itself.
+    - The response <b class="font-extrabold	text-yellow-700">should</b> include the fully-populated resource unless it is
       infeasible to do so.
-  - The operation <b class="text-red-700">must not</b> require any other fields, and <b class="text-yellow-700">should not</b>
+  - The operation <b class="font-extrabold	text-red-700">must not</b> require any other fields, and <b class="font-extrabold	text-yellow-700">should not</b>
     contain other optional query parameters except those described in this or
     another AEP.
   
@@ -201,28 +201,28 @@ A resource that supports soft delete <b class="text-yellow-700">should</b> provi
 ### Long-running undelete
 
 Some resources take longer to undelete a resource than is reasonable for a
-regular API request. In this situation, the API <b class="text-yellow-700">should</b> follow the
+regular API request. In this situation, the API <b class="font-extrabold	text-yellow-700">should</b> follow the
 long-running request pattern (AEP-151).
 
 ### List and Get
 
-Soft-deleted resources <b class="text-yellow-700">should not</b> be returned in `List` (AEP-132) responses
+Soft-deleted resources <b class="font-extrabold	text-yellow-700">should not</b> be returned in `List` (AEP-132) responses
 by default (unless `bool show_deleted` is true).
 
-A `Get` (AEP-131) request for a soft deleted resource <b class="text-yellow-700">should</b> error with
+A `Get` (AEP-131) request for a soft deleted resource <b class="font-extrabold	text-yellow-700">should</b> error with
 `410 Gone` unless `bool show_deleted` is true, in which case soft-deleted
-resources <b class="text-red-700">must</b> return the resource.
+resources <b class="font-extrabold	text-red-700">must</b> return the resource.
 
-Services that soft delete resources <b class="text-green-700">may</b> choose a reasonable strategy for
+Services that soft delete resources <b class="font-extrabold text-green-700">may</b> choose a reasonable strategy for
 purging those resources, including automatic purging after a reasonable time
 (such as 30 days), allowing users to set an expiry time (AEP-214), or retaining
 the resources indefinitely. Regardless of what strategy is selected, the
-service <b class="text-yellow-700">should</b> document when soft deleted resources will be completely
+service <b class="font-extrabold	text-yellow-700">should</b> document when soft deleted resources will be completely
 removed.
 
 ### Declarative-friendly resources
 
-A resource that is declarative-friendly (AEP-128) <b class="text-yellow-700">should</b> support soft
+A resource that is declarative-friendly (AEP-128) <b class="font-extrabold	text-yellow-700">should</b> support soft
 delete and undelete.
 
 <Aside type="caution" title="Important">
@@ -230,36 +230,36 @@ delete and undelete.
   and "undelete". When given an alias which was previously deleted and a
   directive to make it exist, tooling usually does not know if the intent is to
   restore the previously-deleted resource, or create a new one with the same
-  alias. Declarative tools <b class="text-yellow-700">should</b> resolve this ambiguity in favor of creating
+  alias. Declarative tools <b class="font-extrabold	text-yellow-700">should</b> resolve this ambiguity in favor of creating
   a new resource: the only way to undelete is to explicitly use the undelete RPC
-  (an imperative operation), and declarative tools <b class="text-green-700">may</b> elect not to map
+  (an imperative operation), and declarative tools <b class="font-extrabold text-green-700">may</b> elect not to map
   anything to undelete at all.
 </Aside>
 
-Declarative-friendly resources <b class="text-red-700">must</b> use long-running operations for both
-soft delete and undelete. The service <b class="text-green-700">may</b> return an LRO that is already set
+Declarative-friendly resources <b class="font-extrabold	text-red-700">must</b> use long-running operations for both
+soft delete and undelete. The service <b class="font-extrabold text-green-700">may</b> return an LRO that is already set
 to done if the request is effectively immediate.
 
-Declarative-friendly resources <b class="text-red-700">must</b> include `validate_only` (AEP-163) and
+Declarative-friendly resources <b class="font-extrabold	text-red-700">must</b> include `validate_only` (AEP-163) and
 `etag` (AEP-154) in their `Undelete` methods.
 
 ### Errors
 
 If the user does not have permission to access the resource, regardless of
-whether or not it exists, the service <b class="text-red-700">must</b> error with `403 Forbidden`.
-Permission <b class="text-red-700">must</b> be checked prior to checking if the resource exists.
+whether or not it exists, the service <b class="font-extrabold	text-red-700">must</b> error with `403 Forbidden`.
+Permission <b class="font-extrabold	text-red-700">must</b> be checked prior to checking if the resource exists.
 
 If the user does have proper permission, but the requested resource does not
-exist (either it was never created or already expunged), the service <b class="text-red-700">must</b>
+exist (either it was never created or already expunged), the service <b class="font-extrabold	text-red-700">must</b>
 error with `404 Not Found`.
 
 If the user calling a soft `Delete` has proper permission, but the requested
-resource is already deleted, the service <b class="text-red-700">must</b> succeed if `allow_missing` is
-`true`, and <b class="text-yellow-700">should</b> error with `404 Not Found` if `allow_missing` is
+resource is already deleted, the service <b class="font-extrabold	text-red-700">must</b> succeed if `allow_missing` is
+`true`, and <b class="font-extrabold	text-yellow-700">should</b> error with `404 Not Found` if `allow_missing` is
 `false`.
 
 If the user calling `Undelete` has proper permission, but the requested
-resource is not deleted, the service <b class="text-red-700">must</b> error with `409 Conflict`.
+resource is not deleted, the service <b class="font-extrabold	text-red-700">must</b> error with `409 Conflict`.
 
 ## Further reading
 

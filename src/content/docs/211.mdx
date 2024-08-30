@@ -21,18 +21,18 @@ users, since leaking information can be a security concern.
 
 ## Guidance
 
-Services <b class="text-red-700">must</b> check authorization before validating any request, to ensure
+Services <b class="font-extrabold	text-red-700">must</b> check authorization before validating any request, to ensure
 both a secure API surface and a consistent user experience. An operation
-<b class="text-green-700">may</b> require multiple permissions or preconditions in order to grant
+<b class="font-extrabold text-green-700">may</b> require multiple permissions or preconditions in order to grant
 authorization.
 
 If a request can not pass the authorization check for any reason, the service
-<b class="text-red-700">must</b> error with `403 Forbidden`, and the corresponding error message
-<b class="text-red-700">must</b> look like: "Permission `{p}` denied on resource `{r}` (or it might
+<b class="font-extrabold	text-red-700">must</b> error with `403 Forbidden`, and the corresponding error message
+<b class="font-extrabold	text-red-700">must</b> look like: "Permission `{p}` denied on resource `{r}` (or it might
 not exist)." This avoids leaking resource existence.
 
 If it is not possible to determine authorization for a resource because the
-resource does not exist, the service <b class="text-yellow-700">should</b> check authorization to read
+resource does not exist, the service <b class="font-extrabold	text-yellow-700">should</b> check authorization to read
 children on the parent resource, and return `404 Not Found` if the
 authorization check passes.
 
@@ -42,7 +42,7 @@ A service could encounter a situation where it has two different operations
 with two different permissions, either of which would reveal the existence of a
 resource if called, but a user only has permission to call one of them.
 
-In this situation, the service <b class="text-red-700">must</b> only check for authorization applicable
+In this situation, the service <b class="font-extrabold	text-red-700">must</b> only check for authorization applicable
 to the operation being called, rather than check for related authorization that
 would provide permission to reveal existence. Such algorithms are complicated to
 implement correctly and prone to accidental leaks.
@@ -54,7 +54,7 @@ For example, consider a scenario where:
   collection uses user-specified IDs (meaning that a failure because of a
   duplicate ID would reveal existance).
 
-In this situation, the get or create methods <b class="text-red-700">must</b> still only check _their_
+In this situation, the get or create methods <b class="font-extrabold	text-red-700">must</b> still only check _their_
 permissions when determining what error to return, and not one another's.
 
 ## Rationale

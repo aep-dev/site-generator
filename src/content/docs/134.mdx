@@ -22,25 +22,25 @@ representing that resource and return the resource.
 
 ## Guidance
 
-APIs <b class="text-yellow-700">should</b> provide an update method for resources unless it is not
+APIs <b class="font-extrabold	text-yellow-700">should</b> provide an update method for resources unless it is not
 valuable for users to do so. The purpose of the update method is to make
 changes to the resources without causing side effects.
 
 Update methods are specified using the following pattern:
 
-- The method's name <b class="text-red-700">must</b> begin with the word `Update`. The remainder of the
-  method name <b class="text-red-700">must</b> be the singular form of the resource's name.
-- The request schema's name <b class="text-red-700">must</b> exactly match the RPC name, with a
+- The method's name <b class="font-extrabold	text-red-700">must</b> begin with the word `Update`. The remainder of the
+  method name <b class="font-extrabold	text-red-700">must</b> be the singular form of the resource's name.
+- The request schema's name <b class="font-extrabold	text-red-700">must</b> exactly match the RPC name, with a
   `Request` suffix.
-- The response schema <b class="text-red-700">must</b> be the resource itself.
-  - The response <b class="text-yellow-700">should</b> include the fully-populated resource, and <b class="text-red-700">must</b>
+- The response schema <b class="font-extrabold	text-red-700">must</b> be the resource itself.
+  - The response <b class="font-extrabold	text-yellow-700">should</b> include the fully-populated resource, and <b class="font-extrabold	text-red-700">must</b>
     include any fields that were sent and included in the update mask unless
     they are input only (see AEP-203).
   - If the update RPC is [long-running](#long-running-update), the response
-    <b class="text-red-700">must</b> be an `Operation` for which the return type is the resource
+    <b class="font-extrabold	text-red-700">must</b> be an `Operation` for which the return type is the resource
     itself.
-- The method <b class="text-yellow-700">should</b> support partial resource update, and the HTTP verb
-  <b class="text-yellow-700">should</b> be `PATCH`.
+- The method <b class="font-extrabold	text-yellow-700">should</b> support partial resource update, and the HTTP verb
+  <b class="font-extrabold	text-yellow-700">should</b> be `PATCH`.
 
 
 <Tabs>
@@ -57,13 +57,13 @@ Update methods are specified using the following pattern:
   }
   ```
   
-  - The request's `path` field <b class="text-red-700">must</b> map to the URI path.
-    - The `path` field <b class="text-red-700">must</b> be the only variable in the URI
+  - The request's `path` field <b class="font-extrabold	text-red-700">must</b> map to the URI path.
+    - The `path` field <b class="font-extrabold	text-red-700">must</b> be the only variable in the URI
       path.
-  - There <b class="text-red-700">must</b> be a `body` key in the `google.api.http` annotation, and it
-    <b class="text-red-700">must</b> map to the resource field in the request message.
-    - All remaining fields <b class="text-yellow-700">should</b> map to URI query parameters.
-  - There <b class="text-yellow-700">should</b> be exactly one `google.api.method_signature` annotation,
+  - There <b class="font-extrabold	text-red-700">must</b> be a `body` key in the `google.api.http` annotation, and it
+    <b class="font-extrabold	text-red-700">must</b> map to the resource field in the request message.
+    - All remaining fields <b class="font-extrabold	text-yellow-700">should</b> map to URI query parameters.
+  - There <b class="font-extrabold	text-yellow-700">should</b> be exactly one `google.api.method_signature` annotation,
     with a value of `"{resource},update_mask"`.
   
   
@@ -82,11 +82,11 @@ Update methods are specified using the following pattern:
 
 Update methods implement a common request pattern:
 
-- The request <b class="text-red-700">must</b> contain a field for the resource.
-  - The name of this field <b class="text-red-700">must</b> be the singular form of the resource's
+- The request <b class="font-extrabold	text-red-700">must</b> contain a field for the resource.
+  - The name of this field <b class="font-extrabold	text-red-700">must</b> be the singular form of the resource's
     name.
-- The request <b class="text-red-700">must not</b> contain any required fields other than those
-  described in this section, and <b class="text-yellow-700">should not</b> contain other optional fields
+- The request <b class="font-extrabold	text-red-700">must not</b> contain any required fields other than those
+  described in this section, and <b class="font-extrabold	text-yellow-700">should not</b> contain other optional fields
   except those described in this or another AEP.
 
 
@@ -112,25 +112,25 @@ Update methods implement a common request pattern:
   }
   ```
   
-  - A `path` field <b class="text-red-700">must</b> be included.
-    - The field <b class="text-red-700">must</b> be [annotated as required](/field-behavior-documentation).
-    - The field <b class="text-red-700">must</b> identify the [resource type](/resource-types) that it
+  - A `path` field <b class="font-extrabold	text-red-700">must</b> be included.
+    - The field <b class="font-extrabold	text-red-700">must</b> be [annotated as required](/field-behavior-documentation).
+    - The field <b class="font-extrabold	text-red-700">must</b> identify the [resource type](/resource-types) that it
       references.
-  - The request message field for the resource <b class="text-red-700">must</b> map to the `PATCH` body.
-  - The request message field for the resource <b class="text-yellow-700">should</b> be [annotated as
+  - The request message field for the resource <b class="font-extrabold	text-red-700">must</b> map to the `PATCH` body.
+  - The request message field for the resource <b class="font-extrabold	text-yellow-700">should</b> be [annotated as
     required][aep-203].
-    - The field <b class="text-red-700">must</b> identify the [resource type][aep-123] of the resource
+    - The field <b class="font-extrabold	text-red-700">must</b> identify the [resource type][aep-123] of the resource
       being updated.
-  - If partial resource update is supported, a field mask <b class="text-red-700">must</b> be included.
-    It <b class="text-red-700">must</b> be of type `google.protobuf.FieldMask`, and it <b class="text-red-700">must</b> be called
+  - If partial resource update is supported, a field mask <b class="font-extrabold	text-red-700">must</b> be included.
+    It <b class="font-extrabold	text-red-700">must</b> be of type `google.protobuf.FieldMask`, and it <b class="font-extrabold	text-red-700">must</b> be called
     `update_mask`.
     - The fields used in the field mask correspond to the resource being updated
       (not the request message).
-    - The field <b class="text-green-700">may</b> be required or optional. If it is required, it <b class="text-red-700">must</b>
-      include the corresponding annotation. If optional, the service <b class="text-red-700">must</b>
+    - The field <b class="font-extrabold text-green-700">may</b> be required or optional. If it is required, it <b class="font-extrabold	text-red-700">must</b>
+      include the corresponding annotation. If optional, the service <b class="font-extrabold	text-red-700">must</b>
       treat an omitted field mask as an implied field mask equivalent to all
       fields that are populated (have a non-empty value).
-    - Update masks <b class="text-red-700">must</b> support a special value `*`, meaning full replacement
+    - Update masks <b class="font-extrabold	text-red-700">must</b> support a special value `*`, meaning full replacement
       (the equivalent of `PUT`).
   
   
@@ -148,10 +148,10 @@ Update methods implement a common request pattern:
 ### Side effects
 
 In general, update methods are intended to update the data within the resource.
-Update methods <b class="text-yellow-700">should not</b> trigger other side effects. Instead, side effects
-<b class="text-yellow-700">should</b> be triggered by custom methods.
+Update methods <b class="font-extrabold	text-yellow-700">should not</b> trigger other side effects. Instead, side effects
+<b class="font-extrabold	text-yellow-700">should</b> be triggered by custom methods.
 
-In particular, this entails that [state fields][] <b class="text-red-700">must not</b> be directly
+In particular, this entails that [state fields][] <b class="font-extrabold	text-red-700">must not</b> be directly
 writable in update methods.
 
 ### PATCH and PUT
@@ -194,10 +194,10 @@ would wipe out data because the previous version did not know about it.
 ### Long-running update
 
 Some resources take longer to update a resource than is reasonable for a
-regular API request. In this situation, the API <b class="text-yellow-700">should</b> use a long-running
+regular API request. In this situation, the API <b class="font-extrabold	text-yellow-700">should</b> use a long-running
 operation (AIP-151) instead:
 
-- The response type <b class="text-red-700">must</b> be set to the resource (what the return type would
+- The response type <b class="font-extrabold	text-red-700">must</b> be set to the resource (what the return type would
   be if the method were not long-running).
 
 
@@ -217,7 +217,7 @@ operation (AIP-151) instead:
   }
   ```
   
-  - Both the `response_type` and `metadata_type` fields <b class="text-red-700">must</b> be specified.
+  - Both the `response_type` and `metadata_type` fields <b class="font-extrabold	text-red-700">must</b> be specified.
   
   
   </TabItem>
@@ -233,7 +233,7 @@ operation (AIP-151) instead:
 
 ### Create or update
 
-If the service uses client-assigned resource paths, `Update` methods <b class="text-green-700">may</b>
+If the service uses client-assigned resource paths, `Update` methods <b class="font-extrabold text-green-700">may</b>
 expose a `bool allow_missing` field, which will cause the method to succeed in
 the event that the user attempts to update a resource that is not present (and
 will create the resource in the process):
@@ -276,7 +276,7 @@ More specifically, the `allow_missing` flag triggers the following behavior:
 - If the method call is on a resource that already exists, only fields declared
   in the field mask are updated.
 
-The user <b class="text-red-700">must</b> have the update permissions to call `Update` even with
+The user <b class="font-extrabold	text-red-700">must</b> have the update permissions to call `Update` even with
 `allow_missing` set to `true`.
 
 ### Etags
@@ -287,7 +287,7 @@ is to detect and avoid race conditions). Resources which need to enable this do
 so by including a `string etag` field, which contains an opaque,
 server-computed value representing the content of the resource.
 
-In this situation, the resource <b class="text-yellow-700">should</b> contain a `string etag` field:
+In this situation, the resource <b class="font-extrabold	text-yellow-700">should</b> contain a `string etag` field:
 
 
 <Tabs>
@@ -331,9 +331,9 @@ In this situation, the resource <b class="text-yellow-700">should</b> contain a 
 </Tabs>
     
 
-The `etag` field <b class="text-green-700">may</b> be either [required][] or [optional][]. If it is set,
-then the request <b class="text-red-700">must</b> succeed if and only if the provided etag matches the
-server-computed value, and <b class="text-red-700">must</b> fail with an `ABORTED` error otherwise. The
+The `etag` field <b class="font-extrabold text-green-700">may</b> be either [required][] or [optional][]. If it is set,
+then the request <b class="font-extrabold	text-red-700">must</b> succeed if and only if the provided etag matches the
+server-computed value, and <b class="font-extrabold	text-red-700">must</b> fail with an `ABORTED` error otherwise. The
 `update_mask` field in the request does not affect the behavior of the `etag`
 field, as it is not a field _being_ updated.
 
@@ -351,8 +351,8 @@ This can happen in a few situations:
   may be infeasible to return authoritative information on the fields that were
   not changed.
 
-In this situation, an API <b class="text-green-700">may</b> return back only the fields that were updated
-and omit the rest. APIs that do this <b class="text-red-700">must</b> document this behavior.
+In this situation, an API <b class="font-extrabold text-green-700">may</b> return back only the fields that were updated
+and omit the rest. APIs that do this <b class="font-extrabold	text-red-700">must</b> document this behavior.
 
 ### Errors
 
@@ -360,7 +360,7 @@ See [errors][], in particular [when to use PERMISSION_DENIED and NOT_FOUND
 errors][permission-denied].
 
 In addition, if the user does have proper permission, but the requested
-resource does not exist, the service <b class="text-red-700">must</b> error with `NOT_FOUND` (HTTP 404)
+resource does not exist, the service <b class="font-extrabold	text-red-700">must</b> error with `NOT_FOUND` (HTTP 404)
 unless `allow_missing` is set to `true`.
 
 {/* prettier-ignore-start  */}

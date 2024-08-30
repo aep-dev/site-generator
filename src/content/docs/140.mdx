@@ -27,11 +27,11 @@ intuitive, and consistent with one another.
 
 ## Guidance
 
-Field names <b class="text-yellow-700">should</b> be in correct American English.
+Field names <b class="font-extrabold	text-yellow-700">should</b> be in correct American English.
 
-Field names <b class="text-yellow-700">should</b> clearly and precisely communicate the concept being
+Field names <b class="font-extrabold	text-yellow-700">should</b> clearly and precisely communicate the concept being
 presented and avoid overly general names that are ambiguous. That said, field
-names <b class="text-yellow-700">should</b> avoid including unnecessary words. In particular, avoid
+names <b class="font-extrabold	text-yellow-700">should</b> avoid including unnecessary words. In particular, avoid
 including adjectives that always apply and add little cognitive value. For
 example, a `proxy_settings` field might be as helpful as
 `shared_proxy_settings` if there is no unshared variant.
@@ -48,7 +48,7 @@ example, a `proxy_settings` field might be as helpful as
   <TabItem label="Protocol Buffers">
   
   
-  Field definitions in protobuf files <b class="text-red-700">must</b> use `lower_snake_case` names.
+  Field definitions in protobuf files <b class="font-extrabold	text-red-700">must</b> use `lower_snake_case` names.
   These names are mapped to an appropriate naming convention in JSON and in
   generated code.
   
@@ -57,7 +57,7 @@ example, a `proxy_settings` field might be as helpful as
   <TabItem label="OpenAPI 3.0">
   
   
-  Field definitions in OAS schemas <b class="text-red-700">must</b> use `camelCase` names.
+  Field definitions in OAS schemas <b class="font-extrabold	text-red-700">must</b> use `camelCase` names.
   
   
   </TabItem>
@@ -71,26 +71,26 @@ example, a `proxy_settings` field might be as helpful as
   `camelCase` for OAS APIs.
 </Aside>
 
-Each word in a field name <b class="text-red-700">must not</b> begin with a number, because it creates
+Each word in a field name <b class="font-extrabold	text-red-700">must not</b> begin with a number, because it creates
 ambiguity when converting between snake case and camel case. Similarly, fields
-<b class="text-red-700">must not</b> contain leading, trailing, or adjacent underscores.
+<b class="font-extrabold	text-red-700">must not</b> contain leading, trailing, or adjacent underscores.
 
 ### Uniformity
 
-APIs <b class="text-yellow-700">should</b> endeavor to use the same name for the same concept and
+APIs <b class="font-extrabold	text-yellow-700">should</b> endeavor to use the same name for the same concept and
 different names for different concepts wherever possible. This includes names
 across multiple APIs, in particular if those APIs are likely to be used
 together.
 
 ### Arrays / Repeated fields
 
-Arrays (in OAS) and repeated fields (in protobuf) <b class="text-red-700">must</b> use the proper
+Arrays (in OAS) and repeated fields (in protobuf) <b class="font-extrabold	text-red-700">must</b> use the proper
 plural form, such as `books` or `authors`. On the other hand, singular fields
-<b class="text-red-700">must</b> use the singular form such as `book` or `author`.
+<b class="font-extrabold	text-red-700">must</b> use the singular form such as `book` or `author`.
 
 ### Prepositions
 
-Field names <b class="text-yellow-700">should not</b> include prepositions (such as "with", "for", "at",
+Field names <b class="font-extrabold	text-yellow-700">should not</b> include prepositions (such as "with", "for", "at",
 "by", etc.). For example:
 
 - `error_reason` (**not** `reason_for_error`)
@@ -114,19 +114,19 @@ redesigning.
 ### Adjectives
 
 For uniformity, field names that contain both a noun and an adjective
-<b class="text-yellow-700">should</b> place the adjective _before_ the noun. For example:
+<b class="font-extrabold	text-yellow-700">should</b> place the adjective _before_ the noun. For example:
 
 - `collected_items` (**not** `items_collected`)
 - `imported_objects` (**not** `objects_imported`)
 
 ### Verbs
 
-Field names <b class="text-red-700">must not</b> be named to reflect an intent or action. They **must
+Field names <b class="font-extrabold	text-red-700">must not</b> be named to reflect an intent or action. They **must
 not** be verbs.
 
 Rather, because the field defines the _desired value_ for mutations, e.g.
 Create and Update, and the _current value_ for reads, e.g. Get and List, the
-name <b class="text-red-700">must</b> be a noun. It defines what is so, not what to do.
+name <b class="font-extrabold	text-red-700">must</b> be a noun. It defines what is so, not what to do.
 
 - `collected_items` (**not** `collect_items`)
 - `disabled` (**not** `disable`)
@@ -136,7 +136,7 @@ resources and are named as verbs.
 
 ### Booleans
 
-Boolean fields <b class="text-yellow-700">should</b> omit the prefix "is". For example:
+Boolean fields <b class="font-extrabold	text-yellow-700">should</b> omit the prefix "is". For example:
 
 - `disabled` (**not** `is_disabled`)
 - `required` (**not** `is_required`)
@@ -154,8 +154,8 @@ Boolean fields <b class="text-yellow-700">should</b> omit the prefix "is". For e
   
   
   When using `bytes`, the contents of the field are base64-encoded when using
-  JSON on the wire. APIs <b class="text-yellow-700">should</b> use `bytes` when there is a need to send
-  binary contents over the wire, and <b class="text-yellow-700">should not</b> ask the user to manually
+  JSON on the wire. APIs <b class="font-extrabold	text-yellow-700">should</b> use `bytes` when there is a need to send
+  binary contents over the wire, and <b class="font-extrabold	text-yellow-700">should not</b> ask the user to manually
   base64-encode a field into a `string` field.
   
   
@@ -172,32 +172,32 @@ Boolean fields <b class="text-yellow-700">should</b> omit the prefix "is". For e
 
 ### URIs
 
-Field names representing URLs or URIs <b class="text-yellow-700">should</b> always use `uri` rather than
+Field names representing URLs or URIs <b class="font-extrabold	text-yellow-700">should</b> always use `uri` rather than
 `url`. This is because while all URLs are URIs, not all URIs are URLs. Field
-names <b class="text-green-700">may</b> use a prefix in front of `uri` as appropriate.
+names <b class="font-extrabold text-green-700">may</b> use a prefix in front of `uri` as appropriate.
 
 ### Reserved words
 
-Field names <b class="text-yellow-700">should</b> avoid using names that are likely to conflict with
+Field names <b class="font-extrabold	text-yellow-700">should</b> avoid using names that are likely to conflict with
 keywords in common programming languages, such as `new`, `class`, `function`,
 `import`, etc. Reserved keywords can cause hardship for developers using the
 API in that language.
 
 ### Conflicts
 
-Schemas <b class="text-yellow-700">should not</b> include a field with the same name as the enclosing
+Schemas <b class="font-extrabold	text-yellow-700">should not</b> include a field with the same name as the enclosing
 schema (ignoring case transformations). This causes conflicts when generating
 code in some languages.
 
 ### Display names
 
 Many resources have a human-readable name, often used for display in UI. This
-field <b class="text-yellow-700">should</b> be called `display_name`, and <b class="text-yellow-700">should not</b> have a uniqueness
+field <b class="font-extrabold	text-yellow-700">should</b> be called `display_name`, and <b class="font-extrabold	text-yellow-700">should not</b> have a uniqueness
 requirement.
 
 If an entity has an official, formal name (such as a company name or the title
-of a book), an API <b class="text-green-700">may</b> use `title` as the field name instead. The `title`
-field <b class="text-yellow-700">should not</b> have a uniqueness requirement.
+of a book), an API <b class="font-extrabold text-green-700">may</b> use `title` as the field name instead. The `title`
+field <b class="font-extrabold	text-yellow-700">should not</b> have a uniqueness requirement.
 
 ## Further reading
 

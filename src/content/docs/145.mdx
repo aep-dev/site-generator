@@ -20,7 +20,7 @@ subtle ways depending on the type of range being discussed.
 
 ## Guidance
 
-A resource or message representing a range <b class="text-yellow-700">should</b> ordinarily use two
+A resource or message representing a range <b class="font-extrabold	text-yellow-700">should</b> ordinarily use two
 separate fields of the same type, with prefixes `start_` and `end_`:
 
 ```typescript
@@ -38,7 +38,7 @@ interface Chapter {
 
 ### Inclusive or exclusive ranges
 
-Fields representing ranges <b class="text-yellow-700">should</b> use inclusive start values and exclusive
+Fields representing ranges <b class="font-extrabold	text-yellow-700">should</b> use inclusive start values and exclusive
 end values (half-closed intervals) in most situations; in interval notation:
 `[start_xxx, end_xxx)`.
 
@@ -64,7 +64,7 @@ run for three days: April 21, April 22, and April 23. This is also true for
 days of the week: a business that is open "Monday through Friday" is open, not
 closed, on Fridays.
 
-In this situation, the prefixes `first` and `last` <b class="text-yellow-700">should</b> be used instead:
+In this situation, the prefixes `first` and `last` <b class="font-extrabold	text-yellow-700">should</b> be used instead:
 
 ```typescript
 // A representation of a chapter in a book.
@@ -80,7 +80,7 @@ interface Chapter {
 ```
 
 Fields representing ranges with significant colloquial precedent for inclusive
-start and end values <b class="text-yellow-700">should</b> use inclusive end values with `first_` and
-`last_` prefixes for those ranges only. The service <b class="text-yellow-700">should</b> still use
-exclusive end values for other ranges where this does not apply, and <b class="text-red-700">must</b>
+start and end values <b class="font-extrabold	text-yellow-700">should</b> use inclusive end values with `first_` and
+`last_` prefixes for those ranges only. The service <b class="font-extrabold	text-yellow-700">should</b> still use
+exclusive end values for other ranges where this does not apply, and <b class="font-extrabold	text-red-700">must</b>
 clearly document each range as inclusive or exclusive.

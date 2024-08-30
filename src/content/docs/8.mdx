@@ -24,16 +24,16 @@ style for use in APIs, they also _follow_ consistent patterns and style.
 
 ## Guidance
 
-- AEPs <b class="text-red-700">must</b> cover a single, discrete topic, and provide clear, actionable
+- AEPs <b class="font-extrabold	text-red-700">must</b> cover a single, discrete topic, and provide clear, actionable
   guidance.
-- AEPs <b class="text-red-700">must not</b> duplicate or contradict guidance in another AEP.
-- AEPs <b class="text-green-700">may</b> also cover what _not_ to do, but <b class="text-yellow-700">should not</b> cover _only_
+- AEPs <b class="font-extrabold	text-red-700">must not</b> duplicate or contradict guidance in another AEP.
+- AEPs <b class="font-extrabold text-green-700">may</b> also cover what _not_ to do, but <b class="font-extrabold	text-yellow-700">should not</b> cover _only_
   anti-patterns.
 - If AEP guidance is conditional (e.g. a design pattern such as Jobs), the
-  guidance <b class="text-red-700">must</b> clearly explain under what conditions the guidance should
+  guidance <b class="font-extrabold	text-red-700">must</b> clearly explain under what conditions the guidance should
   be followed.
 
-Guidance contained within an AEP <b class="text-red-700">must</b> be beneficial to one or more types of
+Guidance contained within an AEP <b class="font-extrabold	text-red-700">must</b> be beneficial to one or more types of
 clients or their authors, including but not limited to:
 
 - Asset inventories which can be used to audit and analyze resources.
@@ -58,7 +58,7 @@ Examples of enhancements include:
   clients (e.g. requiring `singular` and `plural` on a `google.api.resource`
   annotation).
 
-AEP guidance <b class="text-red-700">must not</b> be a significant detriment to a client's usability or
+AEP guidance <b class="font-extrabold	text-red-700">must not</b> be a significant detriment to a client's usability or
 implementation difficulty, or maintenance difficulty.
 
 Examples of detriments include:
@@ -71,16 +71,16 @@ Examples of detriments include:
   my service).
 
 While the length of AEPs will necessarily vary based on the complexity of the
-question, most AEPs <b class="text-yellow-700">should</b> be able to cover their content in roughly two
+question, most AEPs <b class="font-extrabold	text-yellow-700">should</b> be able to cover their content in roughly two
 printed pages.
 
 ### File structure
 
-AEPs <b class="text-red-700">must</b> be written in Markdown, and <b class="text-red-700">must</b> be named using their
+AEPs <b class="font-extrabold	text-red-700">must</b> be written in Markdown, and <b class="font-extrabold	text-red-700">must</b> be named using their
 four-digit number (example: `0008.md`). AEPs that serve a specific scope
-<b class="text-red-700">must</b> be in the subdirectory for that scope.
+<b class="font-extrabold	text-red-700">must</b> be in the subdirectory for that scope.
 
-AEPs <b class="text-red-700">must</b> have appropriate front matter.
+AEPs <b class="font-extrabold	text-red-700">must</b> have appropriate front matter.
 
 ```yaml
 ---
@@ -95,7 +95,7 @@ redirect_from:
 ---
 ```
 
-Front matter for AEPs <b class="text-red-700">must</b> include:
+Front matter for AEPs <b class="font-extrabold	text-red-700">must</b> include:
 
 - The `aep` key:
   - `id`: Required. The ID for the given AEP, as an integer.
@@ -105,9 +105,9 @@ Front matter for AEPs <b class="text-red-700">must</b> include:
   - `created`: Required. The ISO-8601 date (`yyyy-mm-dd`) when the AEP was
     originally drafted, with no quotes.
   - `updated`: The ISO-8601 date (`yyyy-mm-dd`) when the AEP was last revised.
-  - `scope`: The scope for the AEP. This <b class="text-red-700">must</b> match the directory name for
+  - `scope`: The scope for the AEP. This <b class="font-extrabold	text-red-700">must</b> match the directory name for
     that scope. Required for AEPs with IDs \>= 1000, prohibited otherwise.
-- The `permalink` key (required): This <b class="text-red-700">must</b> be set to
+- The `permalink` key (required): This <b class="font-extrabold	text-red-700">must</b> be set to
   `/{aep.scope}/{aep.id}`. If there is no scope, use `/{aep.id}` instead.
 - The `redirect_from` key: This should include a list of any `/{aep.id}`
   permutations that a reader would be likely to enter, including:
@@ -117,12 +117,12 @@ Front matter for AEPs <b class="text-red-700">must</b> include:
 
 ### Document structure
 
-AEPs <b class="text-red-700">must</b> begin with a top-level heading with the AEP's title (`# Title`).
-The title <b class="text-yellow-700">should</b> be a noun (not an imperative). For example, "Bad API
+AEPs <b class="font-extrabold	text-red-700">must</b> begin with a top-level heading with the AEP's title (`# Title`).
+The title <b class="font-extrabold	text-yellow-700">should</b> be a noun (not an imperative). For example, "Bad API
 precedents" not "Avoid breaking API precedent".
 
-AEPs <b class="text-yellow-700">should</b> then begin with an introduction (with no additional heading),
-followed by a `## Guidance` heading. If necessary, the AEP <b class="text-green-700">may</b> include any
+AEPs <b class="font-extrabold	text-yellow-700">should</b> then begin with an introduction (with no additional heading),
+followed by a `## Guidance` heading. If necessary, the AEP <b class="font-extrabold text-green-700">may</b> include any
 of the following after the guidance, in the following order:
 
 - "Further reading" is a bulleted list of links to other AEPs that are useful
@@ -134,7 +134,7 @@ of the following after the guidance, in the following order:
 - "Changelog" is a bulleted list of changes made to the AEP since the first
   writing.
 
-The guidance section <b class="text-green-700">may</b> include subsections that elaborate further on
+The guidance section <b class="font-extrabold text-green-700">may</b> include subsections that elaborate further on
 details. Subsections will automatically create an entry in the table of
 contents, and an anchor for citations.
 
@@ -162,7 +162,7 @@ details.
 The "rationale" section is optional, and helps the reader understand the
 motivation behind specific guidance within the AEP.
 
-Deeper explanations of design justification and tradeoffs <b class="text-red-700">must</b> be in the
+Deeper explanations of design justification and tradeoffs <b class="font-extrabold	text-red-700">must</b> be in the
 rationale instead of other sections, to ensure the rest of the document acts as
 an easily actionable reference.
 
@@ -176,7 +176,7 @@ While the changelog is a dotted list of one-line summaries of changes to an
 AEP, the history section should elaborate on significant events in a
 descriptive format.
 
-The section <b class="text-red-700">must not</b> be used to exhaustively enumerate all changes. This is
+The section <b class="font-extrabold	text-red-700">must not</b> be used to exhaustively enumerate all changes. This is
 what the changelog provides.
 
 ## Further reading
@@ -194,41 +194,41 @@ format:
 - **2019-07-01**: Added a subsection clarifying XYZ.
 ```
 
-AEPs <b class="text-yellow-700">should</b> attempt to follow this overall format if possible, but AEPs
-<b class="text-green-700">may</b> deviate from it if necessary (in particular, if the AEP would be more
+AEPs <b class="font-extrabold	text-yellow-700">should</b> attempt to follow this overall format if possible, but AEPs
+<b class="font-extrabold text-green-700">may</b> deviate from it if necessary (in particular, if the AEP would be more
 difficult to understand, even for a reader already accustomed to reading AEPs
 in the usual format).
 
 <Aside type="note" title="Note">
-  Except for the title, AEPs <b class="text-red-700">must</b> only use the second heading level
-  (`##`) and above. AEPs <b class="text-yellow-700">should</b> only use the second and third heading levels
+  Except for the title, AEPs <b class="font-extrabold	text-red-700">must</b> only use the second heading level
+  (`##`) and above. AEPs <b class="font-extrabold	text-yellow-700">should</b> only use the second and third heading levels
   (`##`, `###`).
 </Aside>
 
 ### Requirement keywords
 
-AEPs <b class="text-yellow-700">should</b> use the following requirement level keywords: "MUST", "MUST
+AEPs <b class="font-extrabold	text-yellow-700">should</b> use the following requirement level keywords: "MUST", "MUST
 NOT", "SHOULD", "SHOULD NOT", and "MAY", which are to be interpreted as
 described in [RFC 2119][].
 
-When using these terms in AEPs, they <b class="text-red-700">must</b> be lower-case and **bold**. These
-terms <b class="text-yellow-700">should not</b> be used in other ways.
+When using these terms in AEPs, they <b class="font-extrabold	text-red-700">must</b> be lower-case and **bold**. These
+terms <b class="font-extrabold	text-yellow-700">should not</b> be used in other ways.
 
-If "SHOULD" or "SHOULD NOT" are used, they <b class="text-red-700">must</b> include valid examples of
+If "SHOULD" or "SHOULD NOT" are used, they <b class="font-extrabold	text-red-700">must</b> include valid examples of
 where other concerns may override the guidance.
 
 <Aside type="caution" title="Important">
   If rationale is used, it exists to provide background and a more
-  complete understanding, but <b class="text-red-700">must not</b> contain guidance (and RFC-2119 terms
-  <b class="text-red-700">must not</b> be used).
+  complete understanding, but <b class="font-extrabold	text-red-700">must not</b> contain guidance (and RFC-2119 terms
+  <b class="font-extrabold	text-red-700">must not</b> be used).
 </Aside>
 
 ### Code examples
 
-API design examples in AEPs <b class="text-yellow-700">should</b> be presented in both [OpenAPI][] and
-[protocol buffers][]. Examples <b class="text-yellow-700">should</b> cover only enough syntax to explain
+API design examples in AEPs <b class="font-extrabold	text-yellow-700">should</b> be presented in both [OpenAPI][] and
+[protocol buffers][]. Examples <b class="font-extrabold	text-yellow-700">should</b> cover only enough syntax to explain
 the concept. When using RPCs in examples, a `google.api.http` annotation
-<b class="text-yellow-700">should</b> be included.
+<b class="font-extrabold	text-yellow-700">should</b> be included.
 
 AEPs should use snake-case naming for parameters and properties (fields), for
 consistency across OpenAPI and protocol buffers, but other casing conventions
@@ -236,13 +236,13 @@ may be used as long as they are applied uniformly.
 
 ### Referencing AEPs
 
-When AEPs reference other AEPs, the prosaic text <b class="text-red-700">must</b> use the format
-`AEP-XXXX` without zero-padding (e.g., `AEP-8`, not `AEP-0008`), and <b class="text-red-700">must</b>
-link to the relevant AEP. AEP links <b class="text-green-700">may</b> point to a particular section of
+When AEPs reference other AEPs, the prosaic text <b class="font-extrabold	text-red-700">must</b> use the format
+`AEP-XXXX` without zero-padding (e.g., `AEP-8`, not `AEP-0008`), and <b class="font-extrabold	text-red-700">must</b>
+link to the relevant AEP. AEP links <b class="font-extrabold text-green-700">may</b> point to a particular section of
 the AEP if appropriate.
 
 <Aside type="caution" title="Important">
-  AEP links <b class="text-red-700">must</b> use the relative path to the file in the
+  AEP links <b class="font-extrabold	text-red-700">must</b> use the relative path to the file in the
   repository (such as `./0008.md` for core AEPs, or `../0008.md` for AEPs in a
   subdirectory); this ensures that the link works both on the AEP site, when
   viewing the Markdown file on GitHub, using the local development server, or a

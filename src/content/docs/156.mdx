@@ -18,7 +18,7 @@ for a config object.
 
 ## Guidance
 
-An API <b class="text-green-700">may</b> define _singleton resources_. A singleton resource <b class="text-red-700">must</b>
+An API <b class="font-extrabold text-green-700">may</b> define _singleton resources_. A singleton resource <b class="font-extrabold	text-red-700">must</b>
 always exist by virtue of the existence of its parent, with one and exactly one
 per parent.
 
@@ -118,28 +118,28 @@ For example:
 </Tabs>
     
 
-- Singleton resources <b class="text-red-700">must not</b> have a user-provided or system-generated ID;
+- Singleton resources <b class="font-extrabold	text-red-700">must not</b> have a user-provided or system-generated ID;
   their [resource name][aep-122] includes the name of their parent followed by
   one static-segment.
   - Example: `users/1234/config`
 - Singleton resources are always singular.
   - Example: `users/1234/thing`
-- Singleton resources <b class="text-green-700">may</b> parent other resources.
-- Singleton resources <b class="text-red-700">must not</b> define the [`Create`][aep-133] or
+- Singleton resources <b class="font-extrabold text-green-700">may</b> parent other resources.
+- Singleton resources <b class="font-extrabold	text-red-700">must not</b> define the [`Create`][aep-133] or
   [`Delete`][aep-135] standard methods. The singleton is implicitly created or
   deleted when its parent is created or deleted.
-- Singleton resources <b class="text-yellow-700">should</b> define the [`Get`][aep-131] and
-  [`Update`][aep-134] methods, and <b class="text-green-700">may</b> define custom methods as
+- Singleton resources <b class="font-extrabold	text-yellow-700">should</b> define the [`Get`][aep-131] and
+  [`Update`][aep-134] methods, and <b class="font-extrabold text-green-700">may</b> define custom methods as
   appropriate.
-  - However, singleton resources <b class="text-red-700">must not</b> define the [`Update`][aep-134]
+  - However, singleton resources <b class="font-extrabold	text-red-700">must not</b> define the [`Update`][aep-134]
     method if all fields on the resource are [output only][aep-203].
-- Singleton resources <b class="text-green-700">may</b> define the [`List`][aep-132] method, but <b class="text-red-700">must</b>
+- Singleton resources <b class="font-extrabold text-green-700">may</b> define the [`List`][aep-132] method, but <b class="font-extrabold	text-red-700">must</b>
   implement it according to [AEP-159][aep-159]. See the example below.
   - The trailing segment in the path pattern that typically represents the
-    collection <b class="text-yellow-700">should</b> be the `plural` form of the Singleton resource e.g.
+    collection <b class="font-extrabold	text-yellow-700">should</b> be the `plural` form of the Singleton resource e.g.
     `/v1/{parent=users/*}/configs`.
   - If a parent resource ID is provided instead of the hyphen `-` as per
-    [AEP-159][aep-159], then the service <b class="text-yellow-700">should</b> return a collection of one Singleton
+    [AEP-159][aep-159], then the service <b class="font-extrabold	text-yellow-700">should</b> return a collection of one Singleton
     resource corresponding to the specified parent resource.
 
 

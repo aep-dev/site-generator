@@ -20,7 +20,7 @@ For larger arrays of resources, consider [pagination][/pagination].
 
 ## Guidance
 
-Resources <b class="text-green-700">may</b> use array fields where appropriate.
+Resources <b class="font-extrabold text-green-700">may</b> use array fields where appropriate.
 
 
 <Tabs>
@@ -52,16 +52,16 @@ Resources <b class="text-green-700">may</b> use array fields where appropriate.
 </Tabs>
     
 
-- Array fields <b class="text-yellow-700">should</b> use a plural field name.
+- Array fields <b class="font-extrabold	text-yellow-700">should</b> use a plural field name.
   - If the English singular and plural words are identical ("moose", "info"),
-    the dictionary word <b class="text-red-700">must</b> be used rather than attempting to coin a new
+    the dictionary word <b class="font-extrabold	text-red-700">must</b> be used rather than attempting to coin a new
     plural form.
-- Array fields <b class="text-yellow-700">should</b> have an enforced upper bound that will not cause a
+- Array fields <b class="font-extrabold	text-yellow-700">should</b> have an enforced upper bound that will not cause a
   single resource payload to become too large. A good rule of thumb is 100
   elements.
   - If an array data can not be bounded (in other words, if there is a chance
     that the array will be too large to be reasonably returned in a single
-    request), the API <b class="text-yellow-700">should</b> use a sub-resource instead.
+    request), the API <b class="font-extrabold	text-yellow-700">should</b> use a sub-resource instead.
 
 <Aside type="note" title="Note">
   This document uses the term "array" to refer to a field on a resource
@@ -74,18 +74,18 @@ Resources <b class="text-green-700">may</b> use array fields where appropriate.
 
 ### Scalars and structs
 
-Array fields <b class="text-yellow-700">should</b> use a scalar type (such as `string`) if they are
+Array fields <b class="font-extrabold	text-yellow-700">should</b> use a scalar type (such as `string`) if they are
 certain that additional data will not be needed in the future, as using a
 struct type adds significant cognitive overhead and leads to more complicated
 code.
 
 However, if additional data is likely to be needed in the future, array fields
-<b class="text-yellow-700">should</b> use a struct instead of a scalar proactively, to avoid parallel
+<b class="font-extrabold	text-yellow-700">should</b> use a struct instead of a scalar proactively, to avoid parallel
 array fields.
 
 ### Update strategies
 
-A resource <b class="text-green-700">may</b> use one of two strategies to enable updating a array field:
+A resource <b class="font-extrabold text-green-700">may</b> use one of two strategies to enable updating a array field:
 direct update using the [standard `Update`][aip-134] method, or custom `Add`
 and `Remove` methods.
 
@@ -97,7 +97,7 @@ expected to have a small size (fewer than 10 or so) and race conditions are not
 an issue, or can be guarded against with [ETags][aip-154].
 
 <Aside type="note" title="Note">
-  Declarative-friendly resources (AEP-128) <b class="text-red-700">must</b> use the standard
+  Declarative-friendly resources (AEP-128) <b class="font-extrabold	text-red-700">must</b> use the standard
   `Update` method, and not introduce `Add` and `Remove` methods. If declarative
   tools need to reason about particular relationships while ignoring others,
   consider using a subresource instead.
@@ -105,7 +105,7 @@ an issue, or can be guarded against with [ETags][aip-154].
 
 If atomic modifications are required, and if the array is functionally a set
 (meaning that order does not matter, duplicate values are not meaningful, and
-non-comparable values such as `null` or `NaN` are not used), the API <b class="text-yellow-700">should</b>
+non-comparable values such as `null` or `NaN` are not used), the API <b class="font-extrabold	text-yellow-700">should</b>
 define custom methods using the verbs `Add` and `Remove`:
 
 
@@ -191,27 +191,27 @@ define custom methods using the verbs `Add` and `Remove`:
         ```
       
   
-  - The data being added or removed <b class="text-yellow-700">should</b> be a primitive (usually a
+  - The data being added or removed <b class="font-extrabold	text-yellow-700">should</b> be a primitive (usually a
     `string`).
-    - For more complex data structures with a primary key, the API <b class="text-yellow-700">should</b> use
+    - For more complex data structures with a primary key, the API <b class="font-extrabold	text-yellow-700">should</b> use
       a map with the `Update` method instead.
-  - The RPC's name <b class="text-red-700">must</b> begin with the word `Add` or `Remove`. The remainder
-    of the RPC name <b class="text-yellow-700">should</b> be the singular form of the field being added.
-  - The response <b class="text-yellow-700">should</b> be the resource itself, and <b class="text-yellow-700">should</b> fully-populate
+  - The RPC's name <b class="font-extrabold	text-red-700">must</b> begin with the word `Add` or `Remove`. The remainder
+    of the RPC name <b class="font-extrabold	text-yellow-700">should</b> be the singular form of the field being added.
+  - The response <b class="font-extrabold	text-yellow-700">should</b> be the resource itself, and <b class="font-extrabold	text-yellow-700">should</b> fully-populate
     the resource structure.
-  - The HTTP method <b class="text-red-700">must</b> be `POST`, as usual for [custom methods][aip-136].
-  - The HTTP URI <b class="text-red-700">must</b> end with `:add*` or `:remove*`, where `*` is the
+  - The HTTP method <b class="font-extrabold	text-red-700">must</b> be `POST`, as usual for [custom methods][aip-136].
+  - The HTTP URI <b class="font-extrabold	text-red-700">must</b> end with `:add*` or `:remove*`, where `*` is the
     camel-case singular name of the field being added or removed.
-  - The request field receiving the resource name <b class="text-yellow-700">should</b> map to the URI path.
-    - The HTTP variable <b class="text-yellow-700">should</b> be the name of the resource (such as `book`)
+  - The request field receiving the resource name <b class="font-extrabold	text-yellow-700">should</b> map to the URI path.
+    - The HTTP variable <b class="font-extrabold	text-yellow-700">should</b> be the name of the resource (such as `book`)
       rather than `name` or `parent`.
-    - That variable <b class="text-yellow-700">should</b> be the only variable in the URI path.
-  - The body clause in the `google.api.http` annotation <b class="text-yellow-700">should</b> be `"*"`.
+    - That variable <b class="font-extrabold	text-yellow-700">should</b> be the only variable in the URI path.
+  - The body clause in the `google.api.http` annotation <b class="font-extrabold	text-yellow-700">should</b> be `"*"`.
   - If the data being added in an `Add` operation is already present, the method
-    <b class="text-yellow-700">should</b> accept the request and make no changes (no-op), but <b class="text-green-700">may</b> error
+    <b class="font-extrabold	text-yellow-700">should</b> accept the request and make no changes (no-op), but <b class="font-extrabold text-green-700">may</b> error
     with `ALREADY_EXISTS` if appropriate.
   - If the data being removed in a `Remove` operation is not present, the method
-    <b class="text-yellow-700">should</b> accept the request and make no changes (no-op), but <b class="text-green-700">may</b> error
+    <b class="font-extrabold	text-yellow-700">should</b> accept the request and make no changes (no-op), but <b class="font-extrabold text-green-700">may</b> error
     with `NOT_FOUND` if appropriate.
   
   
@@ -298,23 +298,23 @@ define custom methods using the verbs `Add` and `Remove`:
         ```
       
   
-  - The data being added or removed <b class="text-yellow-700">should</b> be a primitive (usually a
+  - The data being added or removed <b class="font-extrabold	text-yellow-700">should</b> be a primitive (usually a
     `string`).
-    - For more complex data structures with a primary key, the API <b class="text-yellow-700">should</b> use
+    - For more complex data structures with a primary key, the API <b class="font-extrabold	text-yellow-700">should</b> use
       a map with the `Update` method instead.
-  - The `operationId` <b class="text-red-700">must</b> begin with the word `add` or `remove`. The
-    remainder of the `operationId` <b class="text-yellow-700">should</b> be the singular form of the field
+  - The `operationId` <b class="font-extrabold	text-red-700">must</b> begin with the word `add` or `remove`. The
+    remainder of the `operationId` <b class="font-extrabold	text-yellow-700">should</b> be the singular form of the field
     being added.
-  - The response <b class="text-yellow-700">should</b> be the resource itself, and <b class="text-yellow-700">should</b> fully-populate
+  - The response <b class="font-extrabold	text-yellow-700">should</b> be the resource itself, and <b class="font-extrabold	text-yellow-700">should</b> fully-populate
     the resource structure.
-  - The HTTP method <b class="text-red-700">must</b> be `POST`, as usual for [custom methods][aip-136].
-  - The HTTP URI <b class="text-red-700">must</b> end with `:add*` or `:remove*`, where `*` is the
+  - The HTTP method <b class="font-extrabold	text-red-700">must</b> be `POST`, as usual for [custom methods][aip-136].
+  - The HTTP URI <b class="font-extrabold	text-red-700">must</b> end with `:add*` or `:remove*`, where `*` is the
     camel-case singular name of the field being added or removed.
   - If the data being added in an `Add` operation is already present, the method
-    <b class="text-yellow-700">should</b> accept the request and make no changes (no-op), but <b class="text-green-700">may</b> error
+    <b class="font-extrabold	text-yellow-700">should</b> accept the request and make no changes (no-op), but <b class="font-extrabold text-green-700">may</b> error
     with `409 Conflict` if appropriate.
   - If the data being removed in a `Remove` operation is not present, the method
-    <b class="text-yellow-700">should</b> accept the request and make no changes (no-op), but <b class="text-green-700">may</b> error
+    <b class="font-extrabold	text-yellow-700">should</b> accept the request and make no changes (no-op), but <b class="font-extrabold text-green-700">may</b> error
     with `404 Not Found` if appropriate.
   
   
@@ -412,16 +412,16 @@ define custom methods using the verbs `Add` and `Remove`:
         ```
       
   
-  - A resource field <b class="text-red-700">must</b> be included. It <b class="text-yellow-700">should</b> be the name of the
+  - A resource field <b class="font-extrabold	text-red-700">must</b> be included. It <b class="font-extrabold	text-yellow-700">should</b> be the name of the
     resource (such as `book`) rather than `name` or `parent`.
-    - The field <b class="text-yellow-700">should</b> be [annotated as required][aip-203].
-    - If the field represents the name of another resource, it <b class="text-yellow-700">should</b>
+    - The field <b class="font-extrabold	text-yellow-700">should</b> be [annotated as required][aip-203].
+    - If the field represents the name of another resource, it <b class="font-extrabold	text-yellow-700">should</b>
       identify the [resource type][aip-123] that it references.
-  - A field for the value being added or removed <b class="text-red-700">must</b> be included. It
-    <b class="text-yellow-700">should</b> be the singular name of the field.
-    - The field <b class="text-yellow-700">should</b> be [annotated as required][aip-203].
-  - The request message <b class="text-red-700">must not</b> contain any other required fields, and
-    <b class="text-yellow-700">should not</b> contain other optional fields except those described in this
+  - A field for the value being added or removed <b class="font-extrabold	text-red-700">must</b> be included. It
+    <b class="font-extrabold	text-yellow-700">should</b> be the singular name of the field.
+    - The field <b class="font-extrabold	text-yellow-700">should</b> be [annotated as required][aip-203].
+  - The request message <b class="font-extrabold	text-red-700">must not</b> contain any other required fields, and
+    <b class="font-extrabold	text-yellow-700">should not</b> contain other optional fields except those described in this
     or another AEP.
   
   
@@ -508,9 +508,9 @@ define custom methods using the verbs `Add` and `Remove`:
         ```
       
   
-  - A field for the value being added or removed <b class="text-red-700">must</b> be included. It
-    <b class="text-yellow-700">should</b> be the singular name of the field.
-    - The field <b class="text-yellow-700">should</b> be designated as required.
+  - A field for the value being added or removed <b class="font-extrabold	text-red-700">must</b> be included. It
+    <b class="font-extrabold	text-yellow-700">should</b> be the singular name of the field.
+    - The field <b class="font-extrabold	text-yellow-700">should</b> be designated as required.
   
   
   </TabItem>

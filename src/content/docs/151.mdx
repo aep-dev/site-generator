@@ -27,11 +27,11 @@ can be used to track progress and retrieve the result.
 
 ## Guidance
 
-Operations that might take a significant amount of time to complete <b class="text-yellow-700">should</b>
+Operations that might take a significant amount of time to complete <b class="font-extrabold	text-yellow-700">should</b>
 return a `202 Accepted` response along with an `Operation` resource that can be
 used to track the status of the request and ultimately retrieve the result.
 
-Any single operation defined in an API surface <b class="text-red-700">must</b> either _always_ return
+Any single operation defined in an API surface <b class="font-extrabold	text-red-700">must</b> either _always_ return
 `202 Accepted` along with an `Operation`, or _never_ do so. A service **must
 not** return a `200 OK` response with the result if it is "fast enough", and
 `202 Accepted` if it is not fast enough, because such behavior adds significant
@@ -45,14 +45,14 @@ burdens for clients.
 
 ### Operation representation
 
-The response to a long-running request <b class="text-red-700">must</b> be an [`Operation`][Operation].
+The response to a long-running request <b class="font-extrabold	text-red-700">must</b> be an [`Operation`][Operation].
 
 
 <Tabs>
   <TabItem label="Protocol Buffers">
   
   
-  Protocol buffer APIs <b class="text-red-700">must</b> use the common component
+  Protocol buffer APIs <b class="font-extrabold	text-red-700">must</b> use the common component
   [`aep.api.Operation`][aep.api.Operation].
   
   
@@ -60,7 +60,7 @@ The response to a long-running request <b class="text-red-700">must</b> be an [`
   <TabItem label="OpenAPI 3.0">
   
   
-  OpenAPI services <b class="text-red-700">must</b> use this [`JSON Schema Operation`]JSON Schema
+  OpenAPI services <b class="font-extrabold	text-red-700">must</b> use this [`JSON Schema Operation`]JSON Schema
   Operation] schema.
   
   
@@ -70,8 +70,8 @@ The response to a long-running request <b class="text-red-700">must</b> be an [`
 
 ### Querying an operation
 
-The service <b class="text-red-700">must</b> provide an endpoint to query the status of the operation,
-which <b class="text-red-700">must</b> accept the operation path and <b class="text-yellow-700">should not</b> include other
+The service <b class="font-extrabold	text-red-700">must</b> provide an endpoint to query the status of the operation,
+which <b class="font-extrabold	text-red-700">must</b> accept the operation path and <b class="font-extrabold	text-yellow-700">should not</b> include other
 parameters:
 
 ```http
@@ -80,35 +80,35 @@ Host: library.example.com
 Accept: application/json
 ```
 
-The endpoint <b class="text-red-700">must</b> return a `Operation` as described above.
+The endpoint <b class="font-extrabold	text-red-700">must</b> return a `Operation` as described above.
 
 ### Standard methods
 
-APIs <b class="text-green-700">may</b> return an `Operation` from the [`Create`][aip-133],
+APIs <b class="font-extrabold text-green-700">may</b> return an `Operation` from the [`Create`][aip-133],
 [`Update`][aip-134], or [`Delete`][aip-135] standard methods if appropriate. In
-this case, the `response` field <b class="text-red-700">must</b> be the standard and expected response
+this case, the `response` field <b class="font-extrabold	text-red-700">must</b> be the standard and expected response
 type for that standard method.
 
 When creating or deleting a resource with a long-running request, the resource
-<b class="text-yellow-700">should</b> be included in [`List`][aip-132] and [`Get`][aip-131] calls;
-however, the resource <b class="text-yellow-700">should</b> indicate that it is not usable, generally with
+<b class="font-extrabold	text-yellow-700">should</b> be included in [`List`][aip-132] and [`Get`][aip-131] calls;
+however, the resource <b class="font-extrabold	text-yellow-700">should</b> indicate that it is not usable, generally with
 a [state enum][aip-216].
 
 ### Parallel requests
 
-A resource <b class="text-green-700">may</b> accept multiple requests that will work on it in parallel,
+A resource <b class="font-extrabold text-green-700">may</b> accept multiple requests that will work on it in parallel,
 but is not obligated to do so:
 
-- Resources that accept multiple parallel requests <b class="text-green-700">may</b> place them in a
+- Resources that accept multiple parallel requests <b class="font-extrabold text-green-700">may</b> place them in a
   queue rather than work on the requests simultaneously.
 - Resource that does not permit multiple requests in parallel (denying any new
-  request until the one that is in progress finishes) <b class="text-red-700">must</b> return
+  request until the one that is in progress finishes) <b class="font-extrabold	text-red-700">must</b> return
   `409 Conflict` if a user attempts a parallel request, and include an error
   message explaining the situation.
 
 ### Expiration
 
-APIs <b class="text-green-700">may</b> allow their operation resources to expire after sufficient time
+APIs <b class="font-extrabold text-green-700">may</b> allow their operation resources to expire after sufficient time
 has elapsed after the request completed.
 
 <Aside type="note" title="Note">
@@ -117,11 +117,11 @@ has elapsed after the request completed.
 
 ### Errors
 
-Errors that prevent a long-running request from _starting_ <b class="text-red-700">must</b> return an
+Errors that prevent a long-running request from _starting_ <b class="font-extrabold	text-red-700">must</b> return an
 error response (AEP-193), similar to any other method.
 
-Errors that occur over the course of a request <b class="text-green-700">may</b> be placed in the
-metadata message. The errors themselves <b class="text-red-700">must</b> still be represented with a
+Errors that occur over the course of a request <b class="font-extrabold text-green-700">may</b> be placed in the
+metadata message. The errors themselves <b class="font-extrabold	text-red-700">must</b> still be represented with a
 canonical error object.
 
 ## Interface Definitions
@@ -225,28 +225,28 @@ canonical error object.
         ```
       
   
-  - The response type <b class="text-red-700">must</b> be `aep.api.Operation`. The `Operation` proto
-    definition <b class="text-yellow-700">should not</b> be copied into individual APIs; prefer to use a
+  - The response type <b class="font-extrabold	text-red-700">must</b> be `aep.api.Operation`. The `Operation` proto
+    definition <b class="font-extrabold	text-yellow-700">should not</b> be copied into individual APIs; prefer to use a
     single copy (in monorepo code bases), or remote dependencies via a tool like
     [Buf][buf.build].
-    - The response <b class="text-red-700">must not</b> be a streaming response.
-  - The method <b class="text-red-700">must</b> include a [`aep.api.operation_info`][lro] annotation,
-    which <b class="text-red-700">must</b> define both response and metadata types.
-    - The response and metadata types <b class="text-red-700">must</b> be defined in the file where the
+    - The response <b class="font-extrabold	text-red-700">must not</b> be a streaming response.
+  - The method <b class="font-extrabold	text-red-700">must</b> include a [`aep.api.operation_info`][lro] annotation,
+    which <b class="font-extrabold	text-red-700">must</b> define both response and metadata types.
+    - The response and metadata types <b class="font-extrabold	text-red-700">must</b> be defined in the file where the
       RPC appears, or a file imported by that file.
     - If the response and metadata types are defined in another package, the
-      fully-qualified message name <b class="text-red-700">must</b> be used.
-    - The response type <b class="text-yellow-700">should not</b> be `google.protobuf.Empty` (except for
+      fully-qualified message name <b class="font-extrabold	text-red-700">must</b> be used.
+    - The response type <b class="font-extrabold	text-yellow-700">should not</b> be `google.protobuf.Empty` (except for
       [`Delete`][aip-135] methods), unless it is certain that response data will
       _never_ be needed. If response data might be added in the future, define an
       empty message for the RPC response and use that.
     - The metadata type is used to provide information such as progress, partial
       failures, and similar information on each `GetOperation` call. The metadata
-      type <b class="text-yellow-700">should not</b> be `google.protobuf.Empty`, unless it is certain that
+      type <b class="font-extrabold	text-yellow-700">should not</b> be `google.protobuf.Empty`, unless it is certain that
       metadata will _never_ be needed. If metadata might be added in the future,
       define an empty message for the RPC metadata and use that.
-  - APIs with messages that return `Operation` <b class="text-red-700">must</b> implement the
-    `GetOperation` method of the [`Operations`][lro] service, and <b class="text-green-700">may</b>
+  - APIs with messages that return `Operation` <b class="font-extrabold	text-red-700">must</b> implement the
+    `GetOperation` method of the [`Operations`][lro] service, and <b class="font-extrabold text-green-700">may</b>
     implement the other methods defined in that service. Individual APIs **must
     not** define their own interfaces for long-running operations to avoid
     inconsistency.
@@ -344,23 +344,23 @@ canonical error object.
         ```
       
   
-  - `202` <b class="text-red-700">must</b> be the only success status code defined.
-  - The `202` response <b class="text-red-700">must</b> define an `application/json` response body and no
+  - `202` <b class="font-extrabold	text-red-700">must</b> be the only success status code defined.
+  - The `202` response <b class="font-extrabold	text-red-700">must</b> define an `application/json` response body and no
     other response content types.
-  - The response body schema <b class="text-red-700">must</b> be an object with `path`, `done`, `error`,
+  - The response body schema <b class="font-extrabold	text-red-700">must</b> be an object with `path`, `done`, `error`,
     and `response` properties as described above for an `Operation`.
-  - The response body schema <b class="text-green-700">may</b> contain an object property named `metadata`
+  - The response body schema <b class="font-extrabold text-green-700">may</b> contain an object property named `metadata`
     to hold service-specific metadata associated with the operation, for example
     progress information and common metadata such as create time. The service
-    <b class="text-yellow-700">should</b> define the contents of the `metadata` object in a separate schema,
-    which <b class="text-yellow-700">should</b> specify `additionalProperties: true` to allow for future
+    <b class="font-extrabold	text-yellow-700">should</b> define the contents of the `metadata` object in a separate schema,
+    which <b class="font-extrabold	text-yellow-700">should</b> specify `additionalProperties: true` to allow for future
     extensibility.
-  - The `response` property <b class="text-red-700">must</b> be a schema that defines the success
+  - The `response` property <b class="font-extrabold	text-red-700">must</b> be a schema that defines the success
     response for the operation. For an operation that typically gives a
     `204 No Content` response, such as a `Delete`, `response` should be defined
     as an empty object schema. For a standard `Get/Create/Update` operation,
     `response` should be a representation of the resource.
-  - If a service has any long running operations, the service <b class="text-red-700">must</b> define an
+  - If a service has any long running operations, the service <b class="font-extrabold	text-red-700">must</b> define an
     `Operation` resource with a `list` operation to retrieve a potentially
     filtered list of operations and a `get` operation to retrieve a specific
     operation by its `path`.

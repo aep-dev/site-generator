@@ -20,37 +20,37 @@ custom error handling code.
 
 ## Guidance
 
-Services <b class="text-red-700">must</b> clearly distinguish successful responses from error
+Services <b class="font-extrabold	text-red-700">must</b> clearly distinguish successful responses from error
 responses.
 
-The structure of the error response <b class="text-red-700">must</b> be consistent across all APIs of
-the service. You <b class="text-yellow-700">should</b> use the error response structure below which comes
+The structure of the error response <b class="font-extrabold	text-red-700">must</b> be consistent across all APIs of
+the service. You <b class="font-extrabold	text-yellow-700">should</b> use the error response structure below which comes
 from the Problem Details for HTTP APIs [RFC 9457].
 
 ### Structure
 
-An error response <b class="text-yellow-700">should</b> contain the following fields:
+An error response <b class="font-extrabold	text-yellow-700">should</b> contain the following fields:
 
 | Name     | Type    | Required | Description                                                                                                                                                                                                                                                        |
 | -------- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | type     | string  | Y        | A URI reference [URI] that identifies the problem type. If the type URI is a locator (e.g., those with an "http" or "https" scheme), dereferencing it SHOULD provide human-readable documentation for the problem type.                                            |
 | status   | integer |          | The HTTP status code that best describes the type of problem detected.                                                                                                                                                                                             |
-| title    | string  |          | A human-readable description of the problem. Messages are likely to be logged in plain text and <b class="text-red-700">must not</b> include information about a specific occurrence nor any sensitive data like PII. Information about specific occurrences should be part of `metadata`. |
-| detail   | string  |          | A human-readable explanation specific to this occurrence of the problem. This <b class="text-green-700">may</b> contain PII and <b class="text-yellow-700">should not</b> be logged.                                                                                                                                    |
+| title    | string  |          | A human-readable description of the problem. Messages are likely to be logged in plain text and <b class="font-extrabold	text-red-700">must not</b> include information about a specific occurrence nor any sensitive data like PII. Information about specific occurrences should be part of `metadata`. |
+| detail   | string  |          | A human-readable explanation specific to this occurrence of the problem. This <b class="font-extrabold text-green-700">may</b> contain PII and <b class="font-extrabold	text-yellow-700">should not</b> be logged.                                                                                                                                    |
 | instance | string  |          | A unique identifier for the specific occurrence of the problem.                                                                                                                                                                                                    |
 
 An error response may contain additional fields appropriate for a specific
 error type.
 
-The error title and detail fields <b class="text-yellow-700">should</b> help a reasonably technical user
-_understand_ and _resolve_ the issue, and <b class="text-yellow-700">should not</b> assume that the user
+The error title and detail fields <b class="font-extrabold	text-yellow-700">should</b> help a reasonably technical user
+_understand_ and _resolve_ the issue, and <b class="font-extrabold	text-yellow-700">should not</b> assume that the user
 is an expert in your particular API. Additionally, the error title and detail
-<b class="text-red-700">must not</b> assume that the user will know anything about its underlying
+<b class="font-extrabold	text-red-700">must not</b> assume that the user will know anything about its underlying
 implementation.
 
-The error detail <b class="text-yellow-700">should</b> be brief but actionable. Any extra information
-<b class="text-yellow-700">should</b> be provided in additional properties. If even more information is
-necessary, you <b class="text-yellow-700">should</b> provide a link where a reader can get more
+The error detail <b class="font-extrabold	text-yellow-700">should</b> be brief but actionable. Any extra information
+<b class="font-extrabold	text-yellow-700">should</b> be provided in additional properties. If even more information is
+necessary, you <b class="font-extrabold	text-yellow-700">should</b> provide a link where a reader can get more
 information or ask questions to help resolve the issue.
 
 The error detail field
@@ -82,13 +82,13 @@ A JSON representation of an error response might look like the following:
   <TabItem label="Protocol Buffers">
   
   
-  Services <b class="text-red-700">must</b> return a [`google.rpc.Status`][Status] message when an API
-  error occurs, and <b class="text-red-700">must</b> use the canonical error codes defined in
+  Services <b class="font-extrabold	text-red-700">must</b> return a [`google.rpc.Status`][Status] message when an API
+  error occurs, and <b class="font-extrabold	text-red-700">must</b> use the canonical error codes defined in
   [`google.rpc.Code`][Code]. More information about the particular codes is
   available in the [gRPC status code documentation][].
   
-  The error response structure defined above <b class="text-yellow-700">should</b> be returned in the
-  `details` field of the Status message. Services <b class="text-yellow-700">should</b> use the
+  The error response structure defined above <b class="font-extrabold	text-yellow-700">should</b> be returned in the
+  `details` field of the Status message. Services <b class="font-extrabold	text-yellow-700">should</b> use the
   [`aep.api.ProblemDetails`](https://buf.build/aep/api/docs/main:aep.api#aep.api.ProblemDetails)
   to define this field.
   
@@ -118,7 +118,7 @@ originates from the request, the title of the Book and the name of the Library,
 and by the information that is known only by the service, i.e. the expected
 return date of the Book.
 
-All dynamic variables found in error detail <b class="text-red-700">must</b> also be present as
+All dynamic variables found in error detail <b class="font-extrabold	text-red-700">must</b> also be present as
 additional properties of the error response
 
 ```yaml
@@ -127,20 +127,20 @@ library: 'Garfield East'
 expectedReturnDate: '2199-05-13'
 ```
 
-Once present for a particular error type, additional properties <b class="text-red-700">must</b>
+Once present for a particular error type, additional properties <b class="font-extrabold	text-red-700">must</b>
 continue to be included in the the error response to be backwards compatible,
 even if the value for a particular property is empty.
 
 #### Localization
 
-The title and detail fields <b class="text-yellow-700">should</b> be presented in the service's native
+The title and detail fields <b class="font-extrabold	text-yellow-700">should</b> be presented in the service's native
 language. If a localized detail is required, it may be included as an
-additional property in the error response, and <b class="text-yellow-700">should</b> be named
+additional property in the error response, and <b class="font-extrabold	text-yellow-700">should</b> be named
 `localizedDetail`.
 
 ### Partial errors
 
-APIs <b class="text-yellow-700">should not</b> support partial errors. Partial errors add significant
+APIs <b class="font-extrabold	text-yellow-700">should not</b> support partial errors. Partial errors add significant
 complexity for users, because they usually sidestep the use of error codes, or
 move those error codes into the response message, where the user must write
 specialized error handling logic to address the problem.
@@ -149,20 +149,20 @@ However, occasionally partial errors are necessary, particularly in bulk
 operations where it would be hostile to users to fail an entire large request
 because of a problem with a single entry.
 
-Methods that require partial errors <b class="text-yellow-700">should</b> use [long-running operations][],
-and the method <b class="text-yellow-700">should</b> put partial failure information in the metadata
-message. The errors themselves <b class="text-red-700">must</b> still be represented as an error object
+Methods that require partial errors <b class="font-extrabold	text-yellow-700">should</b> use [long-running operations][],
+and the method <b class="font-extrabold	text-yellow-700">should</b> put partial failure information in the metadata
+message. The errors themselves <b class="font-extrabold	text-red-700">must</b> still be represented as an error object
 as described in this AEP.
 
 ### Permission Denied
 
 If the user does not have permission to access the resource or parent,
-regardless of whether or not it exists, the service <b class="text-red-700">must</b> error with
-`PERMISSION_DENIED` (HTTP 403). Permission <b class="text-red-700">must</b> be checked prior to
+regardless of whether or not it exists, the service <b class="font-extrabold	text-red-700">must</b> error with
+`PERMISSION_DENIED` (HTTP 403). Permission <b class="font-extrabold	text-red-700">must</b> be checked prior to
 checking if the resource or parent exists.
 
 If the user does have proper permission, but the requested resource or parent
-does not exist, the service <b class="text-red-700">must</b> error with `NOT_FOUND` (HTTP 404).
+does not exist, the service <b class="font-extrabold	text-red-700">must</b> error with `NOT_FOUND` (HTTP 404).
 
 ## Rationale
 

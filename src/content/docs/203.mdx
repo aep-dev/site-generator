@@ -27,12 +27,12 @@ field behavior, such as a field being required or immutable.
 RecognitionAudio audio = 2 [(aep.api.field_behavior) = REQUIRED];
 ```
 
-- APIs <b class="text-red-700">must</b> apply the `aep.api.field_behavior` annotation on every field on
+- APIs <b class="font-extrabold	text-red-700">must</b> apply the `aep.api.field_behavior` annotation on every field on
   a message or sub-message used in a request.
-- The annotation <b class="text-red-700">must</b> include any google.api.FieldBehavior values that
+- The annotation <b class="font-extrabold	text-red-700">must</b> include any google.api.FieldBehavior values that
   accurately describe the behavior of the field.
-  - `FIELD_BEHAVIOR_UNSPECIFIED` <b class="text-red-700">must not</b> be used.
-- APIs <b class="text-red-700">must</b> at minimum use one of `REQUIRED`, `OPTIONAL`, or `OUTPUT_ONLY`.
+  - `FIELD_BEHAVIOR_UNSPECIFIED` <b class="font-extrabold	text-red-700">must not</b> be used.
+- APIs <b class="font-extrabold	text-red-700">must</b> at minimum use one of `REQUIRED`, `OPTIONAL`, or `OUTPUT_ONLY`.
 
 <Aside type="danger" title="Warning">
   Although `field_behavior` does not impact proto-level behavior,
@@ -71,8 +71,8 @@ In the case above, if a `title` is specified, the `text` field is required.
 ### Identifier
 
 The use of `IDENTIFIER` indicates that a field within a resource message is
-used to identify the resource. It <b class="text-red-700">must</b> be attached to the `path` field and
-<b class="text-red-700">must not</b> be attached to any other field (see [fields representing resource
+used to identify the resource. It <b class="font-extrabold	text-red-700">must</b> be attached to the `path` field and
+<b class="font-extrabold	text-red-700">must not</b> be attached to any other field (see [fields representing resource
 paths]).
 
 The `IDENTIFIER` value conveys that the field is not accepted as input (i.e.
@@ -80,7 +80,7 @@ The `IDENTIFIER` value conveys that the field is not accepted as input (i.e.
 `IMMUTABLE` and accepted as input for mutation methods that accept the resource
 as the primary input e.g. [Standard Update](./standard-methods).
 
-This annotation <b class="text-red-700">must not</b> be applied to references to other resources within
+This annotation <b class="font-extrabold	text-red-700">must not</b> be applied to references to other resources within
 a message.
 
 ### Immutable
@@ -90,8 +90,8 @@ after it's creation. This can apply to either fields that are input or outputs,
 required or optional.
 
 When a service receives an immutable field in an update request (or similar),
-even if included in the update mask, the service <b class="text-yellow-700">should</b> ignore the field if
-the value matches, but <b class="text-yellow-700">should</b> error with `INVALID_ARGUMENT` if a change is
+even if included in the update mask, the service <b class="font-extrabold	text-yellow-700">should</b> ignore the field if
+the value matches, but <b class="font-extrabold	text-yellow-700">should</b> error with `INVALID_ARGUMENT` if a change is
 requested.
 
 Potential use cases for immutable fields (this is not an exhaustive list) are:
@@ -100,7 +100,7 @@ Potential use cases for immutable fields (this is not an exhaustive list) are:
   application (e.g. a disk type).
 
 <Aside type="note" title="Note">
-  Fields which are "conditionally immutable" <b class="text-red-700">must not</b> be given the
+  Fields which are "conditionally immutable" <b class="font-extrabold	text-red-700">must not</b> be given the
   immutable annotation.
 </Aside>
 
@@ -109,10 +109,10 @@ Potential use cases for immutable fields (this is not an exhaustive list) are:
 The use of `INPUT_ONLY` indicates that the field is provided in requests and
 that the corresponding field will not be included in output.
 
-Additionally, a field <b class="text-yellow-700">should</b> only be described as input only if it is a
+Additionally, a field <b class="font-extrabold	text-yellow-700">should</b> only be described as input only if it is a
 field in a resource message or a field of a message included within a resource
 message. Notably, fields in request messages (a message which only ever acts as
-an argument to an RPC, with a name usually ending in `Request`) <b class="text-yellow-700">should not</b>
+an argument to an RPC, with a name usually ending in `Request`) <b class="font-extrabold	text-yellow-700">should not</b>
 be described as input only because this is already implied.
 
 Potential use cases for input only fields (this is not an exhaustive list) are:
@@ -128,7 +128,7 @@ Potential use cases for input only fields (this is not an exhaustive list) are:
 
 The use of `OPTIONAL` indicates that a field is not required.
 
-A field <b class="text-green-700">may</b> be described as optional if it is a field on a request message
+A field <b class="font-extrabold text-green-700">may</b> be described as optional if it is a field on a request message
 (a message that is an argument to an RPC, usually ending in `Request`), or a
 field on a submessage.
 
@@ -136,18 +136,18 @@ field on a submessage.
 
 The use of `OUTPUT_ONLY` indicates that the field is provided in responses, but
 that including the field in a message in a request does nothing (the server
-<b class="text-red-700">must</b> clear out any value in this field and <b class="text-red-700">must not</b> throw an error as a
+<b class="font-extrabold	text-red-700">must</b> clear out any value in this field and <b class="font-extrabold	text-red-700">must not</b> throw an error as a
 result of the presence of a value in this field on input). Similarly, services
-<b class="text-red-700">must</b> ignore the presence of output only fields in update field masks (see:
+<b class="font-extrabold	text-red-700">must</b> ignore the presence of output only fields in update field masks (see:
 AEP-161).
 
-Additionally, a field <b class="text-yellow-700">should</b> only be described as output only if it is a
+Additionally, a field <b class="font-extrabold	text-yellow-700">should</b> only be described as output only if it is a
 field in a resource message, or a field of a message farther down the tree.
 Notably, fields in response messages (a message which only ever acts as a
-return value to an RPC, usually ending in `Response`) <b class="text-yellow-700">should not</b> be
+return value to an RPC, usually ending in `Response`) <b class="font-extrabold	text-yellow-700">should not</b> be
 described as output only because this is already implied.
 
-Output only fields <b class="text-green-700">may</b> be set to empty values if appropriate to the API.
+Output only fields <b class="font-extrabold text-green-700">may</b> be set to empty values if appropriate to the API.
 
 Potential use cases for output only fields (this is not an exhaustive list)
 are:
@@ -158,23 +158,23 @@ are:
 
 ### Required
 
-The use of `REQUIRED` indicates that the field <b class="text-red-700">must</b> be present (and set to
+The use of `REQUIRED` indicates that the field <b class="font-extrabold	text-red-700">must</b> be present (and set to
 a non-empty value) on the request.
 
-A field <b class="text-yellow-700">should</b> only be described as required if _either_:
+A field <b class="font-extrabold	text-yellow-700">should</b> only be described as required if _either_:
 
 - It is a field on a resource that a user provides somewhere as input.
-  - When [creating](./standard-methods) the resource, a value <b class="text-red-700">must</b> be
+  - When [creating](./standard-methods) the resource, a value <b class="font-extrabold	text-red-700">must</b> be
     provided for the field on the create request.
-  - When [updating](./standard-methods) the resource, the user <b class="text-green-700">may</b> omit the
+  - When [updating](./standard-methods) the resource, the user <b class="font-extrabold text-green-700">may</b> omit the
     field provided that the field is also absent from the field mask,
-    indicating no change to the field (otherwise it <b class="text-red-700">must</b> be provided).
+    indicating no change to the field (otherwise it <b class="font-extrabold	text-red-700">must</b> be provided).
 - It is a field on a request message (a message that is an argument to an RPC,
-  with a name usually ending in `Request`). In this case, a value <b class="text-red-700">must</b> be
-  provided as part of the request, and failure to do so <b class="text-red-700">must</b> cause an error
+  with a name usually ending in `Request`). In this case, a value <b class="font-extrabold	text-red-700">must</b> be
+  provided as part of the request, and failure to do so <b class="font-extrabold	text-red-700">must</b> cause an error
   (usually `INVALID_ARGUMENT`).
 
-Fields <b class="text-yellow-700">should not</b> be described as required in order to signify:
+Fields <b class="font-extrabold	text-yellow-700">should not</b> be described as required in order to signify:
 
 - A field which will always be present in a response.
 - A field which is conditionally required in some situations.
@@ -193,7 +193,7 @@ Fields <b class="text-yellow-700">should not</b> be described as required in ord
 The use of `UNORDERED_LIST` on a repeated field of a resource indicates that
 the service does not guarantee the order of the items in the list.
 
-A field <b class="text-yellow-700">should</b> be described as an unordered list if the service does not
+A field <b class="font-extrabold	text-yellow-700">should</b> be described as an unordered list if the service does not
 guarantee that the order of the elements in the list will match the order that
 the user sent, including a situation where the service will sort the list on
 the user's behalf.

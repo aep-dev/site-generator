@@ -21,7 +21,7 @@ values are.
 
 ## Guidance
 
-APIs <b class="text-green-700">may</b> expose enum objects for sets of values that are expected to change
+APIs <b class="font-extrabold text-green-700">may</b> expose enum objects for sets of values that are expected to change
 infrequently:
 
 ```typescript
@@ -41,43 +41,43 @@ enum Format {
 }
 ```
 
-- All enum values <b class="text-yellow-700">should</b> use a consistent case format across an
+- All enum values <b class="font-extrabold	text-yellow-700">should</b> use a consistent case format across an
   organization. In many cases, this is dictated by the IDL the organization
   uses.
-- Enums <b class="text-yellow-700">should</b> document whether the enum is frozen or they expect to add
+- Enums <b class="font-extrabold	text-yellow-700">should</b> document whether the enum is frozen or they expect to add
   values in the future.
 
 ### When to use enums
 
 Enums can be more accessible and readable than strings or booleans in many
-cases, but they do add overhead when they change. Therefore, enums <b class="text-yellow-700">should</b>
+cases, but they do add overhead when they change. Therefore, enums <b class="font-extrabold	text-yellow-700">should</b>
 receive new values infrequently. While the definition of "infrequently" may
 change based on individual use cases, a good rule of thumb is no more than once
-a year. For enums that change frequently, the API <b class="text-yellow-700">should</b> use a string and
+a year. For enums that change frequently, the API <b class="font-extrabold	text-yellow-700">should</b> use a string and
 document the format.
 
 <Aside type="note" title="Note">
   If an enumerated value needs to be shared across APIs, an enum
-  <b class="text-green-700">may</b> be used, but the assignment between enum values and their wire
-  representation <b class="text-red-700">must</b> match.
+  <b class="font-extrabold text-green-700">may</b> be used, but the assignment between enum values and their wire
+  representation <b class="font-extrabold	text-red-700">must</b> match.
 </Aside>
 
 ### Alternatives
 
-Enums <b class="text-yellow-700">should not</b> be used when there is a competing, widely-adopted standard
+Enums <b class="font-extrabold	text-yellow-700">should not</b> be used when there is a competing, widely-adopted standard
 representation (such as with [language codes][bcp-47] or [media types][]).
-Instead, that standard representation <b class="text-yellow-700">should</b> be used. This is true even if
+Instead, that standard representation <b class="font-extrabold	text-yellow-700">should</b> be used. This is true even if
 only a small subset of values are permitted, because using enums in this
 situation often leads to frustrating lookup tables when trying to use multiple
 APIs together.
 
 For enumerated values where the set of allowed values changes frequently, APIs
-<b class="text-yellow-700">should</b> use a `string` field instead, and <b class="text-red-700">must</b> document the allowed
-values. String fields with enumerated values <b class="text-yellow-700">should</b> use a uniform case
+<b class="font-extrabold	text-yellow-700">should</b> use a `string` field instead, and <b class="font-extrabold	text-red-700">must</b> document the allowed
+values. String fields with enumerated values <b class="font-extrabold	text-yellow-700">should</b> use a uniform case
 system (`snake_case`, `kebab-case`, etc.) throughout an organization.
 
-Boolean fields <b class="text-green-700">may</b> be used in situations where it is clear that no further
-flexibility will be needed. The default value <b class="text-red-700">must</b> be `false`.
+Boolean fields <b class="font-extrabold text-green-700">may</b> be used in situations where it is clear that no further
+flexibility will be needed. The default value <b class="font-extrabold	text-red-700">must</b> be `false`.
 
 ### Compatibility
 
@@ -100,12 +100,12 @@ switch (book.format) {
 }
 ```
 
-Services <b class="text-green-700">may</b> add new values to existing enums; however, they <b class="text-yellow-700">should</b> add
+Services <b class="font-extrabold text-green-700">may</b> add new values to existing enums; however, they <b class="font-extrabold	text-yellow-700">should</b> add
 enums carefully; think about what will happen if a client system does not know
 about a new value.
 
 Additionally, in IDLs where enum values are presented in a specific order,
-services <b class="text-yellow-700">should</b> only add new values to the end. An exception to this rule
+services <b class="font-extrabold	text-yellow-700">should</b> only add new values to the end. An exception to this rule
 is if the enum conforms to an external standard (for example, an enum
 representing HTTP status codes would add a new 3xx value alongside the others,
 not at the end).
@@ -185,21 +185,21 @@ not at the end).
         ```
       
   
-  - The zero value of the enum <b class="text-yellow-700">should</b> be the name of the enum itself followed
-    by the suffix `_UNSPECIFIED`. The service <b class="text-green-700">may</b> either allow or prohibit
+  - The zero value of the enum <b class="font-extrabold	text-yellow-700">should</b> be the name of the enum itself followed
+    by the suffix `_UNSPECIFIED`. The service <b class="font-extrabold text-green-700">may</b> either allow or prohibit
     use of this value.
-  - Enums which will only be used in a single message <b class="text-yellow-700">should</b> be nested within
-    that message. In this case, the enum <b class="text-yellow-700">should</b> be declared immediately
+  - Enums which will only be used in a single message <b class="font-extrabold	text-yellow-700">should</b> be nested within
+    that message. In this case, the enum <b class="font-extrabold	text-yellow-700">should</b> be declared immediately
     before it is used.
-  - If multiple enums are in the same namespace, they <b class="text-red-700">must not</b> share any
+  - If multiple enums are in the same namespace, they <b class="font-extrabold	text-red-700">must not</b> share any
     values. (This is because enums do not provide their own namespace for their
     values in some languages.)
-  - If an enumerated value needs to be shared across APIs, an enum <b class="text-green-700">may</b> be
-    used, but the assignment between the value names and the tag numbers <b class="text-red-700">must</b>
+  - If an enumerated value needs to be shared across APIs, an enum <b class="font-extrabold text-green-700">may</b> be
+    used, but the assignment between the value names and the tag numbers <b class="font-extrabold	text-red-700">must</b>
     match.
   
   **Note:** When using protocol buffers, it is impossible to distinguish between
-  `false` and unset. If this is a requirement, an enum <b class="text-green-700">may</b> be a better design
+  `false` and unset. If this is a requirement, an enum <b class="font-extrabold text-green-700">may</b> be a better design
   choice (although `google.protobuf.BoolValue` is also available).
   
   
@@ -253,9 +253,9 @@ not at the end).
         ```
       
   
-  - Enumerated fields <b class="text-yellow-700">should</b> be strings.
-  - If the enum is optional, The `null` value <b class="text-yellow-700">should</b> be used as the empty
-    value, and <b class="text-yellow-700">should</b> be the first value specified.
+  - Enumerated fields <b class="font-extrabold	text-yellow-700">should</b> be strings.
+  - If the enum is optional, The `null` value <b class="font-extrabold	text-yellow-700">should</b> be used as the empty
+    value, and <b class="font-extrabold	text-yellow-700">should</b> be the first value specified.
   
   **Note:** If `null` is a valid value, OpenAPI 3.0 also requires that
   `nullable: true` is specified for the field.

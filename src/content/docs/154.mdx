@@ -25,7 +25,7 @@ the request.
 
 ## Guidance
 
-A resource <b class="text-green-700">may</b> provide an `ETag` header when retrieving a single resource
+A resource <b class="font-extrabold text-green-700">may</b> provide an `ETag` header when retrieving a single resource
 when it is important to ensure that the client has an up to date resource
 before acting on certain requests:
 
@@ -35,22 +35,22 @@ Content-type: application/json
 ETag: "55cc0347-66fc-46c3-a26f-98a9a7d61d0e"
 ```
 
-The ETag <b class="text-red-700">must</b> be provided by the server on output, and values <b class="text-yellow-700">should</b>
-conform to [RFC 7232][]. Resources <b class="text-red-700">must</b> support the `If-Match` header (and
-<b class="text-green-700">may</b> support the `If-None-Match` header) if and only if resources provide
+The ETag <b class="font-extrabold	text-red-700">must</b> be provided by the server on output, and values <b class="font-extrabold	text-yellow-700">should</b>
+conform to [RFC 7232][]. Resources <b class="font-extrabold	text-red-700">must</b> support the `If-Match` header (and
+<b class="font-extrabold text-green-700">may</b> support the `If-None-Match` header) if and only if resources provide
 the ETag.
 
 <Aside type="note" title="Note">
-  ETag values <b class="text-red-700">must</b> include quotes as described in [RFC 7232][]. For
+  ETag values <b class="font-extrabold	text-red-700">must</b> include quotes as described in [RFC 7232][]. For
   example, a valid ETag is `"foo"`, not `foo`.
 </Aside>
 
-ETags <b class="text-red-700">must</b> be based on an opaque checksum or hash of the resource that
+ETags <b class="font-extrabold	text-red-700">must</b> be based on an opaque checksum or hash of the resource that
 guarantees it will change if the resource changes.
 
 ### Condition headers
 
-Services that provide ETags <b class="text-yellow-700">should</b> support the `If-Match` and
+Services that provide ETags <b class="font-extrabold	text-yellow-700">should</b> support the `If-Match` and
 `If-None-Match` headers on incoming requests:
 
 ```http
@@ -61,33 +61,33 @@ If-Match: "55cc0347-66fc-46c3-a26f-98a9a7d61d0e"
 ```
 
 If the service receives a request to modify a resource that includes an
-`If-Match` header, the service <b class="text-red-700">must</b> validate that the value matches the
+`If-Match` header, the service <b class="font-extrabold	text-red-700">must</b> validate that the value matches the
 current ETag. If the `If-Match` header value does not match the ETag, the
-service <b class="text-red-700">must</b> reply with an HTTP 412 error.
+service <b class="font-extrabold	text-red-700">must</b> reply with an HTTP 412 error.
 
-If the user omits the `If-Match` header, the service <b class="text-yellow-700">should</b> permit the
+If the user omits the `If-Match` header, the service <b class="font-extrabold	text-yellow-700">should</b> permit the
 request. However, services with strong consistency or parallelism requirements
-<b class="text-green-700">may</b> require users to send ETags all the time and reject the request with an
+<b class="font-extrabold text-green-700">may</b> require users to send ETags all the time and reject the request with an
 HTTP 400 error if it does not contain an ETag.
 
 If any conditional headers are supported for any operation within a service,
-the same conditional headers <b class="text-red-700">must</b> be supported for all mutation methods
+the same conditional headers <b class="font-extrabold	text-red-700">must</b> be supported for all mutation methods
 (`POST`, `PATCH`, `PUT`, and `DELETE`) of any path that supports them, and
-<b class="text-yellow-700">should</b> be supported uniformly for all operations across the service.
+<b class="font-extrabold	text-yellow-700">should</b> be supported uniformly for all operations across the service.
 
 If any validator or conditional headers are supported for any operations in the
-service, the use of unsupported conditional headers <b class="text-red-700">must</b> result in an
+service, the use of unsupported conditional headers <b class="font-extrabold	text-red-700">must</b> result in an
 error. (In other words, once a service gives the client reason to believe it
-understands conditional headers, it <b class="text-red-700">must not</b> ever ignore them.)
+understands conditional headers, it <b class="font-extrabold	text-red-700">must not</b> ever ignore them.)
 
 ### Read requests
 
 If a service receives a `GET` or `HEAD` request with an `If-Match` header, the
-service <b class="text-red-700">must</b> proceed with the request if the ETag matches, or send a
+service <b class="font-extrabold	text-red-700">must</b> proceed with the request if the ETag matches, or send a
 `412 Precondition Failed` error if the ETag does not match.
 
 If a service receives a `GET` or `HEAD` request with an `If-None-Match` header,
-the service <b class="text-red-700">must</b> proceed with the request if the ETag does not match, or
+the service <b class="font-extrabold	text-red-700">must</b> proceed with the request if the ETag does not match, or
 return a `304 Not Modified` response if the ETag does match.
 
 ### Strong and weak ETags
@@ -100,8 +100,8 @@ ETags can be either "strongly validated" or "weakly validated":
   equivalent, but may differ in ways that the service does not consider to be
   important.
 
-Resources <b class="text-green-700">may</b> use either strong or weak ETags, as it sees fit, but
-<b class="text-yellow-700">should</b> document the behavior. Additionally, weak ETags <b class="text-red-700">must</b> have a `W/`
+Resources <b class="font-extrabold text-green-700">may</b> use either strong or weak ETags, as it sees fit, but
+<b class="font-extrabold	text-yellow-700">should</b> document the behavior. Additionally, weak ETags <b class="font-extrabold	text-red-700">must</b> have a `W/`
 prefix as mandated by [RFC 7232][]:
 
 ```
@@ -110,9 +110,9 @@ Content-type: application/json
 ETag: W/"55cc0347-66fc-46c3-a26f-98a9a7d61d0e"
 ```
 
-Strong ETags <b class="text-red-700">must</b> and weak ETags <b class="text-yellow-700">should</b> be guaranteed to change if any
+Strong ETags <b class="font-extrabold	text-red-700">must</b> and weak ETags <b class="font-extrabold	text-yellow-700">should</b> be guaranteed to change if any
 properties on the resource change that are directly mutable by the client.
-Additionally, strong ETags <b class="text-yellow-700">should</b> be guaranteed to change if the resource's
+Additionally, strong ETags <b class="font-extrabold	text-yellow-700">should</b> be guaranteed to change if the resource's
 representation changes in a meaningful way (meaning the new representation is
 not equivalent to the old one).
 
