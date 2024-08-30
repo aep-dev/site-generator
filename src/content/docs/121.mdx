@@ -37,7 +37,7 @@ When designing an API, consider the following:
 
 ### Resources
 
-A resource-oriented API **must** be modeled as a resource hierarchy, where each
+A resource-oriented API <b class="text-red-700">must</b> be modeled as a resource hierarchy, where each
 node is either a simple resource or a collection of resources.
 
 A _collection_ contains resources of _the same type_. For example, a publisher
@@ -48,7 +48,7 @@ and resources may have any number of sub-resources (usually collections).
   While there is some conceptual alignment between storage systems and
   APIs, a service with a resource-oriented API is not necessarily a database, and
   has enormous flexibility in how it interprets resources and methods. API
-  designers **should not** expect that their API will be reflective of their
+  designers <b class="text-yellow-700">should not</b> expect that their API will be reflective of their
   database schema. In fact, having an API that is identical to the underlying
   database schema is actually an anti-pattern, as it tightly couples the surface
   to the underlying system.
@@ -64,7 +64,7 @@ resource. The methods can be either the standard methods ([Get][], [List][],
 
 If the request to or the response from a standard method (or a custom method in
 the same _service_) **is** the resource or **contains** the resource, the
-resource schema for that resource across all methods **must** be the same.
+resource schema for that resource across all methods <b class="text-red-700">must</b> be the same.
 
 | Standard method | Request               | Response        |
 | --------------- | --------------------- | --------------- |
@@ -78,11 +78,11 @@ _The table above describes each standard method's relationship to the resource,
 where "None" indicates that the resource neither **is** nor **is contained** in
 the request or the response_
 
-A resource **must** support at minimum [Get][]: clients must be able to
+A resource <b class="text-red-700">must</b> support at minimum [Get][]: clients must be able to
 validate the state of resources after performing a mutation such as [Create][],
 [Update][], or [Delete][].
 
-A resource **must** also support [List][], except for [singleton resources][]
+A resource <b class="text-red-700">must</b> also support [List][], except for [singleton resources][]
 where more than one resource is not possible.
 
 <Aside type="note" title="Note">
@@ -91,7 +91,7 @@ where more than one resource is not possible.
   (usually `POST`) and define the custom verb in the URI.
 </Aside>
 
-APIs **should** prefer standard methods over custom methods; the purpose of
+APIs <b class="text-yellow-700">should</b> prefer standard methods over custom methods; the purpose of
 custom methods is to define functionality that does not cleanly map to any of
 the standard methods. Custom methods offer the same design freedom as
 traditional RPC APIs, which can be used to implement common programming
@@ -101,22 +101,22 @@ patterns, such as database transactions, import and export, or data analysis.
 
 For methods that operate on the [management plane][], the completion of those
 operations (either successful or with an error,
-[long-running][long-running-requests] or synchronous) **must** mean that the
+[long-running][long-running-requests] or synchronous) <b class="text-red-700">must</b> mean that the
 state of the resource's existence and all user-settable values have reached a
 steady-state.
 
 [Output only][output only] values unrelated to the resource [state][]
-**should** also have reached a steady-state.
+<b class="text-yellow-700">should</b> also have reached a steady-state.
 
 Examples include:
 
 - Following a successful create that is is latest mutation on a resource, a get
-  request for a resource **must** return the resource.
+  request for a resource <b class="text-red-700">must</b> return the resource.
 - Following a successful update that is the latest mutation on a resource, a
-  get request for a resource **must** return the final values from the update
+  get request for a resource <b class="text-red-700">must</b> return the final values from the update
   request.
 - Following a successful delete that is the latest mutation on a resource, a
-  get request for a resource **must** return `NOT_FOUND` (or the resource with
+  get request for a resource <b class="text-red-700">must</b> return `NOT_FOUND` (or the resource with
   the `DELETED` state value in the case of [soft delete][])
 
 Clients of resource-oriented APIs often need to orchestrate multiple operations
@@ -133,7 +133,7 @@ change.
 ### Cyclic References
 
 The relationship between resources, such as parent-child or [resource
-references][], **must** be representable via a [directed acyclic graph][].
+references][], <b class="text-red-700">must</b> be representable via a [directed acyclic graph][].
 
 A cyclic relationship between resources increases the complexity of managing
 resources. Consider resources A and B that refer to each other. The process to

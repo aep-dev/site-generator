@@ -24,13 +24,13 @@ resource.
 
 ## Guidance
 
- - APIs **must** provide a get method for resources. The purpose of the get method
+ - APIs <b class="text-red-700">must</b> provide a get method for resources. The purpose of the get method
 is to return data from a single resource.
  - Some resources take longer to be retrieved than is reasonable for a regular API request. In this situation, the API should use a [long-running operation](/long-running-operations).
 
 ### Requests
 
-`Get` operations **must** be made by sending a `GET` request to the resource's
+`Get` operations <b class="text-red-700">must</b> be made by sending a `GET` request to the resource's
 URI:
 
 ```http
@@ -39,18 +39,18 @@ Host: library.example.com
 Accept: application/json
 ```
 
-- The HTTP method **must** be `GET`.
-  - The request **must** be safe and **must not** have side effects.
-- There **must not** be a request body.
-  - If a `GET` request contains a body, the body **must** be ignored, and
-    **must not** cause an error.
-- The request **must not** require any fields in the query string. The request
-  **should not** include optional fields in the query string unless described
+- The HTTP method <b class="text-red-700">must</b> be `GET`.
+  - The request <b class="text-red-700">must</b> be safe and <b class="text-red-700">must not</b> have side effects.
+- There <b class="text-red-700">must not</b> be a request body.
+  - If a `GET` request contains a body, the body <b class="text-red-700">must</b> be ignored, and
+    <b class="text-red-700">must not</b> cause an error.
+- The request <b class="text-red-700">must not</b> require any fields in the query string. The request
+  <b class="text-yellow-700">should not</b> include optional fields in the query string unless described
   in another AEP.
 
 ### Responses
 
-Single-resource `GET` operations **must** return the resource itself, without
+Single-resource `GET` operations <b class="text-red-700">must</b> return the resource itself, without
 any additional wrapping:
 
 ```json
@@ -63,21 +63,21 @@ any additional wrapping:
 }
 ```
 
-The response **should** usually include the fully-populated resource unless
+The response <b class="text-yellow-700">should</b> usually include the fully-populated resource unless
 there is a reason to return a partial response (see AEP-157).
 
 ### Errors
 
 If the user does not have sufficient permission to know that the resource
-exists, the service **should** reply with an HTTP 404 error, regardless of
-whether or not the resource exists. Permission **must** be checked prior to
+exists, the service <b class="text-yellow-700">should</b> reply with an HTTP 404 error, regardless of
+whether or not the resource exists. Permission <b class="text-red-700">must</b> be checked prior to
 checking if the resource exists.
 
 If the user has sufficient permission to know that the resource exists, but is
-unable to access it, the service **should** reply with an HTTP 403 error.
+unable to access it, the service <b class="text-yellow-700">should</b> reply with an HTTP 403 error.
 
 If the user does have proper permission, but the requested resource does not
-exist, the service **must** reply with an HTTP 404 error.
+exist, the service <b class="text-red-700">must</b> reply with an HTTP 404 error.
 
 ## Interface Definitions
 
@@ -158,20 +158,20 @@ exist, the service **must** reply with an HTTP 404 error.
         ```
       
   
-  - The RPC's name **must** begin with the word `Get`. The remainder of the RPC
-    name **should** be the singular form of the resource's message name.
-  - The request message **must** match the RPC name, with a `Request` suffix.
-  - The response message **must** be the resource itself. (There is no
+  - The RPC's name <b class="text-red-700">must</b> begin with the word `Get`. The remainder of the RPC
+    name <b class="text-yellow-700">should</b> be the singular form of the resource's message name.
+  - The request message <b class="text-red-700">must</b> match the RPC name, with a `Request` suffix.
+  - The response message <b class="text-red-700">must</b> be the resource itself. (There is no
     `GetBookResponse`.)
-  - The HTTP verb **must** be `GET`.
-  - The URI **should** contain a single variable field corresponding to the
+  - The HTTP verb <b class="text-red-700">must</b> be `GET`.
+  - The URI <b class="text-yellow-700">should</b> contain a single variable field corresponding to the
     resource path.
-    - This field **should** be called `path`.
-    - The URI **should** have a variable corresponding to this field.
-    - The `path` field **should** be the only variable in the URI path. All
-      remaining parameters **should** map to URI query parameters.
-  - There **must not** be a `body` key in the `google.api.http` annotation.
-  - There **should** be exactly one `google.api.method_signature` annotation,
+    - This field <b class="text-yellow-700">should</b> be called `path`.
+    - The URI <b class="text-yellow-700">should</b> have a variable corresponding to this field.
+    - The `path` field <b class="text-yellow-700">should</b> be the only variable in the URI path. All
+      remaining parameters <b class="text-yellow-700">should</b> map to URI query parameters.
+  - There <b class="text-red-700">must not</b> be a `body` key in the `google.api.http` annotation.
+  - There <b class="text-yellow-700">should</b> be exactly one `google.api.method_signature` annotation,
     with a value of `"path"`.
   
   Get operations also implement a common request message pattern:
@@ -246,13 +246,13 @@ exist, the service **must** reply with an HTTP 404 error.
         ```
       
   
-  - A resource path field **must** be included. It **should** be called `path`.
-    - The field **should** be annotated as `REQUIRED`.
-    - The field **should** identify the [resource type][aep-123] that it
+  - A resource path field <b class="text-red-700">must</b> be included. It <b class="text-yellow-700">should</b> be called `path`.
+    - The field <b class="text-yellow-700">should</b> be annotated as `REQUIRED`.
+    - The field <b class="text-yellow-700">should</b> identify the [resource type][aep-123] that it
       references.
-  - The comment for the `path` field **should** document the resource pattern.
-  - The request message **must not** contain any other required fields, and
-    **should not** contain other optional fields except those described in
+  - The comment for the `path` field <b class="text-yellow-700">should</b> document the resource pattern.
+  - The request message <b class="text-red-700">must not</b> contain any other required fields, and
+    <b class="text-yellow-700">should not</b> contain other optional fields except those described in
     another AEP.
   
   **Note:** The `path` field in the request object corresponds to the `path`
@@ -265,7 +265,7 @@ exist, the service **must** reply with an HTTP 404 error.
   <TabItem label="OpenAPI 3.0">
   
   
-  Single-resource `GET` operations **must** be specified with consistent OpenAPI
+  Single-resource `GET` operations <b class="text-red-700">must</b> be specified with consistent OpenAPI
   metadata:
   
   
@@ -326,15 +326,15 @@ exist, the service **must** reply with an HTTP 404 error.
         ```
       
   
-  - The `operationId` **must** begin with the word `get`. The remainder of the
-    `operationId` **should** be the singular form of the resource type's name.
-  - The response content **must** be the resource itself. For example:
-    `#/components/schemas/Book`. The response **must** reference a schema with a `x-aep-resource` extension.
-  - The URI **should** contain a variable for each individual ID in the resource
+  - The `operationId` <b class="text-red-700">must</b> begin with the word `get`. The remainder of the
+    `operationId` <b class="text-yellow-700">should</b> be the singular form of the resource type's name.
+  - The response content <b class="text-red-700">must</b> be the resource itself. For example:
+    `#/components/schemas/Book`. The response <b class="text-red-700">must</b> reference a schema with a `x-aep-resource` extension.
+  - The URI <b class="text-yellow-700">should</b> contain a variable for each individual ID in the resource
     hierarchy.
-    - The path parameter for all resource IDs **must** be in the form
+    - The path parameter for all resource IDs <b class="text-red-700">must</b> be in the form
       `{resourceName}Id` (such as `bookId`), and path parameters representing the
-      ID of parent resources **must** end with `Id`.
+      ID of parent resources <b class="text-red-700">must</b> end with `Id`.
   
   
   </TabItem>

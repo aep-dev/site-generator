@@ -21,26 +21,26 @@ vocabulary to adhere to user intent.
 
 ## Guidance
 
-Custom methods **should** only be used for functionality that can not be
+Custom methods <b class="text-yellow-700">should</b> only be used for functionality that can not be
 expressed via standard methods; prefer standard methods if possible, due to
-their consistent semantics. However, APIs **should not** contort things to
+their consistent semantics. However, APIs <b class="text-yellow-700">should not</b> contort things to
 endeavor to make the standard methods "sort of work".
 
 While custom methods vary widely in how they are designed, many principles
 apply consistently:
 
-- The HTTP method for custom methods **should** be selected based on the
+- The HTTP method for custom methods <b class="text-yellow-700">should</b> be selected based on the
   semantics described by [RFC 7231 section 4.3] and [RFC 5789] for `PATCH`. In
-  practice, the vast majority of custom methods **should** use `POST` or `GET`.
+  practice, the vast majority of custom methods <b class="text-yellow-700">should</b> use `POST` or `GET`.
   - Custom methods that serve as an alternative to get or list methods (such as
-    `Search`) **should** use `GET`, and require no request body. These methods
-    **must** be idempotent and have no state changes or side effects (they
+    `Search`) <b class="text-yellow-700">should</b> use `GET`, and require no request body. These methods
+    <b class="text-red-700">must</b> be idempotent and have no state changes or side effects (they
     should be safe as defined in [RFC 7231 section 4.2.1][]).
-  - Custom methods **should not** use `PATCH` or `DELETE`.
-- The HTTP URI **must** use a `:` character followed by the custom verb
-  (`:archive` in the above example), and the verb in the URI **must** match the
+  - Custom methods <b class="text-yellow-700">should not</b> use `PATCH` or `DELETE`.
+- The HTTP URI <b class="text-red-700">must</b> use a `:` character followed by the custom verb
+  (`:archive` in the above example), and the verb in the URI <b class="text-red-700">must</b> match the
   verb in the name of the RPC.
-  - If word separation is required, `camelCase` **must** be used.
+  - If word separation is required, `camelCase` <b class="text-red-700">must</b> be used.
 
 
 <Tabs>
@@ -152,15 +152,15 @@ apply consistently:
         ```
       
   
-  - The name of the RPC **should** be a verb followed by a noun.
-    - The name **must not** contain prepositions ("for", "with", etc.).
-  - The `body` clause in the `google.api.http` annotation **should** be `"*"`.
-    - However, if using `GET` or `DELETE`, the `body` clause **must** be absent.
-  - Custom methods **must** take a request message exactly matching the RPC name,
+  - The name of the RPC <b class="text-yellow-700">should</b> be a verb followed by a noun.
+    - The name <b class="text-red-700">must not</b> contain prepositions ("for", "with", etc.).
+  - The `body` clause in the `google.api.http` annotation <b class="text-yellow-700">should</b> be `"*"`.
+    - However, if using `GET` or `DELETE`, the `body` clause <b class="text-red-700">must</b> be absent.
+  - Custom methods <b class="text-red-700">must</b> take a request message exactly matching the RPC name,
     with a `Request` suffix. For example, `ArchiveBookRequest`.
-  - Custom methods **should** return a response message exactly matching the RPC
+  - Custom methods <b class="text-yellow-700">should</b> return a response message exactly matching the RPC
     name, with a `Response` suffix. For example, `ArchiveBookResponse`.
-    - When operating on a specific resource, a custom method **may** return the
+    - When operating on a specific resource, a custom method <b class="text-green-700">may</b> return the
       resource itself.
   
   
@@ -253,8 +253,8 @@ apply consistently:
         ```
       
   
-  - The name of the RPC **should** be a verb followed by a noun.
-    - The name of the RPC **must not** contain prepositions ("for", "with",
+  - The name of the RPC <b class="text-yellow-700">should</b> be a verb followed by a noun.
+    - The name of the RPC <b class="text-red-700">must not</b> contain prepositions ("for", "with",
       etc.).
   
   
@@ -270,7 +270,7 @@ apply consistently:
 
 ### Resource-based custom methods
 
-Custom methods **must** operate on a resource if the API can be modeled as
+Custom methods <b class="text-red-700">must</b> operate on a resource if the API can be modeled as
 such:
 
 
@@ -383,7 +383,7 @@ such:
         ```
       
   
-  - The parameter for the resource's path **must** be called `path`, and **must**
+  - The parameter for the resource's path <b class="text-red-700">must</b> be called `path`, and <b class="text-red-700">must</b>
     be the only variable in the URI path.
   
   
@@ -401,7 +401,7 @@ such:
 ### Collection-based custom methods
 
 While most custom methods operate on a single resource, some custom methods
-**may** operate on a collection instead:
+<b class="text-green-700">may</b> operate on a collection instead:
 
 
 <Tabs>
@@ -609,8 +609,8 @@ While most custom methods operate on a single resource, some custom methods
     
 
 - If the collection has a parent, the field name in the request message
-  **should** be `parent`.
-- The collection key (`books` in the above example) **must** be literal.
+  <b class="text-yellow-700">should</b> be `parent`.
+- The collection key (`books` in the above example) <b class="text-red-700">must</b> be literal.
 
 ### Stateless methods
 
@@ -751,17 +751,17 @@ permanent effect on data within the API.
     
 
 - If the method runs in a particular scope (such as a project, as in the above
-  example), the field name in the request message **should** be the name of the
-  scope resource. If word separators are necessary, `snake_case` **must** be
+  example), the field name in the request message <b class="text-yellow-700">should</b> be the name of the
+  scope resource. If word separators are necessary, `snake_case` <b class="text-red-700">must</b> be
   used.
-- The URI **should** place both the verb and noun after the `:` separator
+- The URI <b class="text-yellow-700">should</b> place both the verb and noun after the `:` separator
   (avoid a "faux collection key" in the URI in this case, as there is no
   collection). For example, `:translateText` is preferable to `text:translate`.
-- Stateless methods **must** use `POST` if they involve billing.
+- Stateless methods <b class="text-red-700">must</b> use `POST` if they involve billing.
 
 ### Declarative-friendly resources
 
-Declarative-friendly resources usually **should not** employ custom methods
+Declarative-friendly resources usually <b class="text-yellow-700">should not</b> employ custom methods
 (except specific declarative-friendly custom methods discussed in other AEPs),
 because declarative-friendly tools are unable to automatically determine what
 to do with them.

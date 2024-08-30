@@ -25,18 +25,18 @@ tools such as Kubernetes or GraphQL interact with APIs from multiple providers.
 
 ## Guidance
 
-APIs **must** define a resource type for each resource in the API, according to
+APIs <b class="text-red-700">must</b> define a resource type for each resource in the API, according to
 the following pattern: `{API Name}/{Type Name}`. The type name:
 
-- **must** Only contain ASCII alphanumeric characters.
-- **must** Start with a lowercase letter.
-- **must** Be of the singular form of the noun.
-- **must** Use kebab case.
-- For Kubernetes, the type name when converted to UpperCamelCase **must** match
+- <b class="text-red-700">must</b> Only contain ASCII alphanumeric characters.
+- <b class="text-red-700">must</b> Start with a lowercase letter.
+- <b class="text-red-700">must</b> Be of the singular form of the noun.
+- <b class="text-red-700">must</b> Use kebab case.
+- For Kubernetes, the type name when converted to UpperCamelCase <b class="text-red-700">must</b> match
   the [object][] name.
-- For OpenAPI, the type name when converted to UpperCamelCase **must** match
+- For OpenAPI, the type name when converted to UpperCamelCase <b class="text-red-700">must</b> match
   the name of the schema representing the object.
-- For protobuf, the type name when converted to UpperCamelCase **must** match
+- For protobuf, the type name when converted to UpperCamelCase <b class="text-red-700">must</b> match
   the name of the protobuf message.
 
 ### Examples
@@ -52,7 +52,7 @@ Examples of resource types include:
 
 ### Annotating resource types
 
-APIs **must** annotate the resource types for each resource in the API
+APIs <b class="text-red-700">must</b> annotate the resource types for each resource in the API
 
 
 <Tabs>
@@ -110,10 +110,10 @@ APIs **must** annotate the resource types for each resource in the API
 </Tabs>
     
 
-- The `singular` field **must** be the kebab-case singular type name.
-- The `plural` field **must** be the kebab-case plural of the singular.
+- The `singular` field <b class="text-red-700">must</b> be the kebab-case singular type name.
+- The `plural` field <b class="text-red-700">must</b> be the kebab-case plural of the singular.
 
-The `pattern` field **must** match the `pattern` rule in the following grammar,
+The `pattern` field <b class="text-red-700">must</b> match the `pattern` rule in the following grammar,
 expressed as [EBNF][EBNF]:
 
 ```ebnf
@@ -124,9 +124,9 @@ variable = "{", literal, "}";
 
 Where `literal` matches the regex `[a-z][a-z0-9\-]*[a-z0-9]`.
 
-- Patterns **must** match the possible [paths](/paths) of the
+- Patterns <b class="text-red-700">must</b> match the possible [paths](/paths) of the
   resource.
-- Pattern variables (the segments within braces) **must** match the singular of
+- Pattern variables (the segments within braces) <b class="text-red-700">must</b> match the singular of
   the resource whose id is being matched by that value.
 
 #### Pattern uniqueness

@@ -18,53 +18,53 @@ consistently to communicate that concept.
 
 ## Guidance
 
-Standard fields **should** be used to describe their corresponding concept, and
-**should not** be used for any other purpose.
+Standard fields <b class="text-yellow-700">should</b> be used to describe their corresponding concept, and
+<b class="text-yellow-700">should not</b> be used for any other purpose.
 
 ### Resource paths and IDs
 
 #### path
 
-Every resource **must** have a `string path` field, used for the
-[resource path](/resource-paths), which **should** be the first field in the
+Every resource <b class="text-red-700">must</b> have a `string path` field, used for the
+[resource path](/resource-paths), which <b class="text-yellow-700">should</b> be the first field in the
 resource.
 
 #### parent
 
 The `string parent` field refers to the resource name of the parent of a
-collection, and **must** be used in [`List`](/list) and [`Create`](/create)
+collection, and <b class="text-red-700">must</b> be used in [`List`](/list) and [`Create`](/create)
 requests except for top-level resources.
 
 ### Names
 
 #### display_name
 
-The `string display_name` field **should** be a mutable, user-settable field
+The `string display_name` field <b class="text-yellow-700">should</b> be a mutable, user-settable field
 where the user can provide a human-readable name to be used in user interfaces.
 
-Display names **should not** have uniqueness requirements, and **should** be
+Display names <b class="text-yellow-700">should not</b> have uniqueness requirements, and <b class="text-yellow-700">should</b> be
 limited to \<= 63 characters.
 
 <Aside type="note" title="Note">
-  The `_name` suffix **should not** be used to describe other types of
+  The `_name` suffix <b class="text-yellow-700">should not</b> be used to describe other types of
   names unless otherwise covered in this AEP.
 </Aside>
 
 #### title
 
-The `string title` field **should** be the official name of an entity, such as
+The `string title` field <b class="text-yellow-700">should</b> be the official name of an entity, such as
 a company's name. This is a more formal variant of `string display_name`.
 
 #### given_name
 
-The `string given_name` field **must** refer to a human or animal's given name.
-Resources **must not** use `first_name` for this concept, because the given
+The `string given_name` field <b class="text-red-700">must</b> refer to a human or animal's given name.
+Resources <b class="text-red-700">must not</b> use `first_name` for this concept, because the given
 name is not placed first in many cultures.
 
 #### family_name
 
-The `string family_name` field **must** refer to a human or animal's family
-name. Resources **must not** use `last_name` for this concept, because the
+The `string family_name` field <b class="text-red-700">must</b> refer to a human or animal's family
+name. Resources <b class="text-red-700">must not</b> use `last_name` for this concept, because the
 family name is not placed last in many cultures.
 
 ### Timestamps
@@ -74,51 +74,51 @@ See [common components](/common-components) for more information about `Timestam
 
 #### create_time
 
-The output only `Timestamp create_time` field **must** represent the timestamp
-when the resource was created. This **may** be either the time creation was
+The output only `Timestamp create_time` field <b class="text-red-700">must</b> represent the timestamp
+when the resource was created. This <b class="text-green-700">may</b> be either the time creation was
 initiated or the time it was completed.
 
 #### update_time
 
-The output only `Timestamp update_time` field **must** represent the timestamp
+The output only `Timestamp update_time` field <b class="text-red-700">must</b> represent the timestamp
 when the resource was most recently updated. Any change to the resource made by
-users **must** refresh this value; changes to a resource made internally by the
-service **may** refresh this value.
+users <b class="text-red-700">must</b> refresh this value; changes to a resource made internally by the
+service <b class="text-green-700">may</b> refresh this value.
 
 #### delete_time
 
-The output only `Timestamp delete_time` field **must** represent the timestamp
-that a resource was soft deleted. This **may** correspond to either the time
+The output only `Timestamp delete_time` field <b class="text-red-700">must</b> represent the timestamp
+that a resource was soft deleted. This <b class="text-green-700">may</b> correspond to either the time
 when the user requested deletion, or when the service successfully soft deleted
 the resource. If a resource is not soft deleted, the `delete_time` field
-**must** be empty.
+<b class="text-red-700">must</b> be empty.
 
-Resources that support [soft delete](/soft-delete) **should** provide this field.
+Resources that support [soft delete](/soft-delete) <b class="text-yellow-700">should</b> provide this field.
 
 #### expire_time
 
-The `Timestamp expire_time` field **should** represent the time that a given
+The `Timestamp expire_time` field <b class="text-yellow-700">should</b> represent the time that a given
 resource or resource attribute is no longer useful or valid (e.g. a rotating
-security key). It **may** be used for [expiration](/resource-expiration).
+security key). It <b class="text-green-700">may</b> be used for [expiration](/resource-expiration).
 
-Services **may** provide an `expire_time` value that is inexact, but the
-resource **must not** expire before that time.
+Services <b class="text-green-700">may</b> provide an `expire_time` value that is inexact, but the
+resource <b class="text-red-700">must not</b> expire before that time.
 
 #### purge_time
 
-The `Timestamp purge_time` field **should** represent the time when a soft
-deleted resource will be purged from the system (see AEP-164). It **may** be
+The `Timestamp purge_time` field <b class="text-yellow-700">should</b> represent the time when a soft
+deleted resource will be purged from the system (see AEP-164). It <b class="text-green-700">may</b> be
 used for similar forms of expiration as described in AEP-214. Resources that
-support soft delete **should** include this field.
+support soft delete <b class="text-yellow-700">should</b> include this field.
 
-Services **may** provide a `purge_time` value that is inexact, but the resource
-**must not** be purged from the system before that time.
+Services <b class="text-green-700">may</b> provide a `purge_time` value that is inexact, but the resource
+<b class="text-red-700">must not</b> be purged from the system before that time.
 
 ### Well known string fields
 
 #### IP address
 
-A field that represents an IP address **must** comply with the following:
+A field that represents an IP address <b class="text-red-700">must</b> comply with the following:
 
 - use type `string`
 - use the name `ip_address` or end with the suffix `_ip_address` e.g.
@@ -129,8 +129,8 @@ A field that represents an IP address **must** comply with the following:
 #### uid
 
 The output only `string uid` field refers to a system-assigned unique
-identifier for a resource. When provided, this field **must** be a [UUID4][]
-and **must** specify this format via the `UUID4` format extension (see
+identifier for a resource. When provided, this field <b class="text-red-700">must</b> be a [UUID4][]
+and <b class="text-red-700">must</b> specify this format via the `UUID4` format extension (see
 [fields](/fields)).
 
 ## Further reading

@@ -29,9 +29,9 @@ only processed once.
 
 ## Guidance
 
-APIs **may** add a `aep.api.IdempotencyKey idempotency_key` parameter to
+APIs <b class="text-green-700">may</b> add a `aep.api.IdempotencyKey idempotency_key` parameter to
 request messages (including those of standard methods) in order to uniquely
-identify particular requests. API servers **must not** execute requests with
+identify particular requests. API servers <b class="text-red-700">must not</b> execute requests with
 the same `idempotency_key` more than once.
 
 ```proto
@@ -64,9 +64,9 @@ message CreateBookRequest {
 
   - `key` is simply a unique identifier.
 
-- Providing an idempotency key **must** guarantee idempotency.
+- Providing an idempotency key <b class="text-red-700">must</b> guarantee idempotency.
 
-  - If a duplicate request is detected, the server **must** return one of:
+  - If a duplicate request is detected, the server <b class="text-red-700">must</b> return one of:
 
     - A response equivalent to the response for the previously successful
       request, because the client most likely did not receive the previous
@@ -77,28 +77,28 @@ message CreateBookRequest {
     - An error, if returning an equivalent response is not possible.
 
       For example, if a resource was created, then deleted, and then a
-      duplicate request to create the resource is received, the server **may**
+      duplicate request to create the resource is received, the server <b class="text-green-700">may</b>
       return an error if returning the previously created resource is not
       possible.
 
-  - APIs **should** honor idempotency keys for at least an hour.
-    - When using protocol buffers, idempotency keys that are UUIDs **must** be
+  - APIs <b class="text-yellow-700">should</b> honor idempotency keys for at least an hour.
+    - When using protocol buffers, idempotency keys that are UUIDs <b class="text-red-700">must</b> be
       annotated with a minimum lifetime using the extension
       [`(aep.api.field_info).minimum_lifetime`][minimum_lifetime].
 
-- The `idempotency_key` field **must** be provided on the request message to
-  which it applies (and it **must not** be a field on resources themselves).
+- The `idempotency_key` field <b class="text-red-700">must</b> be provided on the request message to
+  which it applies (and it <b class="text-red-700">must not</b> be a field on resources themselves).
 
   - The `first_sent` field can be used by API servers to determine if a key is
-    expired. API servers **must** reject requests with expired keys, and
-    **must** reject requests with keys that are in the future. When feasible,
-    API servers **should** reject requests that use the same `key` but have a
+    expired. API servers <b class="text-red-700">must</b> reject requests with expired keys, and
+    <b class="text-red-700">must</b> reject requests with keys that are in the future. When feasible,
+    API servers <b class="text-yellow-700">should</b> reject requests that use the same `key` but have a
     different `first_sent` timestamp.
-  - The `key` field **must** be able to be a UUID, and **may** allow UUIDs to
+  - The `key` field <b class="text-red-700">must</b> be able to be a UUID, and <b class="text-green-700">may</b> allow UUIDs to
     be the only valid format. The format restrictions for idempotency keys
-    **must** be documented.
+    <b class="text-red-700">must</b> be documented.
 
-- Idempotency keys **should** be optional.
+- Idempotency keys <b class="text-yellow-700">should</b> be optional.
 
 ## Further reading
 

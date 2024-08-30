@@ -48,6 +48,15 @@ const ASIDES = {
   'Summary': { 'type': 'tip', 'title': 'Summary' }
 };
 
+const RULE_COLORS = {
+  'may': 'text-green-700',
+  'may not': 'text-green-700',
+  'should': 'text-yellow-700',
+  'should not': 'text-yellow-700',
+  'must': 'text-red-700',
+  'must not': 'text-red-700'
+}
+
 async function getFolders(dirPath: string): Promise<string[]> {
   const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
 
@@ -123,8 +132,17 @@ function buildMarkdown(contents: string, folder: string): Markdown {
   substituteHTMLComments(result);
   substituteEscapeCharacters(result);
   substituteCallouts(result);
-
+  substituteRuleIdentifiers(result);
   return result;
+}
+
+function substituteRuleIdentifiers(contents: Markdown) {
+  var rule_regex = /\*\*(should(?: not)?|may(?: not)?|must(?: not)?)\*\*/g
+  var matches = contents.contents.matchAll(rule_regex);
+  for(var match of matches) {
+    var color = RULE_COLORS[match[1]];
+    contents.contents = contents.contents.replace(match[0], `<b class="${color}">${match[1]}</b>`);
+  }
 }
 
 function substituteCallouts(contents: Markdown) {

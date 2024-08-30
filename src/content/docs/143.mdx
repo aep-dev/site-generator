@@ -22,7 +22,7 @@ or "Español" and "Spanish").
 ## Guidance
 
 For concepts where a standardized code exists and is in common use, fields
-representing these concepts **should** use the standardized code for both input
+representing these concepts <b class="text-yellow-700">should</b> use the standardized code for both input
 and output.
 
 
@@ -68,32 +68,32 @@ and output.
 </Tabs>
     
 
-- Fields representing standardized concepts **must** use the appropriate data
+- Fields representing standardized concepts <b class="text-red-700">must</b> use the appropriate data
   type for the standard code (usually `string`).
-  - Fields representing standardized concepts **should not** use enums, even if
+  - Fields representing standardized concepts <b class="text-yellow-700">should not</b> use enums, even if
     they only allow a small subset of possible values. Using enums in this
     situation often leads to frustrating lookup tables when using multiple APIs
     together.
-  - Fields representing standardized concepts **must** indicate which standard
+  - Fields representing standardized concepts <b class="text-red-700">must</b> indicate which standard
     they follow, preferably with a link (either to the standard itself, the
     Wikipedia description, or something similar).
-- The field name **should** end in `_code` or `_type` unless the concept has an
+- The field name <b class="text-yellow-700">should</b> end in `_code` or `_type` unless the concept has an
   obviously clearer suffix.
-- When accepting values provided by users, validation **should** be
+- When accepting values provided by users, validation <b class="text-yellow-700">should</b> be
   case-insensitive unless this would introduce ambiguity (for example, accept
-  both `en-gb` and `en-GB`). When providing values to users, APIs **should**
+  both `en-gb` and `en-GB`). When providing values to users, APIs <b class="text-yellow-700">should</b>
   use the canonical case (in the example above, `en-GB`).
 
 ### Content types
 
-Fields representing a content or media type **must** use [IANA media types][].
-For legacy reasons, the field **should** be called `mime_type`.
+Fields representing a content or media type <b class="text-red-700">must</b> use [IANA media types][].
+For legacy reasons, the field <b class="text-yellow-700">should</b> be called `mime_type`.
 
 ### Countries and regions
 
-Fields representing individual countries or nations **must** use the [Unicode
+Fields representing individual countries or nations <b class="text-red-700">must</b> use the [Unicode
 CLDR region codes][cldr] ([list][]), such as `US` or `CH`, and the field
-**must** be called `region_code`.
+<b class="text-red-700">must</b> be called `region_code`.
 
 <Aside type="caution" title="Important">
   We use `region_code` and not `country_code` to include regions
@@ -103,8 +103,8 @@ CLDR region codes][cldr] ([list][]), such as `US` or `CH`, and the field
 
 ### Currency
 
-Fields representing currency **must** use [ISO-4217 currency codes][iso-4217],
-such as `USD` or `CHF`, and the field **must** be called `currency_code`.
+Fields representing currency <b class="text-red-700">must</b> use [ISO-4217 currency codes][iso-4217],
+such as `USD` or `CHF`, and the field <b class="text-red-700">must</b> be called `currency_code`.
 
 <Aside type="note" title="Note">
   For representing an amount of money in a particular currency, rather
@@ -113,18 +113,18 @@ such as `USD` or `CHF`, and the field **must** be called `currency_code`.
 
 ### Language
 
-Fields representing spoken languages **must** use [IETF BCP-47 language
-codes][bcp-47] ([list][]), such as `en-US` or `de-CH`, and the field **must**
+Fields representing spoken languages <b class="text-red-700">must</b> use [IETF BCP-47 language
+codes][bcp-47] ([list][]), such as `en-US` or `de-CH`, and the field <b class="text-red-700">must</b>
 be called `language_code`.
 
 ### Time zones
 
-Fields representing a time zone **should** use the [IANA TZ][] codes, and the
-field **must** be called `time_zone`.
+Fields representing a time zone <b class="text-yellow-700">should</b> use the [IANA TZ][] codes, and the
+field <b class="text-red-700">must</b> be called `time_zone`.
 
-Fields also **may** represent a UTC offset rather than a time zone (note that
-these are subtly different). In this case, the field **must** use the [ISO-8601
-format][] to represent this, and the field **must** be named `utc_offset`.
+Fields also <b class="text-green-700">may</b> represent a UTC offset rather than a time zone (note that
+these are subtly different). In this case, the field <b class="text-red-700">must</b> use the [ISO-8601
+format][] to represent this, and the field <b class="text-red-700">must</b> be named `utc_offset`.
 
 ## Changelog
 

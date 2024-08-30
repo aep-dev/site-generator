@@ -50,7 +50,7 @@ Character encoding tends to be an area we often gloss over, so a quick primer:
 </Aside>
 
 In API documentation (e.g., API reference documents, blog posts, marketing
-documentation, billing explanations, etc), "character" **must** be defined as a
+documentation, billing explanations, etc), "character" <b class="text-red-700">must</b> be defined as a
 Unicode code point.
 
 ### Length units
@@ -59,7 +59,7 @@ Unicode code point.
   Set size limits in "characters" (as defined above).
 </Aside>
 
-All string field length limits defined in the API **must** be measured and
+All string field length limits defined in the API <b class="text-red-700">must</b> be measured and
 enforced in characters as defined above. This means that there is an underlying
 maximum limit of (`4 * characters`) bytes, though this limit will only be hit
 when using exclusively characters that consist of 4 UTF-8 code units (32 bits).
@@ -70,7 +70,7 @@ handled by the underlying storage system.
 
 ### Billing units
 
-APIs **may** use either code points or bytes (using the UTF-8 encoding) as the
+APIs <b class="text-green-700">may</b> use either code points or bytes (using the UTF-8 encoding) as the
 unit for billing or quota measurement (e.g., Cloud Translation chooses to use
 characters). If an API does not define this, the assumption is that the unit of
 billing is characters (e.g., $0.01 _per character_, not $0.01 _per byte_).
@@ -78,32 +78,32 @@ billing is characters (e.g., $0.01 _per character_, not $0.01 _per byte_).
 ### Unique identifiers
 
 <Aside type="tip" title="undefined">
-  Unique identifiers **should** limit to ASCII, generally only
+  Unique identifiers <b class="text-yellow-700">should</b> limit to ASCII, generally only
   letters, numbers, hyphens, and underscores. Additionally, unique identifiers
-  **should** start with a letter, **should** end in either a letter or number,
-  and **should not** have hyphens or underscores that are next to other hyphens
+  <b class="text-yellow-700">should</b> start with a letter, <b class="text-yellow-700">should</b> end in either a letter or number,
+  and <b class="text-yellow-700">should not</b> have hyphens or underscores that are next to other hyphens
   or underscores.
 </Aside>
 
-Strings used as unique identifiers **should** limit inputs to ASCII characters,
+Strings used as unique identifiers <b class="text-yellow-700">should</b> limit inputs to ASCII characters,
 typically letters, numbers, hyphens, and underscores
 (`[a-zA-Z][a-zA-Z0-9_-]*`). This ensures that there are never accidental
 collisions due to normalization. If an API decides to allow all valid Unicode
-characters in unique identifiers, the API **must** reject any inputs that are
+characters in unique identifiers, the API <b class="text-red-700">must</b> reject any inputs that are
 not in Normalization Form C.
 
-Unique identifiers **should** use a maximum length of 64 characters, though
+Unique identifiers <b class="text-yellow-700">should</b> use a maximum length of 64 characters, though
 this limit may be expanded as necessary. 64 characters should be sufficient for
 most purposes as even UUIDs only require 36 characters.
 
 ### Normalization
 
 <Aside type="tip" title="undefined">
-  Unicode values **should** be stored in [Normalization Form C][].
+  Unicode values <b class="text-yellow-700">should</b> be stored in [Normalization Form C][].
 </Aside>
 
-Values **should** always be normalized into Normalization Form C. Unique
-identifiers **must** always be stored in Normalization Form C (see the next
+Values <b class="text-yellow-700">should</b> always be normalized into Normalization Form C. Unique
+identifiers <b class="text-red-700">must</b> always be stored in Normalization Form C (see the next
 section).
 
 Imagine we're dealing with Spanish input "estar<strong>é</strong>" (the
@@ -131,12 +131,12 @@ To avoid this discrepancy in size (both code units and code points), use
 ### Uniqueness
 
 <Aside type="tip" title="undefined">
-  Unicode values **must** be normalized to [Normalization Form C][]
+  Unicode values <b class="text-red-700">must</b> be normalized to [Normalization Form C][]
   before checking uniqueness.
 </Aside>
 
 For the purposes of unique identification (e.g., `name`, `id`, or `parent`),
-the value **must** be normalized into [Normalization Form C][] (which happens
+the value <b class="text-red-700">must</b> be normalized into [Normalization Form C][] (which happens
 to be the most compact). Otherwise we may have what is essentially "the same
 string" used to identify two entirely different resources.
 
@@ -151,7 +151,7 @@ internet. It is the most compact normalized form on Unicode text, and avoids
 most interoperability problems. If we were to treat two Unicode byte sequences
 as different when they have the same representation in NFC, we'd be required to
 reply to possible "Get" requests with content that is **not** in normalized
-form. Since that is definitely unacceptable, we **must** treat the two as
+form. Since that is definitely unacceptable, we <b class="text-red-700">must</b> treat the two as
 identical by transforming any incoming string data into Normalized Form C or
 rejecting identifiers not in the normalized form.
 
