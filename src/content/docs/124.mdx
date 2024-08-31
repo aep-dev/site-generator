@@ -9,6 +9,7 @@ title: Resource association
 
 --- 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import Sample from '../../components/Sample.astro';
 
 # Resource association
 
@@ -33,59 +34,14 @@ associated with other resources through other fields on the resource.
   <TabItem label="Protocol Buffers">
   
   
-  
-        ```protobuf
-        syntax = "proto3";
-  
-  import "google/api/resource.proto";
-  
-  message Book {
-    // The resource path pattern for Book indicates that Publisher is the
-    // canonical parent.
-    option (google.api.resource) = {
-      type: "library.googleapis.com/Book"
-      pattern: "publishers/{publisher}/books/{book}"
-    };
-  
-    // The resource path for the book.
-    string path = 1 [(google.api.field_behavior) = IDENTIFIER];
-  
-    // The resource name for the book's author.
-    string author = 2 [(google.api.resource_reference) = {
-      type: "library.googleapis.com/Author"
-    }];
-  }
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0124/multiple_many_to_one.proto" type="protobuf" />
   
   
   </TabItem>
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        ---
-  openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  components:
-    schema:
-      Book:
-        description: A representation of a single book.
-        properties:
-          path:
-            type: string
-            description: |
-              The path of the book.
-              Format: publishers/{publisher}/books/{book}
-          author:
-            type: string
-            description: The author or authors of the book.
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0124/multiple_many_to_one.oas.yaml" type="yml" />
   
   
   </TabItem>
@@ -118,59 +74,14 @@ described for repeated fields in [arrays][/arrays].
   <TabItem label="Protocol Buffers">
   
   
-  
-        ```protobuf
-        syntax = "proto3";
-  
-  import "google/api/field_behavior.proto";
-  import "google/api/resource.proto";
-  
-  message Book {
-    option (google.api.resource) = {
-      type: "library.googleapis.com/Book"
-      pattern: "publishers/{publisher}/books/{book}"
-    };
-  
-    string path = 1 [(google.api.field_behavior) = IDENTIFIER];
-  
-    // The resource paths for the book's authors.
-    repeated string authors = 2 [(google.api.resource_reference) = {
-      type: "library.googleapis.com/Author"
-    }];
-  }
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0124/many_to_many_repeated.proto" type="protobuf" />
   
   
   </TabItem>
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        ---
-  openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  components:
-    schema:
-      Book:
-        description: A representation of a single book.
-        properties:
-          path:
-            type: string
-            description: |
-              The path of the book.
-              Format: publishers/{publisher}/books/{book}
-          authors:
-            type: array
-            items:
-              type: string
-            description: The author or authors of the book.
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0124/many_to_many_repeated.oas.yaml" type="yml" />
   
   
   </TabItem>
@@ -191,64 +102,14 @@ relationship using a sub-resource with two one-to-many associations.
   <TabItem label="Protocol Buffers">
   
   
-  
-        ```protobuf
-        syntax = "proto3";
-  
-  import "google/api/field_behavior.proto";
-  import "google/api/resource.proto";
-  
-  message BookAuthor {
-    // The resource pattern for BookAuthor indicates that Book is the
-    // canonical parent.
-    option (google.api.resource) = {
-      type: "library.googleapis.com/BookAuthor"
-      pattern: "publishers/{publisher}/books/{book}/authors/{book_author}"
-    };
-  
-    // The resource path for the book-author association.
-    string path = 1 [(google.api.field_behavior) = IDENTIFIER];
-  
-    // The resource path for the author.
-    string author = 2 [(google.api.resource_reference) = {
-      type: "library.googleapis.com/Author"
-    }];
-  
-    // Other fields...
-  }
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0124/many_to_many_subresource.proto" type="protobuf" />
   
   
   </TabItem>
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        ---
-  openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  components:
-    schema:
-      BookAuthor:
-        description: A representation of a book being written by an author.
-        properties:
-          path:
-            type: string
-            description: |
-              The path of the book.
-              Format: publishers/{publisher}/books/{book}
-          authors:
-            type: string
-            description: |
-              The author of the book.
-              Format publishers/{publishers}/authors/{author}
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0124/many_to_many_subresource.oas.yaml" type="yml" />
   
   
   </TabItem>
@@ -319,84 +180,14 @@ dereferenced.
   <TabItem label="Protocol Buffers">
   
   
-  
-        ```protobuf
-        syntax = "proto3";
-  
-  import "google/api/resource.proto";
-  
-  message Book {
-    // The resource path pattern for Book indicates that Publisher is the
-    // canonical parent.
-    option (google.api.resource) = {
-      type: "library.googleapis.com/Book"
-      pattern: "publishers/{publisher}/books/{book}"
-    };
-  
-    // The resource path for the book.
-    string path = 1 [(google.api.field_behavior) = IDENTIFIER];
-  
-    // The resource path of the book's author.
-    //
-    // By default, only the `path` field of the author is populated.
-    // However, the full author can be retrieved by specifying the 
-    // FULL_WITH_AUTHOR view. This **will not** dereference resource
-    // references within the author, such as `Author.pen_names`; only
-    // the `path` subfield of these fields will be populated.
-    Author author = 2 [(google.api.resource_reference) = {
-      type: "library.googleapis.com/Author"
-    }];
-  
-    // Different views of a book.
-    enum View {
-      // The default view.
-      VIEW_UNSPECIFIED = 0;
-  
-      // Includes all fields, but does not derefefence the author.
-      FULL = 1;
-  
-      // Includes all fields and also fully populates author.
-      FULL_WITH_AUTHOR = 2;
-    }
-  }
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0124/embedded_resource.proto" type="protobuf" />
   
   
   </TabItem>
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        ---
-  openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  components:
-    schema:
-      Book:
-        description: A representation of a single book.
-        properties:
-          path:
-            type: string
-            description: |
-              The path of the book.
-              Format: publishers/{publisher}/books/{book}
-          author:
-            $ref: '#/components/schemas/Author'
-            description: |
-              The author or authors of the book.
-  
-              By default, only the `path` field of the author is populated.
-              However, the full author can be retrieved by specifying the
-              FULL_WITH_AUTHOR view. This **will not** dereference resource
-              references within the author, such as `Author.pen_names`; only
-              the `path` subfield of these fields will be populated.
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0124/embedded_resource.oas.yaml" type="yml" />
   
   
   </TabItem>

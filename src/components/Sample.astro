@@ -1,0 +1,12 @@
+---
+import { Code } from '@astrojs/starlight/components';
+import fs from 'node:fs/promises';
+
+const { path, type } = Astro.props;
+
+const exampleCode = await fs.readFile(path, "utf-8");
+---
+
+<Code code={exampleCode} lang={type} />
+
+

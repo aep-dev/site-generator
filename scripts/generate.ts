@@ -192,6 +192,7 @@ function buildAEP(files: string[], folder: string): AEP {
 ${dump(yaml)}
 --- 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import Sample from '../../components/Sample.astro';
 
 ${contents.contents}`
   }
@@ -255,14 +256,9 @@ function substituteSamples(contents: Markdown, folder: string) {
   }
 
   for (var sample of samples) {
-    const sample_contents = readSample(folder, sample.filename)
     let type = sample.filename.endsWith('proto') ? 'protobuf' : 'yml';
-    let formatted_sample = `
-      \`\`\`${type}
-      ${sample_contents}
-      \`\`\`
-    `
-    contents.contents = contents.contents.replace(sample.match, formatted_sample)
+    let formatted_sample = `<Sample path="${path.join(folder, sample.filename)}" type="${type}" />`
+    contents.contents = contents.contents.replace(sample.match, formatted_sample);
   }
 }
 

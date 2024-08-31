@@ -10,6 +10,7 @@ title: Array fields
 
 --- 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import Sample from '../../components/Sample.astro';
 
 # Array fields
 
@@ -113,83 +114,7 @@ define custom methods using the verbs `Add` and `Remove`:
   <TabItem label="Protocol Buffers">
   
   
-  
-        ```protobuf
-        syntax = "proto3";
-  
-  import "google/api/annotations.proto";
-  import "google/api/field_behavior.proto";
-  import "google/api/resource.proto";
-  
-  service Library {
-    // Add an author to a book.
-    rpc AddAuthor(AddAuthorRequest) returns (Book) {
-      option (google.api.http) = {
-        post: "/v1/{book=publishers/*/books/*}:addAuthor"
-        body: "*"
-      };
-    }
-  
-    // Remove an author from a book.
-    rpc RemoveAuthor(RemoveAuthorRequest) returns (Book) {
-      option (google.api.http) = {
-        post: "/v1/{book=publishers/*/books/*}:removeAuthor"
-        body: "*"
-      };
-    }
-  }
-  
-  // The request structure for the AddAuthor operation.
-  message AddAuthorRequest {
-    // The name of the book to add an author to.
-    string book = 1 [
-      (google.api.field_behavior) = REQUIRED,
-      (google.api.resource_reference).type = "library.googleapis.com/Book"
-    ];
-  
-    // The author to be added.
-    string author = 2 [(google.api.field_behavior) = REQUIRED];
-  }
-  
-  // The request structure for the RemoveAuthor operation.
-  message RemoveAuthorRequest {
-    // The name of the book to remove an author from.
-    string book = 1 [
-      (google.api.field_behavior) = REQUIRED,
-      (google.api.resource_reference).type = "library.googleapis.com/Book"
-    ];
-  
-    // The author to be removed.
-    string author = 2 [(google.api.field_behavior) = REQUIRED];
-  }
-  
-  
-  // A representation of a single book.
-  message Book {
-    option (google.api.resource) = {
-      type: "library.googleapis.com/Book"
-      pattern: "publishers/{publisher}/books/{book}"
-    };
-  
-    // The name of the book.
-    // Format: publishers/{publisher}/books/{book}
-    string name = 1;
-  
-    // The ISBN (International Standard Book Number) for this book.
-    string isbn = 2;
-  
-    // The title of the book.
-    string title = 3;
-  
-    // The author or authors of the book.
-    repeated string authors = 4;
-  
-    // The rating assigned to the book.
-    float rating = 5;
-  }
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0144/add_remove.proto" type="protobuf" />
   
   - The data being added or removed <b class="font-extrabold	text-yellow-700">should</b> be a primitive (usually a
     `string`).
@@ -219,84 +144,7 @@ define custom methods using the verbs `Add` and `Remove`:
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        ---
-  openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  paths:
-    '/publishers/{publisherId}/books/{bookId}:addAuthor':
-      post:
-        operationId: addAuthor
-        description: Add an author to a book.
-        requestBody:
-          content:
-            application/json:
-              schema:
-                properties:
-                  author:
-                    type: string
-                    description: The author to be added.
-                    required: true
-          required: true
-        responses:
-          200:
-            description: OK
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Book'
-    '/publishers/{publisherId}/books/{bookId}:removeAuthor':
-      post:
-        operationId: removeAuthor
-        description: Remove an author from a book.
-        requestBody:
-          content:
-            application/json:
-              schema:
-                properties:
-                  author:
-                    type: string
-                    description: The author to be removed.
-                    required: true
-          required: true
-        responses:
-          200:
-            description: OK
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Book'
-  components:
-    schema:
-      Book:
-        description: A representation of a single book.
-        properties:
-          name:
-            type: string
-            description: |
-              The name of the book.
-              Format: publishers/{publisher}/books/{book}
-          isbn:
-            type: string
-            description: |
-              The ISBN (International Standard Book Number) for this book.
-          title:
-            type: string
-            description: The title of the book.
-          authors:
-            type: array
-            items:
-              type: string
-            description: The author or authors of the book.
-          rating:
-            type: float
-            description: The rating assigned to the book.
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0144/add_remove.oas.yaml" type="yml" />
   
   - The data being added or removed <b class="font-extrabold	text-yellow-700">should</b> be a primitive (usually a
     `string`).
@@ -334,83 +182,7 @@ define custom methods using the verbs `Add` and `Remove`:
   <TabItem label="Protocol Buffers">
   
   
-  
-        ```protobuf
-        syntax = "proto3";
-  
-  import "google/api/annotations.proto";
-  import "google/api/field_behavior.proto";
-  import "google/api/resource.proto";
-  
-  service Library {
-    // Add an author to a book.
-    rpc AddAuthor(AddAuthorRequest) returns (Book) {
-      option (google.api.http) = {
-        post: "/v1/{book=publishers/*/books/*}:addAuthor"
-        body: "*"
-      };
-    }
-  
-    // Remove an author from a book.
-    rpc RemoveAuthor(RemoveAuthorRequest) returns (Book) {
-      option (google.api.http) = {
-        post: "/v1/{book=publishers/*/books/*}:removeAuthor"
-        body: "*"
-      };
-    }
-  }
-  
-  // The request structure for the AddAuthor operation.
-  message AddAuthorRequest {
-    // The name of the book to add an author to.
-    string book = 1 [
-      (google.api.field_behavior) = REQUIRED,
-      (google.api.resource_reference).type = "library.googleapis.com/Book"
-    ];
-  
-    // The author to be added.
-    string author = 2 [(google.api.field_behavior) = REQUIRED];
-  }
-  
-  // The request structure for the RemoveAuthor operation.
-  message RemoveAuthorRequest {
-    // The name of the book to remove an author from.
-    string book = 1 [
-      (google.api.field_behavior) = REQUIRED,
-      (google.api.resource_reference).type = "library.googleapis.com/Book"
-    ];
-  
-    // The author to be removed.
-    string author = 2 [(google.api.field_behavior) = REQUIRED];
-  }
-  
-  
-  // A representation of a single book.
-  message Book {
-    option (google.api.resource) = {
-      type: "library.googleapis.com/Book"
-      pattern: "publishers/{publisher}/books/{book}"
-    };
-  
-    // The name of the book.
-    // Format: publishers/{publisher}/books/{book}
-    string name = 1;
-  
-    // The ISBN (International Standard Book Number) for this book.
-    string isbn = 2;
-  
-    // The title of the book.
-    string title = 3;
-  
-    // The author or authors of the book.
-    repeated string authors = 4;
-  
-    // The rating assigned to the book.
-    float rating = 5;
-  }
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0144/add_remove.proto" type="protobuf" />
   
   - A resource field <b class="font-extrabold	text-red-700">must</b> be included. It <b class="font-extrabold	text-yellow-700">should</b> be the name of the
     resource (such as `book`) rather than `name` or `parent`.
@@ -429,84 +201,7 @@ define custom methods using the verbs `Add` and `Remove`:
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        ---
-  openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  paths:
-    '/publishers/{publisherId}/books/{bookId}:addAuthor':
-      post:
-        operationId: addAuthor
-        description: Add an author to a book.
-        requestBody:
-          content:
-            application/json:
-              schema:
-                properties:
-                  author:
-                    type: string
-                    description: The author to be added.
-                    required: true
-          required: true
-        responses:
-          200:
-            description: OK
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Book'
-    '/publishers/{publisherId}/books/{bookId}:removeAuthor':
-      post:
-        operationId: removeAuthor
-        description: Remove an author from a book.
-        requestBody:
-          content:
-            application/json:
-              schema:
-                properties:
-                  author:
-                    type: string
-                    description: The author to be removed.
-                    required: true
-          required: true
-        responses:
-          200:
-            description: OK
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Book'
-  components:
-    schema:
-      Book:
-        description: A representation of a single book.
-        properties:
-          name:
-            type: string
-            description: |
-              The name of the book.
-              Format: publishers/{publisher}/books/{book}
-          isbn:
-            type: string
-            description: |
-              The ISBN (International Standard Book Number) for this book.
-          title:
-            type: string
-            description: The title of the book.
-          authors:
-            type: array
-            items:
-              type: string
-            description: The author or authors of the book.
-          rating:
-            type: float
-            description: The rating assigned to the book.
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0144/add_remove.oas.yaml" type="yml" />
   
   - A field for the value being added or removed <b class="font-extrabold	text-red-700">must</b> be included. It
     <b class="font-extrabold	text-yellow-700">should</b> be the singular name of the field.

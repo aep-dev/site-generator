@@ -9,6 +9,7 @@ title: Delete
 
 --- 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import Sample from '../../components/Sample.astro';
 
 # Delete
 
@@ -77,45 +78,7 @@ Delete methods are specified using the following pattern:
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        ---
-  openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  paths:
-    /publishers/{publisherId}/books/{bookId}:
-      parameters:
-        - $ref: '#/components/parameters/PublisherId'
-        - $ref: '#/components/parameters/BookId'
-      delete:
-        operationId: deleteBook
-        description: Delete a single book.
-        responses:
-          '204':
-            description: Book was deleted
-          '404':
-            description: Not found
-  components:
-    parameters:
-      PublisherId:
-        name: publisherId
-        in: path
-        description: The id of the book publisher.
-        required: true
-        schema:
-          type: string
-      BookId:
-        name: bookId
-        in: path
-        description: The id of the book.
-        required: true
-        schema:
-          type: string
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0135/delete.oas.yaml" type="yml" />
   
   - The response body <b class="font-extrabold	text-yellow-700">should</b> be omitted.
   - The HTTP response code <b class="font-extrabold	text-yellow-700">should</b> be `204 No Content` if the delete was
@@ -169,45 +132,7 @@ Delete methods implement a common request pattern:
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        ---
-  openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  paths:
-    /publishers/{publisherId}/books/{bookId}:
-      parameters:
-        - $ref: '#/components/parameters/PublisherId'
-        - $ref: '#/components/parameters/BookId'
-      delete:
-        operationId: deleteBook
-        description: Delete a single book.
-        responses:
-          '204':
-            description: Book was deleted
-          '404':
-            description: Not found
-  components:
-    parameters:
-      PublisherId:
-        name: publisherId
-        in: path
-        description: The id of the book publisher.
-        required: true
-        schema:
-          type: string
-      BookId:
-        name: bookId
-        in: path
-        description: The id of the book.
-        required: true
-        schema:
-          type: string
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0135/delete.oas.yaml" type="yml" />
   
   - Delete methods <b class="font-extrabold	text-yellow-700">should</b> return `204 No Content` with no response body, or
     `202 Accepted` with a representation of the operation in the response body if
@@ -263,74 +188,7 @@ instead: [AEP-151][aep-151].
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  paths:
-    /publishers/{publisherId}/books/{bookId}:
-      parameters:
-        - $ref: '#/components/parameters/PublisherId'
-        - $ref: '#/components/parameters/BookId'
-      delete:
-        operationId: deleteBook
-        description: Delete a single book.
-        responses:
-          '202':
-            description: Accepted
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/DeleteBookOperation'
-  components:
-    parameters:
-      PublisherId:
-        name: publisherId
-        in: path
-        description: The id of the book publisher.
-        required: true
-        schema:
-          type: string
-      BookId:
-        name: bookId
-        in: path
-        description: The id of the book.
-        required: true
-        schema:
-          type: string
-    schemas:
-      DeleteBookOperation:
-        description: The status of the deleteBook operation.
-        properties:
-          response:
-            type: object
-            description: Empty object.
-          metadata:
-            type: object
-            properties:
-              startTime:
-                type: string
-                format: date-time
-                description: The time the operation started.
-              progressPercent:
-                type: integer
-                format: int32
-                description: The current progress, expressed as an integer.
-              state:
-                type: string
-                description: The current state of the operation.
-                enum:
-                  - STATE_UNSPECIFIED
-                  - RUNNING
-                  - SUCCEEDED
-                  - CANCELLING
-                  - CANCELLED
-                  - FAILED
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0135/long_running_delete.oas.yaml" type="yml" />
   
   - The response status code should be `202 Accepted` if the request was accepted
     for later processing. When the request is processed it could still fail.
@@ -381,49 +239,7 @@ explicitly opt in to a cascading delete.
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  paths:
-    /publishers/{publisherId}:
-      parameters:
-        - $ref: '#/components/parameters/PublisherId'
-      delete:
-        operationId: deletePublisher
-        description: Delete a publisher.
-        parameters:
-          - in: query
-            name: force
-            description: |
-              If set to true, any books from this publisher will also be deleted.
-              (Otherwise, the request will only work if the publisher has no books.)
-            schema:
-              type: boolean
-              default: false
-        responses:
-          '204':
-            description: Publisher was deleted
-          '404':
-            description: Not found
-          '409':
-            description: |
-              Delete request failed because publisher has child resource and the
-              `force` parameter was set or defaulted to `false`.
-  components:
-    parameters:
-      PublisherId:
-        name: publisherId
-        in: path
-        description: The id of the book publisher.
-        required: true
-        schema:
-          type: string
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0135/cascading_delete.oas.yaml" type="yml" />
   
   The API <b class="font-extrabold	text-red-700">must</b> fail with a `409 Conflict` error if the `force` field is
   `false` (or unset) and child resources are present.

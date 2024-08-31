@@ -10,6 +10,7 @@ title: Soft delete
 
 --- 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import Sample from '../../components/Sample.astro';
 
 # Soft delete
 
@@ -41,77 +42,7 @@ A resource that supports soft delete <b class="font-extrabold	text-yellow-700">s
   <TabItem label="Protocol Buffers">
   
   
-  
-        ```protobuf
-        // Copyright 2021 Google LLC
-  //
-  // Licensed under the Apache License, Version 2.0 (the "License");
-  // you may not use this file except in compliance with the License.
-  // You may obtain a copy of the License at
-  //
-  //     https://www.apache.org/licenses/LICENSE-2.0
-  //
-  // Unless required by applicable law or agreed to in writing, software
-  // distributed under the License is distributed on an "AS IS" BASIS,
-  // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  // See the License for the specific language governing permissions and
-  // limitations under the License.
-  
-  syntax = "proto3";
-  
-  import "google/api/annotations.proto";
-  import "google/api/client.proto";
-  import "google/api/field_behavior.proto";
-  import "google/api/resource.proto";
-  
-  service Library {
-    // Undelete a single book.
-    rpc UndeleteBook(UndeleteBookRequest) returns (Book) {
-      option (google.api.http) = {
-        post: "/v1/{name=publishers/*/books/*}:undelete"
-        body: "*"
-      };
-      option (google.api.method_signature) = "name";
-    }
-  }
-  
-  // Request message to undelete a single book.
-  message UndeleteBookRequest {
-    // The name of the book to undelete.
-    // The book must exist and currently be deleted (but not expunged).
-    string name = 1 [
-      (google.api.field_behavior) = REQUIRED,
-      (google.api.resource_reference) = {
-        type: "library.googleapis.com/Book"
-      }];
-  }
-  
-  // A representation of a single book.
-  message Book {
-    option (google.api.resource) = {
-      type: "library.googleapis.com/Book"
-      pattern: "publishers/{publisher}/books/{book}"
-    };
-  
-    // The name of the book.
-    // Format: publishers/{publisher}/books/{book}
-    string name = 1;
-  
-    // The ISBN (International Standard Book Number) for this book.
-    string isbn = 2;
-  
-    // The title of the book.
-    string title = 3;
-  
-    // The author or authors of the book.
-    repeated string authors = 4;
-  
-    // The rating assigned to the book.
-    float rating = 5;
-  }
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0164/undelete.proto" type="protobuf" />
   
   - The HTTP method <b class="font-extrabold	text-red-700">must</b> be `POST`.
   - The `body` clause <b class="font-extrabold	text-red-700">must</b> be `"*"`.
@@ -137,53 +68,7 @@ A resource that supports soft delete <b class="font-extrabold	text-yellow-700">s
   <TabItem label="OpenAPI 3.0">
   
   
-  
-        ```yml
-        ---
-  openapi: 3.0.3
-  info:
-    title: Library
-    version: 1.0.0
-  paths:
-    /publishers/{publisherId}/books/{bookId}:undelete:
-      post:
-        operationId: undeleteBook
-        description: Undelete a single book.
-        responses:
-          200:
-            description: OK
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Book'
-  components:
-    schema:
-      Book:
-        description: A representation of a single book.
-        properties:
-          name:
-            type: string
-            description: |
-              The name of the book.
-              Format: publishers/{publisher}/books/{book}
-          isbn:
-            type: string
-            description: |
-              The ISBN (International Standard Book Number) for this book.
-          title:
-            type: string
-            description: The title of the book.
-          authors:
-            type: array
-            items:
-              type: string
-            description: The author or authors of the book.
-          rating:
-            type: float
-            description: The rating assigned to the book.
-  
-        ```
-      
+  <Sample path="../aep.dev/aep/general/0164/undelete.oas.yaml" type="yml" />
   
   - The HTTP method <b class="font-extrabold	text-red-700">must</b> be `POST`.
   - The response message <b class="font-extrabold	text-red-700">must</b> be the resource itself.
