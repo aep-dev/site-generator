@@ -1,12 +1,114 @@
 ---
 import { Code } from '@astrojs/starlight/components';
+import { redirectToDefaultLocale } from 'astro:i18n';
 import fs from 'node:fs/promises';
 
-const { path, type } = Astro.props;
+const { path, type, token1 = "", token2 = "" } = Astro.props;
 
-const exampleCode = await fs.readFile(path, "utf-8");
+let code = await fs.readFile(path, "utf-8");
+let partialCode = code;
+
+let symbols = [];
+if(token1 != "") {
+    symbols.push(token1);
+}
+if(token2 != "") {
+    symbols.push(token2);
+}
+
+if(symbols.length != 0) {
+    let snippets = []
+        for (var symbol of symbols) {
+            let match = code.match(/^([\s]*)({symbol})/m);
+            if(!match) {
+                throw Error(`Symbol not found ${symbol}`);
+            }
+
+            // Determine the end of the symbol.
+            // This attempts to parse C-style brace syntax if it encounters a
+            // `{` character, or Python/YAML-style indenting if it encounters a
+            // `:` character.
+            //
+            // The first thing we need to know is which syntax we are using.
+            // We attempt to guess that by seeing which token we encounter next
+            // after our symbol.
+            let start = match.index;
+            let positions = [];
+            try {
+                let block_symbols = [':', '{', ';']
+                for(var block_symbol of block_symbols) {
+                    let index = code.indexOf(block_symbol, start + match[0].length - 1)
+                    if(index != -1) {
+                        positions.push([index, block_symbol])
+                    }
+                }
+                positions.sort((a, b) => a[0] < b[0] ? 1 : -1);
+            } catch {
+                throw Error(`No block character (:, {{) found after ${symbol}`);
+            }
+
+            let ix = positions[0][0]
+            let block_token = positions[0][1]
+
+            // Push the start marker backwards to include any leading comments.
+            let lines = code.substring(0, start - 1).split("\n")
+            for(var line of lines.toReversed()) {
+                if(line.match(/^[\s]*(//|#)/)) {
+                    start -= line.length + 1
+                } else {
+                    break;
+                }
+            }
+
+            // If we got a `:`, we parse by indentation, stopping at the
+            // start of the next line with the same indentation as our match.
+            let snippet = ""
+            if(block_token == ":") {
+                let indent = match.groups[0].length
+                let end_match = code.substring(ix, code.length).match(
+                    new RegExp(`^[\s]{0,${indent}}[\S]+`, 'm')
+                )
+                if(end_match) {
+                    snippet = code.substring(start, end_match.index + ix);
+                } else {
+                    snippet = code.substring(start, code.length)
+                }
+                // This line is hard to match in Javascript.
+                // snippet = textwrap.dedent(snippet)
+            }
+
+            // We got a '{'; Find the corresponding closed brace.
+            else if(block_token == "{") {
+                let cursor = match.index
+                let close_brace = code.indexOf("}", cursor);
+                while (close_brace != -1) {
+                    let s = match.index;
+                    let e = close_brace + 1;
+                    if(code.substring(s, e).match(/\{/g).length == code.substring(s, e).match(/\}/g).length) {
+                        snippet = code.substring(start, e)
+                        break;
+                    }
+                    cursor = e
+                }
+                if(close_brace = -1) {
+                    throw Error(`No corresponding }} found for symbol ${symbol}`);
+                }
+
+            }
+            // We got a ';'. Stop there.
+            else {
+                let end = code.indexOf(";", match.index) + 1
+                snippet = code.substring(start, end);
+            }
+
+            // Append the snippet to the list of snippets.
+            snippets.push(snippet)
+        }
+        // We have a snippet. Time to put the string together.
+        partialCode = snippets.join("\n\n");
+}
 ---
 
-<Code code={exampleCode} lang={type} />
+<Code code={partialCode} lang={type} />
 
 
