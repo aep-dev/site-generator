@@ -48,7 +48,7 @@ apply consistently:
   <TabItem label="Protocol Buffers">
   
   
-  <Sample path="../aep.dev/aep/general/0136/library.proto" type="protobuf" />
+  <Sample path="../aep.dev/aep/general/0136/library.proto" type="protobuf" token1="rpc ArchiveBook" token2="" />
   
   - The name of the RPC <b class="font-extrabold	text-yellow-700">should</b> be a verb followed by a noun.
     - The name <b class="font-extrabold	text-red-700">must not</b> contain prepositions ("for", "with", etc.).
@@ -66,7 +66,7 @@ apply consistently:
   <TabItem label="OpenAPI 3.0">
   
   
-  <Sample path="../aep.dev/aep/general/0136/library.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0136/library.oas.yaml" type="yml" token1="/publishers/{publisherId}/books/{bookId}:archive" token2="" />
   
   - The name of the RPC <b class="font-extrabold	text-yellow-700">should</b> be a verb followed by a noun.
     - The name of the RPC <b class="font-extrabold	text-red-700">must not</b> contain prepositions ("for", "with",
@@ -93,7 +93,7 @@ such:
   <TabItem label="Protocol Buffers">
   
   
-  <Sample path="../aep.dev/aep/general/0136/library.proto" type="protobuf" />
+  <Sample path="../aep.dev/aep/general/0136/library.proto" type="protobuf" token1="rpc ArchiveBook" token2="" />
   
   - The parameter for the resource's path <b class="font-extrabold	text-red-700">must</b> be called `path`, and <b class="font-extrabold	text-red-700">must</b>
     be the only variable in the URI path.
@@ -120,14 +120,14 @@ While most custom methods operate on a single resource, some custom methods
   <TabItem label="Protocol Buffers">
   
   
-  <Sample path="../aep.dev/aep/general/0136/library.proto" type="protobuf" />
+  <Sample path="../aep.dev/aep/general/0136/library.proto" type="protobuf" token1="rpc SortBooks" token2="" />
   
   
   </TabItem>
   <TabItem label="OpenAPI 3.0">
   
   
-  <Sample path="../aep.dev/aep/general/0136/library.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0136/library.oas.yaml" type="yml" token1="/publishers/{publisherId}/books:sort" token2="" />
   
   
   </TabItem>
@@ -149,14 +149,14 @@ permanent effect on data within the API.
   <TabItem label="Protocol Buffers">
   
   
-  <Sample path="../aep.dev/aep/general/0136/translate.proto" type="protobuf" />
+  <Sample path="../aep.dev/aep/general/0136/translate.proto" type="protobuf" token1="rpc TranslateText" token2="" />
   
   
   </TabItem>
   <TabItem label="OpenAPI 3.0">
   
   
-  <Sample path="../aep.dev/aep/general/0136/translate.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0136/translate.oas.yaml" type="yml" token1="/projects/{projectId}:translateText" token2="" />
   
   
   </TabItem>

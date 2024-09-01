@@ -78,7 +78,7 @@ Delete methods are specified using the following pattern:
   <TabItem label="OpenAPI 3.0">
   
   
-  <Sample path="../aep.dev/aep/general/0135/delete.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0135/delete.oas.yaml" type="yml" token1="paths" token2="" />
   
   - The response body <b class="font-extrabold	text-yellow-700">should</b> be omitted.
   - The HTTP response code <b class="font-extrabold	text-yellow-700">should</b> be `204 No Content` if the delete was
@@ -132,7 +132,7 @@ Delete methods implement a common request pattern:
   <TabItem label="OpenAPI 3.0">
   
   
-  <Sample path="../aep.dev/aep/general/0135/delete.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0135/delete.oas.yaml" type="yml" token1="paths" token2="" />
   
   - Delete methods <b class="font-extrabold	text-yellow-700">should</b> return `204 No Content` with no response body, or
     `202 Accepted` with a representation of the operation in the response body if
@@ -188,7 +188,7 @@ instead: [AEP-151][aep-151].
   <TabItem label="OpenAPI 3.0">
   
   
-  <Sample path="../aep.dev/aep/general/0135/long_running_delete.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0135/long_running_delete.oas.yaml" type="yml" token1="paths" token2="" />
   
   - The response status code should be `202 Accepted` if the request was accepted
     for later processing. When the request is processed it could still fail.
@@ -239,7 +239,7 @@ explicitly opt in to a cascading delete.
   <TabItem label="OpenAPI 3.0">
   
   
-  <Sample path="../aep.dev/aep/general/0135/cascading_delete.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0135/cascading_delete.oas.yaml" type="yml" token1="paths" token2="" />
   
   The API <b class="font-extrabold	text-red-700">must</b> fail with a `409 Conflict` error if the `force` field is
   `false` (or unset) and child resources are present.

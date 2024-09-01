@@ -244,20 +244,20 @@ function substituteSamples(contents: Markdown, folder: string) {
   const matches = contents.contents.matchAll(sample_regex);
   for (var match of matches) {
     if (match[1].endsWith('proto') || match[1].endsWith('yaml')) {
-      samples.push({ 'match': match[0], 'filename': match[1] })
+      samples.push({ 'match': match[0], 'filename': match[1], 'token1': match[2], 'token2': match[3] })
     }
   }
 
   const matches2 = contents.contents.matchAll(sample2_regex);
   for (var match of matches2) {
     if (match[1].endsWith('proto') || match[1].endsWith('yaml')) {
-      samples.push({ 'match': match[0], 'filename': match[1] })
+      samples.push({ 'match': match[0], 'filename': match[1], 'token1': match[2], 'token2': '' })
     }
   }
 
   for (var sample of samples) {
     let type = sample.filename.endsWith('proto') ? 'protobuf' : 'yml';
-    let formatted_sample = `<Sample path="${path.join(folder, sample.filename)}" type="${type}" />`
+    let formatted_sample = `<Sample path="${path.join(folder, sample.filename)}" type="${type}" token1="${sample.token1}" token2="${sample.token2}" />`
     contents.contents = contents.contents.replace(sample.match, formatted_sample);
   }
 }

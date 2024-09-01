@@ -135,7 +135,7 @@ canonical error object.
   When using protocol buffers, the common component
   [`aep.api.Operation`][aep.api.Operation] is used.
   
-  <Sample path="../aep.dev/aep/general/0151/lro.proto" type="protobuf" />
+  <Sample path="../aep.dev/aep/general/0151/lro.proto" type="protobuf" token1="rpc WriteBook" token2="" />
   
   - The response type <b class="font-extrabold	text-red-700">must</b> be `aep.api.Operation`. The `Operation` proto
     definition <b class="font-extrabold	text-yellow-700">should not</b> be copied into individual APIs; prefer to use a
@@ -168,7 +168,7 @@ canonical error object.
   <TabItem label="OpenAPI 3.0">
   
   
-  <Sample path="../aep.dev/aep/general/0151/lro.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0151/lro.oas.yaml" type="yml" token1="paths" token2="" />
   
   - `202` <b class="font-extrabold	text-red-700">must</b> be the only success status code defined.
   - The `202` response <b class="font-extrabold	text-red-700">must</b> define an `application/json` response body and no

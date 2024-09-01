@@ -114,7 +114,7 @@ define custom methods using the verbs `Add` and `Remove`:
   <TabItem label="Protocol Buffers">
   
   
-  <Sample path="../aep.dev/aep/general/0144/add_remove.proto" type="protobuf" />
+  <Sample path="../aep.dev/aep/general/0144/add_remove.proto" type="protobuf" token1="rpc AddAuthor" token2="rpc RemoveAuthor" />
   
   - The data being added or removed <b class="font-extrabold	text-yellow-700">should</b> be a primitive (usually a
     `string`).
@@ -144,7 +144,7 @@ define custom methods using the verbs `Add` and `Remove`:
   <TabItem label="OpenAPI 3.0">
   
   
-  <Sample path="../aep.dev/aep/general/0144/add_remove.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0144/add_remove.oas.yaml" type="yml" token1="paths" token2="" />
   
   - The data being added or removed <b class="font-extrabold	text-yellow-700">should</b> be a primitive (usually a
     `string`).
@@ -182,7 +182,7 @@ define custom methods using the verbs `Add` and `Remove`:
   <TabItem label="Protocol Buffers">
   
   
-  <Sample path="../aep.dev/aep/general/0144/add_remove.proto" type="protobuf" />
+  <Sample path="../aep.dev/aep/general/0144/add_remove.proto" type="protobuf" token1="message AddAuthorRequest" token2="message RemoveAuthorRequest" />
   
   - A resource field <b class="font-extrabold	text-red-700">must</b> be included. It <b class="font-extrabold	text-yellow-700">should</b> be the name of the
     resource (such as `book`) rather than `name` or `parent`.
@@ -201,7 +201,7 @@ define custom methods using the verbs `Add` and `Remove`:
   <TabItem label="OpenAPI 3.0">
   
   
-  <Sample path="../aep.dev/aep/general/0144/add_remove.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0144/add_remove.oas.yaml" type="yml" token1="requestBody" token2="" />
   
   - A field for the value being added or removed <b class="font-extrabold	text-red-700">must</b> be included. It
     <b class="font-extrabold	text-yellow-700">should</b> be the singular name of the field.

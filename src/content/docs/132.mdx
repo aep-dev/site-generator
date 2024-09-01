@@ -170,7 +170,7 @@ soft-deleted resources to be included.
   
   List operations are specified using the following pattern:
   
-  <Sample path="../aep.dev/aep/general/0132/list.proto" type="protobuf" />
+  <Sample path="../aep.dev/aep/general/0132/list.proto" type="protobuf" token1="rpc ListBooks" token2="" />
   
   - The RPC's name <b class="font-extrabold	text-red-700">must</b> begin with the word `List`. The remainder of the RPC
     name <b class="font-extrabold	text-yellow-700">should</b> be the plural form of the resource's message name.
@@ -191,7 +191,7 @@ soft-deleted resources to be included.
   
   List operations also implement a common request message pattern:
   
-  <Sample path="../aep.dev/aep/general/0132/list.proto" type="protobuf" />
+  <Sample path="../aep.dev/aep/general/0132/list.proto" type="protobuf" token1="message ListBooksRequest" token2="" />
   
   - A `parent` field <b class="font-extrabold	text-red-700">must</b> be included unless the resource being listed is a
     top-level resource. It <b class="font-extrabold	text-yellow-700">should</b> be called `parent`.
@@ -207,7 +207,7 @@ soft-deleted resources to be included.
   `parent` field in the request to be populated based on the value in the URL
   when the REST/JSON interface is used.
   
-  <Sample path="../aep.dev/aep/general/0132/list.proto" type="protobuf" />
+  <Sample path="../aep.dev/aep/general/0132/list.proto" type="protobuf" token1="message ListBooksResponse" token2="" />
   
   - The response message <b class="font-extrabold	text-red-700">must</b> include a field corresponding to the resources
     being returned, named for the English plural term for the resource, and
@@ -223,7 +223,7 @@ soft-deleted resources to be included.
   
   `List` operations <b class="font-extrabold	text-red-700">must</b> be specified with consistent OpenAPI metadata:
   
-  <Sample path="../aep.dev/aep/general/0132/list.oas.yaml" type="yml" />
+  <Sample path="../aep.dev/aep/general/0132/list.oas.yaml" type="yml" token1="paths" token2="" />
   
   - The `operationId` <b class="font-extrabold	text-red-700">must</b> begin with the word `list`. The remainder of the
     `operationId` <b class="font-extrabold	text-yellow-700">should</b> be the plural form of the resource type's name.
