@@ -1,15 +1,15 @@
 ---
-import sideBar from '../../sidebar.json';
+import sideBar from "../../full_aeps.json";
+import AepListEntry from "./AepListEntry.astro";
 ---
 
 {
-    sideBar.map((item) => (
+  sideBar.map((item) => (
+    <div>
         <h1>{item.label}</h1>
-        <ul>
             {item.items.map((aep) => (
-                <a href={"/" + aep}>{aep}</a>
-                <br />
+                <AepListEntry title={aep.title} href={"/" + aep.slug} id={aep.id.toString()} />
             ))}
-        </ul>
-    ))
+    </div>
+  ))
 }

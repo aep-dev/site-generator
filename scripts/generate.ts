@@ -358,12 +358,34 @@ function buildLinterSidebar(rules: LinterRule[]): object[] {
   ];
 }
 
+function buildFullAEPList(aeps: AEP[]) {
+  let response = [];
+  let groups = readGroupFile(AEP_LOC);
+
+  for (var group of groups.categories) {
+    response.push({
+      'label': group.title,
+      'items': aeps.filter((aep) => aep.category == group.code).sort((a1, a2) => a1.order > a2.order ? 1 : -1).map((aep) => {
+        return {
+          'title': aep.title,
+          'id': aep.id,
+          'slug': aep.slug,
+        };
+      }),
+    })
+  }
+  return response;
+}
+
 // Build out AEPs.
 let aeps = await assembleAEPs();
 
 // Build sidebar.
 let sidebar = buildSidebar(aeps);
 writeSidebar(sidebar, "sidebar.json");
+
+let full_aeps = buildFullAEPList(aeps);
+writeSidebar(full_aeps, "full_aeps.json");
 
 
 // Write AEPs to files.
