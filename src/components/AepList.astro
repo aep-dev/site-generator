@@ -8,7 +8,7 @@ import AepListEntry from "./AepListEntry.astro";
     <div>
         <h1>{item.label}</h1>
             {item.items.map((aep) => (
-                <AepListEntry title={aep.title} href={"/" + aep.slug} id={aep.id.toString()} />
+                <AepListEntry title={aep.title} href={"/" + aep.slug} id={aep.id.toString()} state={aep.status} />
             ))}
     </div>
   ))

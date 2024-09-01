@@ -370,6 +370,7 @@ function buildFullAEPList(aeps: AEP[]) {
           'title': aep.title,
           'id': aep.id,
           'slug': aep.slug,
+          'status': aep.frontmatter.state,
         };
       }),
     })

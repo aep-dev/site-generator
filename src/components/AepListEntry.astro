@@ -2,13 +2,14 @@
 // An altered version of astrojs/starlight/components/LinkCard
 
 import type { HTMLAttributes } from 'astro/types';
+import {Badge} from '@astrojs/starlight/components';
 
 interface Props extends Omit<HTMLAttributes<'a'>, 'title'> {
 	title: string;
 	description?: string;
 }
 
-const { title, id, ...attributes } = Astro.props;
+const { title, id, state, ...attributes } = Astro.props;
 ---
 
 <div class="sl-link-card">
@@ -17,6 +18,7 @@ const { title, id, ...attributes } = Astro.props;
 		<a {...attributes}>
 			<span class="title" set:html={title} />
 		</a>
+        {state == "reviewing" && <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">Reviewing</span>}
 	</span>
 </div>
 
@@ -53,6 +55,7 @@ const { title, id, ...attributes } = Astro.props;
 		color: var(--sl-color-white);
 		font-weight: 600;
 		font-size: var(--sl-text-lg);
+        padding-right: 1rem;
 	}
 
 	.aep-id {
