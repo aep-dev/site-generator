@@ -378,6 +378,26 @@ function buildFullAEPList(aeps: AEP[]) {
   return response;
 }
 
+function buildIndexPage(aeps: AEP[]) {
+  var sections = [];
+  let groups = readGroupFile(AEP_LOC);
+  for(var group of groups.categories) {
+    sections.push(`# ${group.title}`)
+    sections.push(`<AepList label="${group.title}" />`)
+  }
+
+  var contents = `---
+title: AEPs
+tableOfContents:
+    minHeadingLevel: 1
+---
+import AepList from "../../components/AepList.astro";
+
+${sections.join("\n")}
+`
+  fs.writeFileSync(`src/content/docs/general.mdx`, contents);
+}
+
 // Build out AEPs.
 let aeps = await assembleAEPs();
 
@@ -405,3 +425,5 @@ for (var rule of linter_rules) {
 
 var linter_sidebar = buildLinterSidebar(linter_rules);
 writeSidebar(linter_sidebar, "linter_sidebar.json");
+
+buildIndexPage(aeps);

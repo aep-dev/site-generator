@@ -1,12 +1,13 @@
 ---
 import sideBar from "../../full_aeps.json";
 import AepListEntry from "./AepListEntry.astro";
+
+const {label} = Astro.props;
 ---
 
 {
-  sideBar.map((item) => (
+  sideBar.filter((item) => item.label == label).map((item) => (
     <div>
-        <h1>{item.label}</h1>
             {item.items.map((aep) => (
                 <AepListEntry title={aep.title} href={"/" + aep.slug} id={aep.id.toString()} state={aep.status} />
             ))}
