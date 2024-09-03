@@ -267,8 +267,8 @@ function writeMarkdown(aep: AEP) {
   fs.writeFileSync(filePath, aep.contents, { flag: "w" });
 }
 
-function writeSidebar(sideBar: object[], filePath: string) {
-  fs.writeFileSync(filePath, JSON.stringify(sideBar), { flag: "w" });
+function writeSidebar(sideBar: any, filePath: string) {
+  fs.writeFileSync(path.join("generated", filePath), JSON.stringify(sideBar), { flag: "w" });
 }
 
 async function assembleAEPs(): Promise<AEP[]> {
@@ -398,6 +398,10 @@ ${sections.join("\n")}
   fs.writeFileSync(`src/content/docs/general.mdx`, contents);
 }
 
+function buildRedirects(aeps: AEP[]): object {
+  return Object.fromEntries(aeps.map((aep) => [`/${aep.id}`, `/${aep.slug}`]));
+}
+
 // Build out AEPs.
 let aeps = await assembleAEPs();
 
@@ -427,3 +431,4 @@ var linter_sidebar = buildLinterSidebar(linter_rules);
 writeSidebar(linter_sidebar, "linter_sidebar.json");
 
 buildIndexPage(aeps);
+writeSidebar(buildRedirects(aeps), "redirects.json");
