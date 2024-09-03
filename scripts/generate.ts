@@ -339,13 +339,12 @@ function consolidateLinterRule(linterRules: LinterRule[]): ConsolidatedLinterRul
   for(var key in rules) {
     let rules_contents = rules[key].map((aep) => `<details>
 <summary>${aep.title}</summary>
-${aep.contents}
+${aep.contents.replace(/---[\s\S]*?---/m, '')}
 </details>
 `
 )
-let contents = `
----
-title: ${rules[key][0].aep} Linter Rules
+let contents = `---
+title: AEP-${rules[key][0].aep} Linter Rules
 ---
 ${rules_contents.join('\n')}
 `
@@ -372,7 +371,7 @@ function buildSidebar(aeps: AEP[]): object[] {
   return response;
 }
 
-function buildLinterSidebar(rules: LinterRule[]): object[] {
+function buildLinterSidebar(rules: ConsolidatedLinterRule[]): object[] {
   return [
     {
       'label': 'Tooling',
@@ -383,7 +382,7 @@ function buildLinterSidebar(rules: LinterRule[]): object[] {
             'tooling/linter',
             {
               'label': 'Rules',
-              'items': rules.map((x) => `tooling/linter/rules/${x.slug}`),
+              'items': rules.map((x) => `tooling/linter/rules/${x.aep}`),
             }
           ]
         }
@@ -458,11 +457,11 @@ writePages(AEP_LOC);
 // Write out linter rules.
 let linter_rules = await assembleLinterRules();
 let consolidated_rules = consolidateLinterRule(linter_rules);
-for (var rule of linter_rules) {
+for (var rule of consolidated_rules) {
   writeRule(rule);
 }
 
-var linter_sidebar = buildLinterSidebar(linter_rules);
+var linter_sidebar = buildLinterSidebar(consolidated_rules);
 writeSidebar(linter_sidebar, "linter_sidebar.json");
 
 buildIndexPage(aeps);
