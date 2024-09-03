@@ -138,7 +138,13 @@ function buildMarkdown(contents: string, folder: string): Markdown {
   substituteEscapeCharacters(result);
   substituteCallouts(result);
   substituteRuleIdentifiers(result);
+  removeTitle(result);
   return result;
+}
+
+function removeTitle(contents: Markdown) {
+  // Title should be removed because Starlight will add it for us.
+  contents.contents = contents.contents.replace(/# (.*)\n/, '');
 }
 
 function substituteRuleIdentifiers(contents: Markdown) {
