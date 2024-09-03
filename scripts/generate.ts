@@ -22,6 +22,11 @@ interface LinterRule {
   slug: string;
 }
 
+interface ConsolidatedLinterRule {
+  aep: string;
+  contents: string;
+}
+
 interface Markdown {
   contents: string;
   components: Set<string>;
@@ -320,8 +325,37 @@ function buildLinterRule(rulePath: string, aep: string): LinterRule {
   }
 }
 
-function writeRule(rule: LinterRule) {
-  const filePath = path.join(`src/content/docs/tooling/linter/rules/`, `${rule.filename}`)
+function consolidateLinterRule(linterRules: LinterRule[]): ConsolidatedLinterRule[] {
+  let rules = {}
+  for(var rule of linterRules) {
+    if(rule.aep in rules) {
+      rules[rule.aep].push(rule)
+    } else {
+      rules[rule.aep] = [rule];
+    }
+  }
+
+  let consolidated_rules = [];
+  for(var key in rules) {
+    let rules_contents = rules[key].map((aep) => `<details>
+<summary>${aep.title}</summary>
+${aep.contents}
+</details>
+`
+)
+let contents = `
+---
+title: ${rules[key][0].aep} Linter Rules
+---
+${rules_contents.join('\n')}
+`
+consolidated_rules.push({'contents': contents, 'aep': rules[key][0].aep})
+  }
+  return consolidated_rules;
+}
+
+function writeRule(rule: ConsolidatedLinterRule) {
+  const filePath = path.join(`src/content/docs/tooling/linter/rules/`, `${rule.aep}.md`)
   fs.writeFileSync(filePath, rule.contents, { flag: "w" });
 }
 
@@ -423,6 +457,7 @@ writePages(AEP_LOC);
 
 // Write out linter rules.
 let linter_rules = await assembleLinterRules();
+let consolidated_rules = consolidateLinterRule(linter_rules);
 for (var rule of linter_rules) {
   writeRule(rule);
 }
