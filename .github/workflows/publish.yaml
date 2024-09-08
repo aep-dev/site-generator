@@ -1,0 +1,37 @@
+---
+name: publish
+on:
+  push:
+    branches:
+      - main
+# Recommended by https://github.com/JamesIves/github-pages-deploy-action
+permissions:
+  contents: write
+jobs:
+  github-pages:
+    runs-on: ubuntu-latest
+    container: node:18
+    steps:
+      - uses: actions/checkout@v3
+      - name: Clone aep.dev
+        uses: actions/checkout@v3
+        with:
+          repository: aep-dev/aep.dev
+          path: './aep-dev'
+      - name: Clone Proto linter
+        uses: actions/checkout@v3
+        with:
+          repository: aep-dev/api-linter
+          path: './api-linter'
+      - name: Install all dependencies.
+        run: npm install
+      - name: Generate all static pages.
+        run: AEP_LOCATION=./aep-dev AEP_LINTER_LOC=./api-linter npm run generate
+      - name: Build the static site.
+        run: npm run build
+      - name: Publish the static site to GitHub Pages.
+        uses: jamesives/github-pages-deploy-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: dist
