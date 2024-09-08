@@ -23,6 +23,8 @@ jobs:
         with:
           repository: aep-dev/api-linter
           path: './api-linter'
+      - name: Create rules folder
+        run: mkdir src/content/docs/tooling/linter/rules
       - name: Install all dependencies.
         run: npm install
       - name: Generate all static pages.
