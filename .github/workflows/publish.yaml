@@ -4,11 +4,14 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 # Recommended by https://github.com/JamesIves/github-pages-deploy-action
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 jobs:
-  github-pages:
+  build:
     runs-on: ubuntu-latest
     container: node:20
     steps:
@@ -29,13 +32,15 @@ jobs:
         run: npm install
       - name: Generate all static pages.
         run: AEP_LOCATION=./aep-dev AEP_LINTER_LOC=./api-linter npm run generate
-      - name: Build the static site.
-        run: npm run build
-      - name: Install rsync for deploy
-        run: apt-get update && apt-get install -y rsync
-      - name: Publish the static site to GitHub Pages.
-        uses: jamesives/github-pages-deploy-action@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          folder: dist
+      - name: Install, build, and upload your site output
+        uses: withastro/action@v2
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
