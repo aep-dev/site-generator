@@ -10,7 +10,7 @@ let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));
 // https://astro.build/config
 export default defineConfig({
   site: 'https://aep-dev.github.io',
-  base: 'site-generator-beta'
+  base: 'site-generator-beta',
   redirects: redirects,
   integrations: [starlight({
     title: 'AEP',
