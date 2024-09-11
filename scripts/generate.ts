@@ -139,7 +139,16 @@ function buildMarkdown(contents: string, folder: string): Markdown {
   substituteCallouts(result);
   substituteRuleIdentifiers(result);
   removeTitle(result);
+  substituteLinks(result);
   return result;
+}
+
+function substituteLinks(contents: Markdown) {
+  // Old site-generator expressed relative links as '[link]: ./0123'.
+  // These should be expressed as '[link]: /123'
+
+  contents.contents = contents.contents.replaceAll(']: ./', ']: /')
+  contents.contents = contents.contents.replaceAll(']: /0', ']: /')
 }
 
 function removeTitle(contents: Markdown) {
