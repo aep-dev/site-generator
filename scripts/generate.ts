@@ -2,45 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { load, dump } from "js-yaml";
 
-import { glob } from 'glob';
-
-interface AEP {
-  title: string;
-  id: string;
-  frontmatter: object;
-  contents: string;
-  category: string;
-  order: number;
-  slug: string;
-}
-
-interface LinterRule {
-  title: string;
-  aep: string;
-  contents: string;
-  filename: string;
-  slug: string;
-}
-
-interface ConsolidatedLinterRule {
-  aep: string;
-  contents: string;
-}
-
-interface Markdown {
-  contents: string;
-  components: Set<string>;
-}
-
-interface GroupFile {
-  categories: Group[]
-}
-
-interface Group {
-  code: string;
-  title: string;
-}
-
+import loadConfigFiles from './src/config';
+import { buildSidebar, buildLinterSidebar } from './src/sidebar';
+import type { AEP, ConsolidatedLinterRule, GroupFile, LinterRule, Markdown } from './src/types';
 
 const AEP_LOC = process.env.AEP_LOCATION!;
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC!;
@@ -373,19 +337,6 @@ function writeRule(rule: ConsolidatedLinterRule) {
   fs.writeFileSync(filePath, rule.contents, { flag: "w" });
 }
 
-function buildSidebar(aeps: AEP[]): object[] {
-  let response = [];
-  let groups = readGroupFile(AEP_LOC);
-
-  for (var group of groups.categories) {
-    response.push({
-      'label': group.title,
-      'items': aeps.filter((aep) => aep.category == group.code).sort((a1, a2) => a1.order > a2.order ? 1 : -1).map((aep) => aep.slug)
-    })
-  }
-  return response;
-}
-
 function buildFullAEPList(aeps: AEP[]) {
   let response = [];
   let groups = readGroupFile(AEP_LOC);
@@ -430,11 +381,15 @@ function buildRedirects(aeps: AEP[]): object {
   return Object.fromEntries(aeps.map((aep) => [`/${aep.id}`, `/${aep.slug}`]));
 }
 
+// Build config.
+let config = loadConfigFiles("hero.yaml", "urls.yaml", "site.yaml");
+writeSidebar(config, "config.json");
+
 // Build out AEPs.
 let aeps = await assembleAEPs();
 
 // Build sidebar.
-let sidebar = buildSidebar(aeps);
+let sidebar = buildSidebar(aeps, readGroupFile(AEP_LOC));
 writeSidebar(sidebar, "sidebar.json");
 
 let full_aeps = buildFullAEPList(aeps);

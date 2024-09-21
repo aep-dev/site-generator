@@ -1,35 +1,9 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
 import path from 'path';
-import { z } from "zod";
+import type { Config } from './types';
 
 const AEP_LOC = process.env.AEP_LOCATION!;
-
-const Config = z.object({
-  hero: z.object({
-    buttons: z.array(z.object({
-        text: z.string(),
-        href: z.string(),
-    })),
-    shortcuts: z.array(z.object({
-        title: z.string(),
-        description: z.string(),
-        button: z.object({
-            text: z.string(),
-            href: z.string(),
-        }),
-    })),
-  }),
-  site: z.object({
-    ga_tag: z.string(),
-  }),
-  urls: z.object({
-    site: z.string(),
-    repo: z.string(),
-  }),
-});
-
-type Config = z.infer<typeof Config>;
 
 function loadConfigFiles(...fileNames: string[]): Config {
   const config = {};
@@ -45,7 +19,7 @@ function loadConfigFiles(...fileNames: string[]): Config {
     }
   });
 
-  return Config.parse(config);
+  return config as Config;
 }
 
 export default loadConfigFiles;
