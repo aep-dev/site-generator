@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { load, dump } from "js-yaml";
 
-import loadConfigFiles from './src/config';
+import { glob } from 'glob';
 
 interface AEP {
   title: string;
@@ -386,26 +386,6 @@ function buildSidebar(aeps: AEP[]): object[] {
   return response;
 }
 
-function buildLinterSidebar(rules: ConsolidatedLinterRule[]): object[] {
-  return [
-    {
-      'label': 'Tooling',
-      'items': [
-        {
-          'label': 'Linter',
-          'items': [
-            'tooling/linter',
-            {
-              'label': 'Rules',
-              'items': rules.map((x) => `tooling/linter/rules/${x.aep}`),
-            }
-          ]
-        }
-      ]
-    }
-  ];
-}
-
 function buildFullAEPList(aeps: AEP[]) {
   let response = [];
   let groups = readGroupFile(AEP_LOC);
@@ -449,10 +429,6 @@ ${sections.join("\n")}
 function buildRedirects(aeps: AEP[]): object {
   return Object.fromEntries(aeps.map((aep) => [`/${aep.id}`, `/${aep.slug}`]));
 }
-
-// Build config.
-let config = loadConfigFiles("hero.yaml", "urls.yaml", "site.yaml");
-writeSidebar(config, "config.json");
 
 // Build out AEPs.
 let aeps = await assembleAEPs();
