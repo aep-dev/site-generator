@@ -6,7 +6,7 @@ function buildLinterSidebar(rules: ConsolidatedLinterRule[]): Sidebar {
     label: 'Tooling',
     items: [
       {
-          'label': 'Linter',
+          'label': 'Protobuf Linter',
           'items': [
             'tooling/linter',
             {
@@ -22,7 +22,7 @@ function buildLinterSidebar(rules: ConsolidatedLinterRule[]): Sidebar {
 }
 
 function buildSidebar(aeps: AEP[], groups: any): Sidebar {
-  let response = [];
+  let response = [{'label': 'Overview', 'items':[]}];
 
   for (var group of groups.categories) {
     response.push({
@@ -33,4 +33,16 @@ function buildSidebar(aeps: AEP[], groups: any): Sidebar {
   return response as Sidebar;
 }
 
-export { buildSidebar, buildLinterSidebar };
+function addToSidebar(sidebar: Sidebar, label: string, items: string[]): Sidebar {
+  const targetGroupIndex = sidebar.findIndex(group => group.label === label);
+  if (targetGroupIndex != -1) {
+    if (Array.isArray(sidebar[targetGroupIndex].items)) {
+      sidebar[targetGroupIndex].items.push(...items);
+    } else {
+      sidebar[targetGroupIndex].items = items;
+    }
+  }
+  return sidebar;
+}
+
+export { buildSidebar, buildLinterSidebar, addToSidebar };

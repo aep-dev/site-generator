@@ -3,9 +3,9 @@ import * as path from 'path';
 import { load, dump } from "js-yaml";
 
 import loadConfigFiles from './src/config';
-import { buildSidebar, buildLinterSidebar } from './src/sidebar';
-import type { AEP, ConsolidatedLinterRule, GroupFile, LinterRule, Markdown } from './src/types';
-import { buildMarkdown } from './src/markdown';
+import { buildSidebar, buildLinterSidebar, addToSidebar } from './src/sidebar';
+import { type AEP, type ConsolidatedLinterRule, type GroupFile, type LinterRule, type Sidebar } from './src/types';
+import { buildMarkdown, Markdown } from './src/markdown';
 
 const AEP_LOC = process.env.AEP_LOCATION!;
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC!;
@@ -30,28 +30,31 @@ async function getLinterRules(dirPath: string): Promise<string[]> {
   return folders;
 }
 
-async function writePage(dirPath: string, filename: string) {
-  let contents = fs.readFileSync(path.join(dirPath, filename), 'utf-8')
+async function writePage(dirPath: string, filename: string, outputPath: string, title: string) {
+  let contents = new Markdown(fs.readFileSync(path.join(dirPath, filename), 'utf-8'));
   let frontmatter = {
-    'title': getTitle(contents.toString())
+    'title': title ?? getTitle(contents.contents)
   }
   let final = `---
 ${dump(frontmatter)}
 ---
-${contents}`
-  fs.writeFileSync(path.join("src/content/docs", filename), final, { flag: 'w' });
+${contents.removeTitle().contents}`
+  fs.writeFileSync(outputPath, final, { flag: 'w' });
 }
 
-async function writePages(dirPath: string) {
+async function writePages(dirPath: string, sidebar: Sidebar): Promise<Sidebar> {
   const entries = await fs.promises.readdir(path.join(dirPath, "pages/general/"), { withFileTypes: true });
 
   let files = entries
     .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
 
   for (var file of files) {
-    writePage(path.join(dirPath, "pages/general"), file.name);
+    writePage(path.join(dirPath, "pages/general"), file.name, path.join("src/content/docs", file.name));
+    addToSidebar(sidebar, "Overview", [file.name.replace('.md', '.mdx')])
   }
-  writePage(dirPath, "CONTRIBUTING.md");
+  writePage(dirPath, "CONTRIBUTING.md", path.join("src/content/docs", "contributing.md"));
+  addToSidebar(sidebar, "Overview", ["contributing"]);
+  return sidebar;
 }
 
 function readAEP(dirPath: string): string[] {
@@ -248,7 +251,6 @@ let aeps = await assembleAEPs();
 
 // Build sidebar.
 let sidebar = buildSidebar(aeps, readGroupFile(AEP_LOC));
-writeSidebar(sidebar, "sidebar.json");
 
 let full_aeps = buildFullAEPList(aeps);
 writeSidebar(full_aeps, "full_aeps.json");
@@ -260,7 +262,12 @@ for (var aep of aeps) {
 }
 
 // Write assorted pages.
-writePages(AEP_LOC);
+sidebar = await writePages(AEP_LOC, sidebar);
+
+// Write linter pages.
+await writePage(AEP_LINTER_LOC, "README.md", "src/content/docs/tooling/linter/index.md", "Protobuf Linter")
+
+writeSidebar(sidebar, "sidebar.json");
 
 // Write out linter rules.
 let linter_rules = await assembleLinterRules();
