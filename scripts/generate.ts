@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { load, dump } from "js-yaml";
 
-import { glob } from 'glob';
+import loadConfigFiles from './src/config';
 
 interface AEP {
   title: string;
@@ -449,6 +449,10 @@ ${sections.join("\n")}
 function buildRedirects(aeps: AEP[]): object {
   return Object.fromEntries(aeps.map((aep) => [`/${aep.id}`, `/${aep.slug}`]));
 }
+
+// Build config.
+let config = loadConfigFiles("hero.yaml", "urls.yaml", "site.yaml");
+writeSidebar(config, "config.json");
 
 // Build out AEPs.
 let aeps = await assembleAEPs();
