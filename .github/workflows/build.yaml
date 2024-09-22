@@ -1,0 +1,36 @@
+---
+name: build
+on:
+  pull_request:
+    branches:
+      - main
+    
+# Recommended by https://github.com/JamesIves/github-pages-deploy-action
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: node:20
+    steps:
+      - uses: actions/checkout@v3
+      - name: Clone aep.dev
+        uses: actions/checkout@v3
+        with:
+          repository: aep-dev/aep.dev
+          path: './aep-dev'
+      - name: Clone Proto linter
+        uses: actions/checkout@v3
+        with:
+          repository: aep-dev/api-linter
+          path: './api-linter'
+      - name: Create rules folder
+        run: mkdir src/content/docs/tooling/linter/rules
+      - name: Install all dependencies.
+        run: npm install
+      - name: Generate all static pages.
+        run: AEP_LOCATION=./aep-dev AEP_LINTER_LOC=./api-linter npm run generate
+      - name: Install, build, and upload your site output
+        uses: withastro/action@v2
