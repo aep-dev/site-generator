@@ -5,26 +5,10 @@ import { load, dump } from "js-yaml";
 import loadConfigFiles from './src/config';
 import { buildSidebar, buildLinterSidebar } from './src/sidebar';
 import type { AEP, ConsolidatedLinterRule, GroupFile, LinterRule, Markdown } from './src/types';
+import { buildMarkdown } from './src/markdown';
 
 const AEP_LOC = process.env.AEP_LOCATION!;
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC!;
-
-const ASIDES = {
-  'Important': { 'title': 'Important', 'type': 'caution' },
-  'Note': { 'title': 'Note', 'type': 'note' },
-  'TL;DR': { 'title:': 'TL;DR', 'type': 'tip' },
-  'Warning': { 'title': 'Warning', 'type': 'danger' },
-  'Summary': { 'type': 'tip', 'title': 'Summary' }
-};
-
-const RULE_COLORS = {
-  'may': 'font-extrabold text-green-700',
-  'may not': 'font-extrabold text-green-700',
-  'should': 'font-extrabold	text-yellow-700',
-  'should not': 'font-extrabold	text-yellow-700',
-  'must': 'font-extrabold	text-red-700',
-  'must not': 'font-extrabold	text-red-700'
-}
 
 async function getFolders(dirPath: string): Promise<string[]> {
   const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
@@ -80,72 +64,10 @@ function readAEP(dirPath: string): string[] {
   return [md_contents, yaml_text];
 }
 
-function readSample(dirPath: string, sample: string) {
-  const sample_path = path.join(dirPath, sample);
-  return fs.readFileSync(sample_path, "utf-8");
-}
-
 function readGroupFile(dirPath: string): GroupFile {
   const group_path = path.join(dirPath, "aep/general/scope.yaml")
   const yaml_contents = fs.readFileSync(group_path, "utf-8");
   return load(yaml_contents) as GroupFile;
-}
-
-function buildMarkdown(contents: string, folder: string): Markdown {
-  let result = {
-    'contents': contents,
-    'components': new Set<string>()
-  }
-  substituteSamples(result, folder);
-  substituteTabs(result);
-  substituteHTMLComments(result);
-  substituteEscapeCharacters(result);
-  substituteCallouts(result);
-  substituteRuleIdentifiers(result);
-  removeTitle(result);
-  substituteLinks(result);
-  return result;
-}
-
-function substituteLinks(contents: Markdown) {
-  // Old site-generator expressed relative links as '[link]: ./0123'.
-  // These should be expressed as '[link]: /123'
-
-  contents.contents = contents.contents.replaceAll(']: ./', ']: /')
-  contents.contents = contents.contents.replaceAll(']: /0', ']: /')
-}
-
-function removeTitle(contents: Markdown) {
-  // Title should be removed because Starlight will add it for us.
-  contents.contents = contents.contents.replace(/# (.*)\n/, '');
-}
-
-function substituteRuleIdentifiers(contents: Markdown) {
-  var rule_regex = /\*\*(should(?: not)?|may(?: not)?|must(?: not)?)\*\*/g
-  var matches = contents.contents.matchAll(rule_regex);
-  for(var match of matches) {
-    var color = RULE_COLORS[match[1]];
-    contents.contents = contents.contents.replace(match[0], `<b class="${color}">${match[1]}</b>`);
-  }
-}
-
-function substituteCallouts(contents: Markdown) {
-  var paragraph_regex =  /(^|\n)\*\*(Note|Warning|Important|Summary|TL;DR):\*\*([\s\S]+?)(?=\n{2,}|$)/g;
-  var matches = contents.contents.matchAll(paragraph_regex);
-  for (var match of matches) {
-    const aside_info = ASIDES[match[2]];
-    const formatted_results = `
-<Aside type="${aside_info.type}" title="${aside_info.title}">
-${tabContents(match[3].trimStart())}
-</Aside>`
-    contents.contents = contents.contents.replace(match[0], formatted_results);
-    contents.components.add('Aside');
-  }
-}
-
-function substituteEscapeCharacters(contents: Markdown) {
-  contents.contents = contents.contents.replaceAll('<=', '\\<=')
-    .replaceAll('>=', '\\>=');
 }
 
 function getTitle(contents: string): string {
@@ -179,70 +101,6 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 import Sample from '../../components/Sample.astro';
 
 ${contents.contents}`
-  }
-}
-
-function substituteHTMLComments(contents: Markdown) {
-  contents.contents = contents.contents.replaceAll("<!-- ", "{/* ")
-    .replaceAll("-->", " */}")
-}
-
-function tabContents(contents: string): string {
-  return contents.split('\n').map((x) => '  ' + x).join('\n');
-}
-
-function substituteTabs(contents: Markdown) {
-  var tab_regex = /\{% tab proto -?%\}([\s\S]*?)\{% tab oas -?%\}([\s\S]*?)\{% endtabs -?%\}/g
-  let tabs = []
-
-  let matches = contents.contents.matchAll(tab_regex);
-  for (var match of matches) {
-    tabs.push({
-      'match': match[0],
-      'proto': tabContents(match[1]),
-      'oas': tabContents(match[2]),
-    });
-  }
-  for (var tab of tabs) {
-    var new_tab = `
-<Tabs>
-  <TabItem label="Protocol Buffers">
-${tab['proto']}
-  </TabItem>
-  <TabItem label="OpenAPI 3.0">
-${tab['oas']}
-  </TabItem>
-</Tabs>
-    `
-    contents.contents = contents.contents.replace(tab.match, new_tab);
-  }
-}
-
-function substituteSamples(contents: Markdown, folder: string) {
-  var sample_regex = /\{% sample '(.*)', '(.*)', '(.*)' %}/g
-  var sample2_regex = /\{% sample '(.*)', '(.*)' %}/g
-
-
-  let samples = []
-  // TODO: Do actual sample parsing.
-  const matches = contents.contents.matchAll(sample_regex);
-  for (var match of matches) {
-    if (match[1].endsWith('proto') || match[1].endsWith('yaml')) {
-      samples.push({ 'match': match[0], 'filename': match[1], 'token1': match[2], 'token2': match[3] })
-    }
-  }
-
-  const matches2 = contents.contents.matchAll(sample2_regex);
-  for (var match of matches2) {
-    if (match[1].endsWith('proto') || match[1].endsWith('yaml')) {
-      samples.push({ 'match': match[0], 'filename': match[1], 'token1': match[2], 'token2': '' })
-    }
-  }
-
-  for (var sample of samples) {
-    let type = sample.filename.endsWith('proto') ? 'protobuf' : 'yml';
-    let formatted_sample = `<Sample path="${path.join(folder, sample.filename)}" type="${type}" token1="${sample.token1}" token2="${sample.token2}" />`
-    contents.contents = contents.contents.replace(sample.match, formatted_sample);
   }
 }
 

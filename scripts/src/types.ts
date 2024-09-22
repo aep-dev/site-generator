@@ -59,11 +59,6 @@ interface ConsolidatedLinterRule {
   contents: string;
 }
 
-interface Markdown {
-  contents: string;
-  components: Set<string>;
-}
-
 interface GroupFile {
   categories: Group[]
 }
