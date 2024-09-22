@@ -138,6 +138,11 @@ ${tabContents(match[3].trimStart())}
         return this;
     }
 
+    public substituteEBNF() {
+        this.contents = this.contents.replaceAll('```ebnf', '```');
+        return this;
+    }
+
 }
 
 function buildMarkdown(contents: string, folder: string): Markdown {
@@ -150,7 +155,8 @@ function buildMarkdown(contents: string, folder: string): Markdown {
         .substituteRuleIdentifiers()
         .removeTitle()
         .substituteLinks()
-        .substituteGraphviz();
+        .substituteGraphviz()
+        .substituteEBNF();
 }
 
 function tabContents(contents: string): string {

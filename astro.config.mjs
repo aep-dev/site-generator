@@ -2,6 +2,10 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import * as fs from 'fs';
 import tailwind from "@astrojs/tailwind";
+import { Graphviz } from "@hpcc-js/wasm";
+import rehypeGraphviz from "rehype-graphviz";
+
+
 let sidebar = JSON.parse(fs.readFileSync("generated/sidebar.json"));
 let linter_sidebar = JSON.parse(fs.readFileSync("generated/linter_sidebar.json"));
 let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));
@@ -12,6 +16,9 @@ let config = JSON.parse(fs.readFileSync("generated/config.json"));
 export default defineConfig({
   site: 'https://beta.aep.dev',
   redirects: redirects,
+  markdown: {
+    rehypePlugins: [[rehypeGraphviz, { graphviz: await Graphviz.load() }]],
+  },
   integrations: [starlight({
     title: 'AEP',
     customCss: [
