@@ -50,7 +50,7 @@ async function writePages(dirPath: string, sidebar: Sidebar): Promise<Sidebar> {
 
   for (var file of files) {
     writePage(path.join(dirPath, "pages/general"), file.name, path.join("src/content/docs", file.name));
-    addToSidebar(sidebar, "Overview", [file.name.replace('.md', '.mdx')])
+    addToSidebar(sidebar, "Overview", [file.name.replace('.md', '')])
   }
   writePage(dirPath, "CONTRIBUTING.md", path.join("src/content/docs", "contributing.md"));
   addToSidebar(sidebar, "Overview", ["contributing"]);
