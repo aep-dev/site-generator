@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { load, dump } from "js-yaml";
 
 import loadConfigFiles from './src/config';
 import { buildSidebar, buildLinterSidebar, addToSidebar } from './src/sidebar';
 import { type AEP, type ConsolidatedLinterRule, type GroupFile, type LinterRule, type Sidebar } from './src/types';
 import { buildMarkdown, Markdown } from './src/markdown';
+import { load, dump } from "js-yaml";
 
 const AEP_LOC = process.env.AEP_LOCATION!;
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC!;
@@ -31,15 +31,11 @@ async function getLinterRules(dirPath: string): Promise<string[]> {
 }
 
 async function writePage(dirPath: string, filename: string, outputPath: string, title: string) {
-  let contents = new Markdown(fs.readFileSync(path.join(dirPath, filename), 'utf-8'));
-  let frontmatter = {
+  let contents = new Markdown(fs.readFileSync(path.join(dirPath, filename), 'utf-8'), {});
+  contents.frontmatter = {
     'title': title ?? getTitle(contents.contents)
   }
-  let final = `---
-${dump(frontmatter)}
----
-${contents.removeTitle().contents}`
-  fs.writeFileSync(outputPath, final, { flag: 'w' });
+  fs.writeFileSync(outputPath, contents.removeTitle().build(), { flag: 'w' });
 }
 
 async function writePages(dirPath: string, sidebar: Sidebar): Promise<Sidebar> {
@@ -85,9 +81,13 @@ function buildAEP(files: string[], folder: string): AEP {
 
   const yaml = load(yaml_text);
 
-  yaml.title = getTitle(md_text);
+  yaml.title = getTitle(md_text).replace('\n', '');
 
   let contents = buildMarkdown(md_text, folder);
+
+  contents.frontmatter = yaml;
+  contents.addComponent({'names': ['Aside', 'Tabs', 'TabItem'], 'path': '@astrojs/starlight/components'})
+  contents.addComponent({'names': ['Sample'], 'path': '../../components/Sample.astro'})
 
   // Write everything to a markdown file.
   return {
@@ -97,19 +97,20 @@ function buildAEP(files: string[], folder: string): AEP {
     category: yaml.placement.category,
     order: yaml.placement.order,
     slug: yaml.slug,
-    contents: `---
-${dump(yaml)}
---- 
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
-import Sample from '../../components/Sample.astro';
-
-${contents.contents}`
+    contents: contents,
   }
 }
 
 function writeMarkdown(aep: AEP) {
+  aep.contents.frontmatter.slug = aep.id.toString();
+
   const filePath = path.join("src/content/docs", `${aep.id}.mdx`)
-  fs.writeFileSync(filePath, aep.contents, { flag: "w" });
+  fs.writeFileSync(filePath, aep.contents.build(), { flag: "w" });
+
+  aep.contents.frontmatter.slug = aep.slug;
+
+  const slugPath = path.join("src/content/docs", `${aep.slug}.mdx`)
+  fs.writeFileSync(slugPath, aep.contents.build(), { flag: "w" });
 }
 
 function writeSidebar(sideBar: any, filePath: string) {
@@ -239,7 +240,7 @@ ${sections.join("\n")}
 }
 
 function buildRedirects(aeps: AEP[]): object {
-  return Object.fromEntries(aeps.map((aep) => [`/${aep.id}`, `/${aep.slug}`]));
+  return {};
 }
 
 // Build config.

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Markdown } from "./markdown";
 
 const Config = z.object({
   hero: z.object({
@@ -40,7 +41,7 @@ interface AEP {
   title: string;
   id: string;
   frontmatter: object;
-  contents: string;
+  contents: Markdown;
   category: string;
   order: number;
   slug: string;
@@ -49,7 +50,7 @@ interface AEP {
 interface LinterRule {
   title: string;
   aep: string;
-  contents: string;
+  contents: Markdown;
   filename: string;
   slug: string;
 }

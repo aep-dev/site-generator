@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { load, dump } from "js-yaml";
 
 const ASIDES = {
     'Important': { 'title': 'Important', 'type': 'caution' },
@@ -17,13 +18,39 @@ const RULE_COLORS = {
     'must not': 'font-extrabold	text-red-700'
 }
 
+interface Component {
+    names: Array<string>
+    path: string
+}
+
 class Markdown {
     contents: string;
-    components: Set<string>;
+    components: Array<Component>;
+    frontmatter: object;
 
-    constructor(contents: string) {
+    constructor(contents: string, frontmatter: object) {
         this.contents = contents;
-        this.components = new Set<string>();
+        this.components = [];
+        this.frontmatter = frontmatter;
+    }
+
+    public addComponent(component: Component) {
+        const existingComponentIndex = this.components.findIndex(c => c.path === component.path);
+        if (existingComponentIndex !== -1) {
+            this.components[existingComponentIndex].names = [...new Set([...this.components[existingComponentIndex].names, ...component.names])];
+        } else {
+            this.components.push(component);
+        }
+    }
+
+    public build() : string {
+        return `---
+${dump(this.frontmatter)}
+---
+${this.components.map((component) => `import ${component.names.length > 1 ? "{" + component.names.join(',') + "}" : component.names.join(',')} from '${component.path}';`).join('\n')}
+
+${this.contents}
+`;
     }
 
     public substituteHTMLComments() {
@@ -122,8 +149,8 @@ ${tab['oas']}
 ${tabContents(match[3].trimStart())}
 </Aside>`
             this.contents = this.contents.replace(match[0], formatted_results);
-            this.components.add('Aside');
         }
+        this.addComponent({'names': ['Aside'], 'path': '@astrojs/starlight/components'});
         return this;
     }
 
