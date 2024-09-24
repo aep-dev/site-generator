@@ -243,6 +243,35 @@ function buildRedirects(aeps: AEP[]): object {
   return {};
 }
 
+function buildHomepage(): Markdown {
+  let frontmatter = {
+    "title": "AEPs",
+    "description": "Application Enhancement Proposals",
+    "template": "splash",
+    "hero": {
+      "tagline": "Focused design documents for flexible API development.",
+      "image": {
+        "file": "../../assets/aep.svg"
+      },
+      actions: []
+    },
+  }
+
+  let config = loadConfigFiles("hero.yaml");
+  frontmatter.hero.actions = config.hero.buttons.map((button) => ({text: button.text, link: button.href, icon: "right-arrow"}));
+
+  let contents = `import config from "../../../generated/config.json";
+
+  <HomeGrid sections={config.hero.shortcuts} />
+  `
+  let markdown = new Markdown(contents, frontmatter);
+  markdown.addComponent({
+    "names": ["HomeGrid"],
+    "path": "../../components/HomeGrid.astro"
+  });
+  return markdown;
+}
+
 // Build config.
 let config = loadConfigFiles("hero.yaml", "urls.yaml", "site.yaml");
 writeSidebar(config, "config.json");
@@ -282,3 +311,6 @@ writeSidebar(linter_sidebar, "linter_sidebar.json");
 
 buildIndexPage(aeps);
 writeSidebar(buildRedirects(aeps), "redirects.json");
+
+let homePage = buildHomepage();
+fs.writeFileSync("src/content/docs/index.mdx", homePage.build());
