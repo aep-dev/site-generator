@@ -30,6 +30,8 @@ jobs:
           path: './api-linter'
       - name: Create rules folder
         run: mkdir -p src/content/docs/tooling/linter/rules
+      - name: Create website folder
+        run: mkdir -p src/content/docs/tooling/website
       - name: Install all dependencies.
         run: npm install
       - name: Generate all static pages.

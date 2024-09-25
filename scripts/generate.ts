@@ -297,6 +297,8 @@ sidebar = await writePages(AEP_LOC, sidebar);
 // Write linter pages.
 await writePage(AEP_LINTER_LOC, "README.md", "src/content/docs/tooling/linter/index.md", "Protobuf Linter")
 
+// Write site generator.
+await writePage(".", "README.md", "src/content/docs/tooling/website/index.md", "")
 writeSidebar(sidebar, "sidebar.json");
 
 // Write out linter rules.
@@ -307,6 +309,7 @@ for (var rule of consolidated_rules) {
 }
 
 var linter_sidebar = buildLinterSidebar(consolidated_rules);
+addToSidebar(linter_sidebar, "Tooling", [{label: "Website", link: "tooling/website"}]);
 writeSidebar(linter_sidebar, "linter_sidebar.json");
 
 buildIndexPage(aeps);
