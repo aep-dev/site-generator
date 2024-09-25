@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import tailwind from "@astrojs/tailwind";
 import { Graphviz } from "@hpcc-js/wasm";
 import rehypeGraphviz from "rehype-graphviz";
+import { VitePluginRadar } from 'vite-plugin-radar';
 
 
 let sidebar = JSON.parse(fs.readFileSync("generated/sidebar.json"));
@@ -22,7 +23,7 @@ export default defineConfig({
   integrations: [starlight({
     title: 'AEP',
     customCss: [
-      './src/tailwind.css',   
+      './src/tailwind.css',
     ],
     social: {
       github: config.urls.repo,
@@ -32,5 +33,17 @@ export default defineConfig({
   }),
   tailwind({
     applyBaseStyles: false,
-  })]
+  })],
+  vite: {
+    plugins: [
+      VitePluginRadar({
+        analytics: {
+          id: config.site.ga_tag
+        },
+        gtm: {
+          id: config.site.ga_tag
+        },
+      }),
+    ],
+  }
 });
