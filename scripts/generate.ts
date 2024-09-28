@@ -89,6 +89,9 @@ function buildAEP(files: string[], folder: string): AEP {
   contents.addComponent({'names': ['Aside', 'Tabs', 'TabItem'], 'path': '@astrojs/starlight/components'})
   contents.addComponent({'names': ['Sample'], 'path': '../../components/Sample.astro'})
 
+  contents.frontmatter['prev'] = false;
+  contents.frontmatter['next'] = false;
+
   // Write everything to a markdown file.
   return {
     title: yaml.title,
