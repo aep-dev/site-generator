@@ -7,8 +7,8 @@ import { type AEP, type ConsolidatedLinterRule, type GroupFile, type LinterRule,
 import { buildMarkdown, Markdown } from './src/markdown';
 import { load, dump } from "js-yaml";
 
-const AEP_LOC = process.env.AEP_LOCATION!;
-const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC!;
+const AEP_LOC = process.env.AEP_LOCATION || "";
+const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC || "";
 
 async function getFolders(dirPath: string): Promise<string[]> {
   const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
@@ -272,48 +272,58 @@ function buildHomepage(): Markdown {
   return markdown;
 }
 
-// Build config.
-let config = loadConfigFiles("hero.yaml", "urls.yaml", "site.yaml");
-writeSidebar(config, "config.json");
+let sidebar: Sidebar = [];
 
-// Build out AEPs.
-let aeps = await assembleAEPs();
+if(AEP_LOC != "") {
+  // Build config.
+  let config = loadConfigFiles("hero.yaml", "urls.yaml", "site.yaml");
+  writeSidebar(config, "config.json");
 
-// Build sidebar.
-let sidebar = buildSidebar(aeps, readGroupFile(AEP_LOC));
+  // Write assorted pages.
+  sidebar = await writePages(AEP_LOC, sidebar);
 
-let full_aeps = buildFullAEPList(aeps);
-writeSidebar(full_aeps, "full_aeps.json");
+  // Build out AEPs.
+  let aeps = await assembleAEPs();
+
+  // Build sidebar.
+  sidebar = buildSidebar(aeps, readGroupFile(AEP_LOC), sidebar);
+
+  let full_aeps = buildFullAEPList(aeps);
+  writeSidebar(full_aeps, "full_aeps.json");
 
 
-// Write AEPs to files.
-for (var aep of aeps) {
-  writeMarkdown(aep);
+  // Write AEPs to files.
+  for (var aep of aeps) {
+    writeMarkdown(aep);
+  }
+
+  buildIndexPage(aeps);
+  writeSidebar(buildRedirects(aeps), "redirects.json");
+
+  let homePage = buildHomepage();
+  fs.writeFileSync("src/content/docs/index.mdx", homePage.build());
+} else {
+  console.warn("AEP repo is not found.")
 }
 
-// Write assorted pages.
-sidebar = await writePages(AEP_LOC, sidebar);
+if (AEP_LINTER_LOC != "") {
+  // Write linter pages.
+  await writePage(AEP_LINTER_LOC, "README.md", "src/content/docs/tooling/linter/index.md", "Protobuf Linter")
 
-// Write linter pages.
-await writePage(AEP_LINTER_LOC, "README.md", "src/content/docs/tooling/linter/index.md", "Protobuf Linter")
+  // Write site generator.
+  await writePage(".", "README.md", "src/content/docs/tooling/website/index.md", "")
 
-// Write site generator.
-await writePage(".", "README.md", "src/content/docs/tooling/website/index.md", "")
+  // Write out linter rules.
+  let linter_rules = await assembleLinterRules();
+  let consolidated_rules = consolidateLinterRule(linter_rules);
+  for (var rule of consolidated_rules) {
+    writeRule(rule);
+  }
+
+  sidebar = buildLinterSidebar(consolidated_rules, sidebar)
+  sidebar = addToSidebar(sidebar, "Tooling", [{label: "Website", link: "tooling/website"}]);
+} else {
+  console.warn("Proto linter repo is not found.")
+}
+
 writeSidebar(sidebar, "sidebar.json");
-
-// Write out linter rules.
-let linter_rules = await assembleLinterRules();
-let consolidated_rules = consolidateLinterRule(linter_rules);
-for (var rule of consolidated_rules) {
-  writeRule(rule);
-}
-
-var linter_sidebar = buildLinterSidebar(consolidated_rules);
-addToSidebar(linter_sidebar, "Tooling", [{label: "Website", link: "tooling/website"}]);
-writeSidebar(linter_sidebar, "linter_sidebar.json");
-
-buildIndexPage(aeps);
-writeSidebar(buildRedirects(aeps), "redirects.json");
-
-let homePage = buildHomepage();
-fs.writeFileSync("src/content/docs/index.mdx", homePage.build());

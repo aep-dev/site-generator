@@ -8,7 +8,6 @@ import { VitePluginRadar } from 'vite-plugin-radar';
 
 
 let sidebar = JSON.parse(fs.readFileSync("generated/sidebar.json"));
-let linter_sidebar = JSON.parse(fs.readFileSync("generated/linter_sidebar.json"));
 let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));
 let config = JSON.parse(fs.readFileSync("generated/config.json"));
 
@@ -28,8 +27,7 @@ export default defineConfig({
     social: {
       github: config.urls.repo,
     },
-    // Google Analytics tag.
-    sidebar: sidebar.concat(linter_sidebar)
+    sidebar: sidebar
   }),
   tailwind({
     applyBaseStyles: false,
