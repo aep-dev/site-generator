@@ -92,6 +92,8 @@ function buildAEP(files: string[], folder: string): AEP {
   contents.frontmatter['prev'] = false;
   contents.frontmatter['next'] = false;
 
+  contents.frontmatter['isAEP'] = true;
+
   // Write everything to a markdown file.
   return {
     title: yaml.title,
