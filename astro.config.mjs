@@ -4,8 +4,6 @@ import * as fs from 'fs';
 import tailwind from "@astrojs/tailwind";
 import { Graphviz } from "@hpcc-js/wasm";
 import rehypeGraphviz from "rehype-graphviz";
-import { VitePluginRadar } from 'vite-plugin-radar';
-
 
 let sidebar = JSON.parse(fs.readFileSync("generated/sidebar.json"));
 let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));

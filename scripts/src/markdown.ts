@@ -170,6 +170,16 @@ ${tabContents(match[3].trimStart())}
         return this;
     }
 
+    public substituteAEPLinks() {
+        // The original site generator knew to magically replace [Create][aep-133] style links with their matching links.
+        // We need to first make these valid Markdown links that point to the correct link.
+        this.contents = this.contents.replace(/\[([^\]]+)\]\[(aep-[^\]]+)\]/g, (match, first, second) => {
+            const alteredSecond = second.replace('aep-', '/');  // Remove 'aep-'
+            return `[${first}](${alteredSecond})`;
+        });
+        return this;
+    }
+
 }
 
 function buildMarkdown(contents: string, folder: string): Markdown {
@@ -183,7 +193,8 @@ function buildMarkdown(contents: string, folder: string): Markdown {
         .removeTitle()
         .substituteLinks()
         .substituteGraphviz()
-        .substituteEBNF();
+        .substituteEBNF()
+        .substituteAEPLinks();
 }
 
 function tabContents(contents: string): string {
