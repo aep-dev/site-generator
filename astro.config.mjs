@@ -30,7 +30,7 @@ export default defineConfig({
     sidebar: sidebar,
     components: {
       'Head': './src/components/overrides/Head.astro',
-      'PageFrame': './src/components/overrides/PageFrame.astro',
+      'SkipLink': './src/components/overrides/SkipLink.astro'
     }
   }),
   tailwind({
