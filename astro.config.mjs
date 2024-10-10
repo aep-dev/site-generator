@@ -27,21 +27,13 @@ export default defineConfig({
     social: {
       github: config.urls.repo,
     },
-    sidebar: sidebar
+    sidebar: sidebar,
+    components: {
+      'Head': './src/components/overrides/Head.astro',
+      'PageFrame': './src/components/overrides/PageFrame.astro',
+    }
   }),
   tailwind({
     applyBaseStyles: false,
   })],
-  vite: {
-    plugins: [
-      VitePluginRadar({
-        analytics: {
-          id: config.site.ga_tag
-        },
-        gtm: {
-          id: config.site.ga_tag
-        },
-      }),
-    ],
-  }
 });
