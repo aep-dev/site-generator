@@ -1,0 +1,59 @@
+---
+const props = Astro.props.entry;
+
+function formatDate(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  return date.toLocaleDateString(undefined, options);
+}
+
+const depth = 0;
+---
+{
+  props.data.isAEP === true && (
+    <div class="container">
+    <ul>
+      <li>
+        <span>Slug: </span><a class="inline" href={props.slug}>/{props.slug}</a>
+      </li>
+      <li><span>Created: </span>{formatDate(props.data.created)}</li>
+      {props.data.updated && <li><span>Updated:</span> {formatDate(props.data.updated)}</li>}
+      <li>
+        <a class="inline"
+          href={
+            "https://github.com/aep-dev/aep.dev/edit/master/aep/general/" +
+            props.data.id
+          }
+        >
+          Edit on GitHub
+        </a>
+      </li>
+    </ul>
+    </div>
+  )
+}
+
+<style define:vars={{ depth }}>
+  .container {
+    margin-bottom: 1rem;
+    padding: 0.125rem;
+  }
+  span {
+    font-weight: 600;
+  }
+  ul {
+    list-style: none;
+    background-color: rgb(224 242 254);
+    border-radius: 0.25rem;
+    padding: 0;
+    border-color: rgb(120 113 108);
+  }
+  .inline {
+    display: inline;
+    font-size: 1rem;
+  }
+</style>
