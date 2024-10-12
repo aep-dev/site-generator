@@ -29,7 +29,7 @@ export default defineConfig({
     components: {
       'Head': './src/components/overrides/Head.astro',
       'SkipLink': './src/components/overrides/SkipLink.astro',
-      'PageSidebar': './src/components/overrides/PageSidebar.astro'
+      'TableOfContents': './src/components/overrides/TableOfContents.astro'
     }
   }),
   tailwind({
