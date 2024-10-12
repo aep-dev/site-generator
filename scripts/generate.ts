@@ -111,11 +111,6 @@ function writeMarkdown(aep: AEP) {
 
   const filePath = path.join("src/content/docs", `${aep.id}.mdx`)
   fs.writeFileSync(filePath, aep.contents.build(), { flag: "w" });
-
-  aep.contents.frontmatter.slug = aep.slug;
-
-  const slugPath = path.join("src/content/docs", `${aep.slug}.mdx`)
-  fs.writeFileSync(slugPath, aep.contents.build(), { flag: "w" });
 }
 
 function writeSidebar(sideBar: any, filePath: string) {
@@ -245,7 +240,7 @@ ${sections.join("\n")}
 }
 
 function buildRedirects(aeps: AEP[]): object {
-  return {};
+  return Object.fromEntries(aeps.map((aep) => [`/${aep.slug}`, `/${aep.id}`]));;
 }
 
 function buildHomepage(): Markdown {
