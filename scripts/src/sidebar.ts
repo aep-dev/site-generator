@@ -27,7 +27,7 @@ function buildSidebar(aeps: AEP[], groups: any, sidebar: Sidebar): Sidebar {
   for (var group of groups.categories) {
     response.push({
       'label': group.title,
-      'items': aeps.filter((aep) => aep.category == group.code).sort((a1, a2) => a1.id > a2.id ? 1 : -1).map((aep) => ({label: `${aep.id}. ${aep.title}`, link: aep.slug}))
+      'items': aeps.filter((aep) => aep.category == group.code).sort((a1, a2) => a1.id > a2.id ? 1 : -1).map((aep) => ({label: `${aep.id}. ${aep.title}`, link: aep.id.toString()}))
     })
   }
   
