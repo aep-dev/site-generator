@@ -12,7 +12,7 @@ let config = JSON.parse(fs.readFileSync("generated/config.json"));
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://beta.aep.dev',
+  site: 'https://aep.dev',
   redirects: redirects,
   markdown: {
     rehypePlugins: [[rehypeGraphviz, { graphviz: await Graphviz.load() }]],
