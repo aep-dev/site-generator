@@ -17,6 +17,7 @@
     "@astrojs/tailwind": "^5.1.0",
     "@hpcc-js/wasm": "^2.22.1",
     "astro": "^4.10.2",
+    "jsonpath": "^1.1.1",
     "marked": "^14.1.2",
     "rehype-graphviz": "^0.3.0",
     "sharp": "^0.32.5",
