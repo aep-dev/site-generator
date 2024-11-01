@@ -73,7 +73,7 @@ ${this.contents}
         }
         for (var tab of tabs) {
             var new_tab = `
-<Tabs>
+<Tabs syncKey="exampleType">
   <TabItem label="Protocol Buffers">
 ${tab['proto']}
   </TabItem>
