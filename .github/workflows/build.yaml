@@ -19,8 +19,8 @@ jobs:
       - name: Clone aep.dev
         uses: actions/checkout@v3
         with:
-          repository: aep-dev/aep.dev
-          path: './aep-dev'
+          repository: aep-dev/aeps
+          path: './aeps'
       - name: Clone Proto linter
         uses: actions/checkout@v3
         with:
@@ -33,6 +33,6 @@ jobs:
       - name: Install all dependencies.
         run: npm install
       - name: Generate all static pages.
-        run: AEP_LOCATION=./aep-dev AEP_LINTER_LOC=./api-linter npm run generate
+        run: AEP_LOCATION=./aeps AEP_LINTER_LOC=./api-linter npm run generate
       - name: Install, build, and upload your site output
         uses: withastro/action@v2
