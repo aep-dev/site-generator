@@ -19,7 +19,7 @@ function sampleYaml(code: string, path: string): string {
 
     let traversal = yaml_code;
 
-    for (let i = 0; i < segments.length - 1; i++) {
+    for (let i = 0; i < segments.length; i++) {
         if (segments[i] != "$") {
             current[segments[i]] = {};
             current = current[segments[i]];
