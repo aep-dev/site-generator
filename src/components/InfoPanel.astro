@@ -15,7 +15,7 @@ const depth = 0;
 ---
 {
   props.data.isAEP === true && (
-    <div class="container">
+    <div class="p-1 mb-2 rounded border-gray-950 border-2">
     <ul>
       <li>
         <span>Slug: </span><a class="inline" href={props.slug}>/{props.slug}</a>
@@ -25,8 +25,8 @@ const depth = 0;
       <li>
         <a class="inline"
           href={
-            "https://github.com/aep-dev/aep.dev/edit/master/aep/general/" +
-            props.data.id
+            "https://github.com/aep-dev/aeps/edit/main/aep/general/" +
+            props.data.id.toString().padStart(4, "0") + "/aep.md.j2"
           }
         >
           Edit on GitHub
@@ -38,16 +38,11 @@ const depth = 0;
 }
 
 <style define:vars={{ depth }}>
-  .container {
-    margin-bottom: 1rem;
-    padding: 0.125rem;
-  }
   span {
     font-weight: 600;
   }
   ul {
     list-style: none;
-    background-color: rgb(224 242 254);
     border-radius: 0.25rem;
     padding: 0;
     border-color: rgb(120 113 108);
