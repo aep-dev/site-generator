@@ -24,3 +24,8 @@ src/contents/docs/*.mdx
 
 # Local Netlify folder
 .netlify
+
+# Generated files
+generated/*.json
+src/content/docs/*.mdx
+src/content/docs/*.md
