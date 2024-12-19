@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import tailwind from "@astrojs/tailwind";
 import { Graphviz } from "@hpcc-js/wasm";
 import rehypeGraphviz from "rehype-graphviz";
+import starlightBlog from 'starlight-blog';
 
 let sidebar = JSON.parse(fs.readFileSync("generated/sidebar.json"));
 let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));
@@ -22,6 +23,7 @@ export default defineConfig({
     customCss: [
       './src/tailwind.css',
     ],
+    plugins: [starlightBlog()],
     social: {
       github: config.urls.repo,
     },
