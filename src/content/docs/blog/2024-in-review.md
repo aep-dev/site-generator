@@ -2,7 +2,7 @@
 title: AEP's 2024 Year in Review
 date: 2024-12-19
 authors:
-    - name: Seyed Ahmad
+    - name: Mak Ahmad
     - name: Alex Stephen
     - name: Yusuke Tsutsumi
 ---
