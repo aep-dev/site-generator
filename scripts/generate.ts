@@ -86,8 +86,8 @@ function buildAEP(files: string[], folder: string): AEP {
   let contents = buildMarkdown(md_text, folder);
 
   contents.frontmatter = yaml;
-  contents.addComponent({'names': ['Aside', 'Tabs', 'TabItem'], 'path': '@astrojs/starlight/components'})
-  contents.addComponent({'names': ['Sample'], 'path': '../../components/Sample.astro'})
+  contents.addComponent({ 'names': ['Aside', 'Tabs', 'TabItem'], 'path': '@astrojs/starlight/components' })
+  contents.addComponent({ 'names': ['Sample'], 'path': '../../components/Sample.astro' })
 
   contents.frontmatter['prev'] = false;
   contents.frontmatter['next'] = false;
@@ -168,8 +168,8 @@ function buildLinterRule(rulePath: string, aep: string): LinterRule {
 
 function consolidateLinterRule(linterRules: LinterRule[]): ConsolidatedLinterRule[] {
   let rules = {}
-  for(var rule of linterRules) {
-    if(rule.aep in rules) {
+  for (var rule of linterRules) {
+    if (rule.aep in rules) {
       rules[rule.aep].push(rule)
     } else {
       rules[rule.aep] = [rule];
@@ -177,19 +177,19 @@ function consolidateLinterRule(linterRules: LinterRule[]): ConsolidatedLinterRul
   }
 
   let consolidated_rules = [];
-  for(var key in rules) {
+  for (var key in rules) {
     let rules_contents = rules[key].map((aep) => `<details>
 <summary>${aep.title}</summary>
 ${aep.contents.replace(/---[\s\S]*?---/m, '')}
 </details>
 `
-)
-let contents = `---
+    )
+    let contents = `---
 title: AEP-${rules[key][0].aep} Linter Rules
 ---
 ${rules_contents.join('\n')}
 `
-consolidated_rules.push({'contents': contents, 'aep': rules[key][0].aep})
+    consolidated_rules.push({ 'contents': contents, 'aep': rules[key][0].aep })
   }
   return consolidated_rules;
 }
@@ -222,7 +222,7 @@ function buildFullAEPList(aeps: AEP[]) {
 function buildIndexPage(aeps: AEP[]) {
   var sections = [];
   let groups = readGroupFile(AEP_LOC);
-  for(var group of groups.categories) {
+  for (var group of groups.categories) {
     sections.push(`# ${group.title}`)
     sections.push(`<AepList label="${group.title}" />`)
   }
@@ -249,7 +249,7 @@ function buildHomepage(): Markdown {
     "description": "Application Enhancement Proposals",
     "template": "splash",
     "hero": {
-      "tagline": "Focused design documents for flexible API development.",
+      "tagline": "An API design specification and ecosystem of clients and tooling for protobuf and HTTP REST APIs.",
       "image": {
         "file": "../../assets/aep.svg"
       },
@@ -258,7 +258,7 @@ function buildHomepage(): Markdown {
   }
 
   let config = loadConfigFiles("hero.yaml");
-  frontmatter.hero.actions = config.hero.buttons.map((button) => ({text: button.text, link: button.href, icon: "right-arrow"}));
+  frontmatter.hero.actions = config.hero.buttons.map((button) => ({ text: button.text, link: button.href, icon: "right-arrow" }));
 
   let contents = `import config from "../../../generated/config.json";
 
@@ -274,7 +274,7 @@ function buildHomepage(): Markdown {
 
 let sidebar: Sidebar = [];
 
-if(AEP_LOC != "") {
+if (AEP_LOC != "") {
   // Build config.
   let config = loadConfigFiles("hero.yaml", "urls.yaml", "site.yaml");
   writeSidebar(config, "config.json");
@@ -321,7 +321,7 @@ if (AEP_LINTER_LOC != "") {
   }
 
   sidebar = buildLinterSidebar(consolidated_rules, sidebar)
-  sidebar = addToSidebar(sidebar, "Tooling", [{label: "Website", link: "tooling/website"}]);
+  sidebar = addToSidebar(sidebar, "Tooling", [{ label: "Website", link: "tooling/website" }]);
 } else {
   console.warn("Proto linter repo is not found.")
 }
