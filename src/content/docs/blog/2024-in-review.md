@@ -10,6 +10,13 @@ authors:
 
 As we close out 2024, we want to share the significant strides the API Enhancement Proposals (AEP) project has made in creating a more cohesive API ecosystem. What started as a fork of Google's API Improvement Proposals has evolved into something much more ambitious: an open, community-driven standard for building resource-oriented APIs that work consistently across different protocols and platforms.
 
+A brief summary of the achievements outlined below are:
+
+- The creation of aepc, an AEP "compiler" that takes a succinct resource definition and generates protobuf and OpenAPI schemas.
+- The 0.1 release of aepcli, which can consume aep-compliant APIs and generate a resource-oriented command-line-interfaces dynamically.
+- A complete linter for protobuf APIs, and starting an OAS variant.
+- aep-explorer: a prototype of a WEB UI to explore aep-compliant APIs.
+- A redesigned website (aep.dev), where this blog post is published!
 ## **The Vision Takes Shape**
 
 This year clarified our core belief that API design shouldn't be a bikeshedding honeypot. By collecting hard-won design patterns from across the industry, we've worked to narrow the decisions API producers need to make while improving the experience for API consumers. Our approach focuses on resource-oriented design principles that can be expressed in both Protocol Buffers and OpenAPI, making AEPs protocol-agnostic while maintaining strong opinions about what makes APIs more usable and maintainable.
