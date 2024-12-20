@@ -33,7 +33,7 @@ aepc is just a prototype with no official release at this moment, but it has bee
 
 The launch of [aepcli](https://github.com/aep-dev/aepcli) marked a significant milestone in our tooling journey. Rather than requiring every API provider to build their own CLI, aepcli dynamically generates a powerful command-line interface from any AEP-compliant API's OpenAPI specification. This client-side approach means new API features are immediately available without requiring CLI updates, solving a common pain point in API tooling.
 
-### **The AEP Explorer**
+### [**The AEP **Explorer**](https://github.com/aep-dev/aep-explorer)**
 
 To complement our command-line tools, we developed a web-based UI for browsing and interacting with AEP-compliant APIs. This provides a more visual way to understand and experiment with APIs while maintaining the same consistent interaction patterns that make AEPs valuable.
 
