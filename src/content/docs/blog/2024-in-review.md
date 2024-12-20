@@ -39,7 +39,9 @@ To complement our command-line tools, we developed a web-based UI for browsing a
 
 ### **Enhanced Linting Capabilities**
 
-A major focus this year was improving our linting capabilities, particularly for OpenAPI specifications. Mike Kistler led the effort to revitalize our OpenAPI linter, implementing rules for key AEPs including AEP-132 (List methods) and AEP-135. The linter helps teams validate their APIs against AEP guidance, catching common issues early in the development process.
+A major focus this year was improving our linting capabilities, particularly for OpenAPI specifications. Mike Kistler led the effort to revitalize our [OpenAPI linter](https://github.com/aep-dev/aep-openapi-linter), implementing rules for key AEPs including AEP-132 (List methods) and AEP-135. The linter helps teams validate their APIs against AEP guidance, catching common issues early in the development process.
+
+Significantly progress was also made for our [protobuf linter](https://github.com/aep-dev/api-linter), which is now compliant with all of the updated guidance in aep.dev.
 
 The linter's approach balances pragmatism with standards enforcement \- while some rules are mandatory, others can be selectively adopted based on an organization's needs. This flexibility helps teams gradually adopt AEP practices while maintaining consistent APIs. The project uses Spectral as its foundation, allowing teams to build on an established tooling ecosystem while adding AEP-specific validations.
 
