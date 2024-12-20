@@ -51,8 +51,6 @@ To help teams get started, we've included comprehensive test cases and example A
 
 A major focus this year was improving the components used for learning about the AEP standards and enforcing them in our organization.
 
-Mike Kistler and Alex Stephen led efforts to build out linting against OpenAPI specifications and Protobuf interfaces. The linter helps teams validate their APIs against AEP guidance, catching common issues early in the development process.
-
 To help teams get started, we've built comprehensive test cases and example APIs that demonstrate proper implementation of AEP patterns. The linters have already helped identify areas where our documentation needed clarification, particularly around operation IDs and resource naming conventions.
 
 Additionally, we've built out a new aep.dev website based on a new framework to help highlight our guidance and to help the team release new content over time. 
