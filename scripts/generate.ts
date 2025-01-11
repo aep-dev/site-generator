@@ -30,12 +30,12 @@ async function getLinterRules(dirPath: string): Promise<string[]> {
   return folders;
 }
 
-async function writePage(dirPath: string, filename: string, outputPath: string, title: string) {
+async function writePage(dirPath: string, filename: string, outputPath: string, title?: string) {
   let contents = new Markdown(fs.readFileSync(path.join(dirPath, filename), 'utf-8'), {});
   contents.frontmatter = {
     'title': title ?? getTitle(contents.contents)
   }
-  fs.writeFileSync(outputPath, contents.removeTitle().build(), { flag: 'w' });
+  writeFile(outputPath, contents.removeTitle().build())
 }
 
 async function writePages(dirPath: string, sidebar: Sidebar): Promise<Sidebar> {
@@ -45,7 +45,7 @@ async function writePages(dirPath: string, sidebar: Sidebar): Promise<Sidebar> {
     .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
 
   for (var file of files) {
-    writePage(path.join(dirPath, "pages/general"), file.name, path.join("src/content/docs", file.name));
+    writePage(path.join(dirPath, "pages/general"), file.name, path.join("src/content/docs", file.name))
     addToSidebar(sidebar, "Overview", [file.name.replace('.md', '')])
   }
   writePage(dirPath, "CONTRIBUTING.md", path.join("src/content/docs", "contributing.md"));
@@ -196,7 +196,15 @@ ${rules_contents.join('\n')}
 
 function writeRule(rule: ConsolidatedLinterRule) {
   const filePath = path.join(`src/content/docs/tooling/linter/rules/`, `${rule.aep}.md`)
-  fs.writeFileSync(filePath, rule.contents, { flag: "w" });
+  writeFile(filePath, rule.contents)
+}
+
+function writeFile(filePath: string, contents: string) {
+  const outDir = path.dirname(filePath);
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
+  }
+  fs.writeFileSync(filePath, contents, { flag: "w" });
 }
 
 function buildFullAEPList(aeps: AEP[]) {

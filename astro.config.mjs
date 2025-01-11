@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import tailwind from "@astrojs/tailwind";
 import { Graphviz } from "@hpcc-js/wasm";
 import rehypeGraphviz from "rehype-graphviz";
+import rehypeMermaid from "rehype-mermaid";
 import starlightBlog from 'starlight-blog';
 
 let sidebar = JSON.parse(fs.readFileSync("generated/sidebar.json"));
@@ -16,7 +17,10 @@ export default defineConfig({
   site: 'https://aep.dev',
   redirects: redirects,
   markdown: {
-    rehypePlugins: [[rehypeGraphviz, { graphviz: await Graphviz.load() }]],
+    rehypePlugins: [
+      [rehypeGraphviz, { graphviz: await Graphviz.load() }],
+      [rehypeMermaid, { dark: true }],
+    ],
   },
   integrations: [starlight({
     title: 'AEP',

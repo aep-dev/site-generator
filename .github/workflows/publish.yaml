@@ -6,7 +6,7 @@ on:
       - main
   repository_dispatch:
     types: [publish-event]
-    
+
 # Recommended by https://github.com/JamesIves/github-pages-deploy-action
 permissions:
   contents: read
@@ -22,18 +22,16 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: aep-dev/aep.dev
-          path: './aep-dev'
+          path: "./aep-dev"
       - name: Clone Proto linter
         uses: actions/checkout@v3
         with:
           repository: aep-dev/api-linter
-          path: './api-linter'
-      - name: Create rules folder
-        run: mkdir -p src/content/docs/tooling/linter/rules
-      - name: Create website folder
-        run: mkdir -p src/content/docs/tooling/website
+          path: "./api-linter"
       - name: Install all dependencies.
         run: npm install
+      - name: Install playwright with chromium
+        run: npx playwright install --with-deps chromium
       - name: Generate all static pages.
         run: AEP_LOCATION=./aep-dev AEP_LINTER_LOC=./api-linter npm run generate
       - name: Install, build, and upload your site output

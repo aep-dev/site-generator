@@ -29,3 +29,4 @@ src/contents/docs/*.mdx
 generated/*.json
 src/content/docs/*.mdx
 src/content/docs/*.md
+src/content
