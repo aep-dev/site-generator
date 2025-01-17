@@ -310,6 +310,17 @@ if (AEP_LOC != "") {
 
   let homePage = buildHomepage();
   fs.writeFileSync("src/content/docs/index.mdx", homePage.build());
+
+  // Write blog
+  const entries = await fs.promises.readdir(path.join(AEP_LOC, "blog/"), { withFileTypes: true });
+
+  let files = entries
+    .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
+
+  for (var file of files) {
+    writePage(path.join(AEP_LOC, "blog"), file.name, path.join("src/content/docs/blog", file.name))
+  }
+  
 } else {
   console.warn("AEP repo is not found.")
 }
