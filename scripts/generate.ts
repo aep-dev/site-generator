@@ -318,7 +318,8 @@ if (AEP_LOC != "") {
     .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
 
   for (var file of files) {
-    writePage(path.join(AEP_LOC, "blog"), file.name, path.join("src/content/docs/blog", file.name))
+    let fileContents = fs.readFileSync(path.join(AEP_LOC, "blog", file.name), 'utf-8');
+    writeFile(path.join("src/content/docs/blog", file.name), fileContents);
   }
   
 } else {
