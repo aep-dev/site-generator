@@ -30,6 +30,8 @@ export default defineConfig({
     plugins: [starlightBlog()],
     social: {
       github: config.urls.repo,
+      blueSky: 'https://bsky.app/profile/aep.dev',
+      youtube: 'https://youtube.com/@aepdev/videos',
     },
     sidebar: sidebar,
     components: {
