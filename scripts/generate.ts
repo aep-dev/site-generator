@@ -9,6 +9,7 @@ import { load, dump } from "js-yaml";
 
 const AEP_LOC = process.env.AEP_LOCATION || "";
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC || "";
+const AEP_COMPONENTS = process.env.AEP_COMPONENTS_LOC || "";
 
 async function getFolders(dirPath: string): Promise<string[]> {
   const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
@@ -28,6 +29,15 @@ async function getLinterRules(dirPath: string): Promise<string[]> {
     .map(entry => path.join(dirPath, entry.name));
 
   return folders;
+}
+
+async function getFilePaths(dirPath: string): Promise<string[]> {
+  const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
+
+  const files = entries
+    .map(entry => path.join(dirPath, entry.name));
+
+  return files;
 }
 
 async function writePage(dirPath: string, filename: string, outputPath: string, title?: string) {
@@ -110,11 +120,11 @@ function writeMarkdown(aep: AEP) {
   aep.contents.frontmatter.slug = aep.id.toString();
 
   const filePath = path.join("src/content/docs", `${aep.id}.mdx`)
-  fs.writeFileSync(filePath, aep.contents.build(), { flag: "w" });
+  writeFile(filePath, aep.contents.build());
 }
 
 function writeSidebar(sideBar: any, filePath: string) {
-  fs.writeFileSync(path.join("generated", filePath), JSON.stringify(sideBar), { flag: "w" });
+  writeFile(path.join("generated", filePath), JSON.stringify(sideBar));
 }
 
 async function assembleAEPs(): Promise<AEP[]> {
@@ -244,7 +254,7 @@ import AepList from "../../components/AepList.astro";
 
 ${sections.join("\n")}
 `
-  fs.writeFileSync(`src/content/docs/general.mdx`, contents);
+writeFile(`src/content/docs/general.mdx`, contents);
 }
 
 function buildRedirects(aeps: AEP[]): object {
@@ -309,7 +319,7 @@ if (AEP_LOC != "") {
   writeSidebar(buildRedirects(aeps), "redirects.json");
 
   let homePage = buildHomepage();
-  fs.writeFileSync("src/content/docs/index.mdx", homePage.build());
+  writeFile("src/content/docs/index.mdx", homePage.build());
 
   // Write blog
   const entries = await fs.promises.readdir(path.join(AEP_LOC, "blog/"), { withFileTypes: true });
@@ -344,6 +354,22 @@ if (AEP_LINTER_LOC != "") {
   sidebar = addToSidebar(sidebar, "Tooling", [{ label: "Website", link: "tooling/website" }]);
 } else {
   console.warn("Proto linter repo is not found.")
+}
+
+if(AEP_COMPONENTS != "") {
+  // Read all YAML component files.
+  const filePaths = await getFilePaths(path.join(AEP_COMPONENTS, "json_schema/type"));
+  for (const filePath of filePaths) {
+    const fileContents = fs.readFileSync(filePath, 'utf-8');
+    try {
+      const yaml = load(fileContents);
+      const id = yaml.$id;
+      const componentPath = id.replace('https://aep.dev/', '');
+      writeFile(path.join("public", componentPath), fileContents);
+    } catch (e) {
+      console.error(`Error converting ${filePath} to YAML: ${e}`);
+    }
+  }
 }
 
 writeSidebar(sidebar, "sidebar.json");
