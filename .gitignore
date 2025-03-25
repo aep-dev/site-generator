@@ -30,4 +30,4 @@ generated/*.json
 src/content/docs/*.mdx
 src/content/docs/*.md
 src/content
-public/json-schema/*.json
+public/json-schema/**/*.json

@@ -11,8 +11,9 @@ Before following any other part of the guide, install the following:
 
 ```
 # clone the aeps and api-linter repositories, and point to their location
-export AEP_LOCATION=${AEP_LOCATION}
-export AEP_LINTER_LOC=${AEP_LINTER_LOC}
+export AEP_LINTER_LOC=${AEP_LINTER_LOC:-"../api-linter"}
+export AEP_LOCATION=${AEP_LOCATION:-"../aeps"}
+export AEP_COMPONENTS_LOC=${AEP_COMPONENTS_LOC:-"../aep-components"}
 # generate the pages required for the astro build
 npm run generate
 # build and run the astro site
