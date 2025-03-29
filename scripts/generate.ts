@@ -40,6 +40,21 @@ async function getFilePaths(dirPath: string): Promise<string[]> {
   return files;
 }
 
+async function getFilePathsRecursive(dirPath: string): Promise<string[]> {
+  const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
+
+  const files = await Promise.all(entries.map(async entry => {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      return getFilePathsRecursive(fullPath);
+    }
+    return [fullPath];
+  }));
+
+  return files.flat();
+}
+
+
 async function writePage(dirPath: string, filename: string, outputPath: string, title?: string) {
   let contents = new Markdown(fs.readFileSync(path.join(dirPath, filename), 'utf-8'), {});
   contents.frontmatter = {
@@ -254,7 +269,7 @@ import AepList from "../../components/AepList.astro";
 
 ${sections.join("\n")}
 `
-writeFile(`src/content/docs/general.mdx`, contents);
+  writeFile(`src/content/docs/general.mdx`, contents);
 }
 
 function buildRedirects(aeps: AEP[]): object {
@@ -331,7 +346,7 @@ if (AEP_LOC != "") {
     let fileContents = fs.readFileSync(path.join(AEP_LOC, "blog", file.name), 'utf-8');
     writeFile(path.join("src/content/docs/blog", file.name), fileContents);
   }
-  
+
 } else {
   console.warn("AEP repo is not found.")
 }
@@ -356,16 +371,18 @@ if (AEP_LINTER_LOC != "") {
   console.warn("Proto linter repo is not found.")
 }
 
-if(AEP_COMPONENTS != "") {
+if (AEP_COMPONENTS != "") {
   // Read all YAML component files.
-  const filePaths = await getFilePaths(path.join(AEP_COMPONENTS, "json_schema/type"));
+  const filePaths = await getFilePathsRecursive(path.join(AEP_COMPONENTS, "json_schema"));
   for (const filePath of filePaths) {
     const fileContents = fs.readFileSync(filePath, 'utf-8');
     try {
-      const yaml = load(fileContents);
-      const id = yaml.$id;
+      const contentObject = load(fileContents);
+      const id = contentObject.$id;
       const componentPath = id.replace('https://aep.dev/', '');
-      writeFile(path.join("public", componentPath), fileContents);
+      // Write JSON schema files to public directory
+      const jsonContents = JSON.stringify(contentObject, null, 2);
+      writeFile(path.join("public", componentPath), jsonContents);
     } catch (e) {
       console.error(`Error converting ${filePath} to YAML: ${e}`);
     }
