@@ -33,7 +33,7 @@ export default defineConfig({
     ],
     plugins: [
       starlightBlog(),
-      starlightSidebarTopics(sidebar),
+      starlightSidebarTopics(sidebar, {'exclude': ['/blog', '/blog/**/*']}),
     ],
     social: [
       {icon: 'github', label: 'GitHub', href: config.urls.repo},

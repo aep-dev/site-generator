@@ -1,6 +1,6 @@
 import type { Sidebar, AEP, ConsolidatedLinterRule } from './types';
 
-function buildLinterSidebar(rules: ConsolidatedLinterRule[], sidebar: Sidebar): Sidebar {
+function buildLinterSidebar(rules: ConsolidatedLinterRule[], sidebar: Sidebar[]): Sidebar[] {
   let contents = [
     {
       'label': 'Protobuf Linter',
@@ -17,7 +17,7 @@ function buildLinterSidebar(rules: ConsolidatedLinterRule[], sidebar: Sidebar): 
   return addToSidebar(sidebar, "Tooling", contents);
 }
 
-function buildSidebar(aeps: AEP[], groups: any, sidebar: Sidebar): Sidebar {
+function buildSidebar(aeps: AEP[], groups: any, sidebar: Sidebar[]): Sidebar[] {
   let response = [];
   for (var group of groups.categories) {
     response.push({
@@ -29,7 +29,7 @@ function buildSidebar(aeps: AEP[], groups: any, sidebar: Sidebar): Sidebar {
   return addToSidebar(sidebar, "AEPs", response);
 }
 
-function addToSidebar(sidebar: Sidebar, label: string, items): Sidebar {
+function addToSidebar(sidebar: Sidebar[], label: string, items): Sidebar[] {
   const targetGroupIndex = sidebar.findIndex(group => group.label === label);
   if (targetGroupIndex != -1) {
     if (Array.isArray(sidebar[targetGroupIndex].items)) {

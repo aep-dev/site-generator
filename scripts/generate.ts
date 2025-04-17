@@ -63,7 +63,7 @@ async function writePage(dirPath: string, filename: string, outputPath: string, 
   writeFile(outputPath, contents.removeTitle().build())
 }
 
-async function writePages(dirPath: string, sidebar: Sidebar): Promise<Sidebar> {
+async function writePages(dirPath: string, sidebar: Sidebar[]): Promise<Sidebar[]> {
   const entries = await fs.promises.readdir(path.join(dirPath, "pages/general/"), { withFileTypes: true });
 
   let files = entries
@@ -305,7 +305,32 @@ function buildHomepage(): Markdown {
   return markdown;
 }
 
-let sidebar: Sidebar = [];
+let sidebar: Sidebar[] = [
+  {
+    'label': 'Blog',
+    'link': '/blog',
+    'icon': 'document',
+    'items': [],
+  },
+  {
+    'label': 'Overview',
+    'link': '1',
+    'icon': 'bars',
+    'items': [],
+  },
+  {
+    'label': 'AEPs',
+    'link': '/general',
+    'icon': 'bars',
+    'items': [],
+  },
+  {
+    'label': 'Tooling',
+    'link': '/tooling-and-ecosystem',
+    'icon': 'settings',
+    'items': [],
+  }
+];
 
 if (AEP_LOC != "") {
   // Build config.

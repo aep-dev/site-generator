@@ -33,9 +33,14 @@ const SideBarItem = z.object({
   items: z.array(z.union([z.string(), z.lazy(() => SideBarItem)]))
 });
 
-const Sidebar = z.array(SideBarItem);
+const SidebarItems = z.array(SideBarItem);
 
-type Sidebar = z.infer<typeof Sidebar>;
+interface Sidebar {
+  label: string
+  link: string
+  icon: string
+  items: z.infer<typeof SidebarItems>
+}
 
 interface AEP {
   title: string;
