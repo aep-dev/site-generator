@@ -54,7 +54,8 @@ ${this.contents}
     }
 
     public substituteHTMLComments() {
-        this.contents = this.contents.replace(/<!--\s*([\s\S]*?)-->/g, (match, p1) => `{/* ${p1} */}`);
+        this.contents = this.contents.replaceAll("<!-- ", "{/* ")
+            .replaceAll("-->", " */}")
         return this;
     }
 
