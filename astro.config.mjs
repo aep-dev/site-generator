@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import * as fs from 'fs';
-import { Graphviz } from "@hpcc-js/wasm";
 import rehypeMermaid from "rehype-mermaid";
 import starlightBlog from 'starlight-blog';
 
