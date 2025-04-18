@@ -340,7 +340,7 @@ if (AEP_LOC != "") {
   const entries = await fs.promises.readdir(path.join(AEP_LOC, "blog/"), { withFileTypes: true });
 
   let files = entries
-    .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
+    .filter(entry => entry.isFile())
 
   for (var file of files) {
     let fileContents = fs.readFileSync(path.join(AEP_LOC, "blog", file.name), 'utf-8');
