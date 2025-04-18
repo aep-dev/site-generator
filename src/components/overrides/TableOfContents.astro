@@ -2,5 +2,5 @@
 import Default from "@astrojs/starlight/components/TableOfContents.astro";
 import InfoPanel from "../InfoPanel.astro";
 ---
-<InfoPanel {...Astro.props} />
-<Default {...Astro.props}><slot /></Default>
+<InfoPanel {...Astro.locals.starlightRoute} />
+<Default {...Astro.locals.starlightRoute}><slot /></Default>

@@ -11,4 +11,4 @@ import Default from "@astrojs/starlight/components/SkipLink.astro";
     style="display:none;visibility:hidden"></iframe></noscript
 >
 <!-- End Google Tag Manager (noscript) -->
-<Default {...Astro.props}><slot /></Default>
+<Default {...Astro.locals.starlightRoute}><slot /></Default>
