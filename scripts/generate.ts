@@ -307,12 +307,6 @@ function buildHomepage(): Markdown {
 
 let sidebar: Sidebar[] = [
   {
-    'label': 'Blog',
-    'link': '/blog',
-    'icon': 'document',
-    'items': [],
-  },
-  {
     'label': 'Overview',
     'link': '1',
     'icon': 'bars',
@@ -321,13 +315,19 @@ let sidebar: Sidebar[] = [
   {
     'label': 'AEPs',
     'link': '/general',
-    'icon': 'bars',
+    'icon': 'open-book',
     'items': [],
   },
   {
     'label': 'Tooling',
     'link': '/tooling-and-ecosystem',
-    'icon': 'settings',
+    'icon': 'puzzle',
+    'items': [],
+  },
+  {
+    'label': 'Blog',
+    'link': '/blog',
+    'icon': 'document',
     'items': [],
   }
 ];
