@@ -10,27 +10,32 @@ function sampleCode(code: string, type: string, token1: string, token2: string):
 }
 
 function sampleYaml(code: string, path: string): string {
-    const yaml_code = yaml.load(code);
+    const yaml_code = yaml.load(code) as any;
 
     // Convert dot notation path into nested object
     let segments = path.split('.');
-    let result = {};
-    let current = result;
+    let result: any = {};
+    let current: any = result;
 
-    let traversal = yaml_code;
+    let traversal: any = yaml_code;
 
     for (let i = 0; i < segments.length; i++) {
         if (segments[i] != "$") {
-            current[segments[i]] = {};
-            current = current[segments[i]];
-
             if(!(segments[i] in traversal)) {
                 throw new Error(`Invalid JSON Path: ${path}`);
             }
-            traversal = traversal[segments[i]];
+            
+            if (i === segments.length - 1) {
+                // For the final segment, assign the value directly
+                current[segments[i]] = traversal[segments[i]];
+            } else {
+                // For intermediate segments, create nested structure
+                current[segments[i]] = {};
+                current = current[segments[i]];
+                traversal = traversal[segments[i]];
+            }
         }
     }
-    current[segments[segments.length - 1]] = traversal;
 
     return yaml.dump(result);
 }
@@ -53,12 +58,12 @@ function sampleProto(code: string, token1: string, token2: string) {
             }
 
             // Determine the end of the symbol.
-            let start = match.index;
+            let start = match.index!;
             let ix, block_token;
             try {
                 [ix, block_token] = [
                     ...[":", "{", ";"].map((token) => [
-                        code.indexOf(token, match.index),
+                        code.indexOf(token, match.index!),
                         token,
                     ]),
                 ]
@@ -88,10 +93,10 @@ function sampleProto(code: string, token1: string, token2: string) {
                     .slice(ix)
                     .match(new RegExp(`^[\\s]{0,${indent}}[^\\s]`, "m"));
                 snippet = endMatch
-                    ? code.slice(start, ix + endMatch.index)
+                    ? code.slice(start, ix + (endMatch.index || 0))
                     : code.slice(start);
             } else if (block_token === "{") {
-                let cursor = match.index;
+                let cursor = match.index!;
                 while (true) {
                     const close_brace = code.indexOf("}", cursor);
                     if (close_brace === -1) {
@@ -99,7 +104,7 @@ function sampleProto(code: string, token1: string, token2: string) {
                             `No corresponding } found for ${symbol} at line ${code.slice(0, start).split("\n").length - 1}`
                         );
                     }
-                    const s = match.index,
+                    const s = match.index!,
                         e = close_brace + 1;
                     if (
                         code.slice(s, e).split("{").length ===
@@ -111,7 +116,7 @@ function sampleProto(code: string, token1: string, token2: string) {
                     cursor = e;
                 }
             } else {
-                const end = code.indexOf(";", match.index) + 1;
+                const end = code.indexOf(";", match.index!) + 1;
                 snippet = code.slice(start, end);
             }
 

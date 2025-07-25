@@ -1,0 +1,19 @@
+---
+name: test
+on:
+  pull_request:
+    branches:
+      - main
+
+# Recommended by https://github.com/JamesIves/github-pages-deploy-action
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: node:20
+    steps:
+      - name: Install all dependencies.
+        run: npm install
+      - name: Install playwright with chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run tests
+        run: npm test
