@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container: node:20
     steps:
+      - uses: actions/checkout@v4
       - name: Install all dependencies.
         run: npm install
       - name: Install playwright with chromium
