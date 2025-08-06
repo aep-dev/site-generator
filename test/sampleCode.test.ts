@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import sampleCode from '../src/components/utils/sample';
+import { buildLLMsTxt } from '../scripts/generate';
 import { fileURLToPath } from 'url';
 
 // Get __dirname equivalent for ES modules
@@ -90,6 +91,79 @@ runTest('sampleCode function should throw error for unsupported type', () => {
     if (!error.message.includes('Type not found')) {
       throw new Error(`Expected 'Type not found' error, got: ${error.message}`);
     }
+  }
+});
+
+// Test 4: buildLLMsTxt function generates correct format
+runTest('buildLLMsTxt function generates correct llms.txt format', () => {
+  // Mock AEP data
+  const mockAeps = [
+    {
+      id: '140',
+      title: 'Field Behavior',
+      contents: { 
+        contents: 'This AEP defines field behavior patterns.\n\n## Overview\n\nField behavior is important for APIs.' 
+      }
+    },
+    {
+      id: '1',
+      title: 'AEP Purpose and Guidelines',
+      contents: { 
+        contents: 'This document describes the AEP process.\n\n## What is an AEP?\n\nAn AEP is a design document providing information.' 
+      }
+    },
+    {
+      id: '133',
+      title: 'Standard Methods: Create',
+      contents: { 
+        contents: 'import { Sample } from "../../components/Sample.astro";\n\nThis AEP defines create methods.\n\n<Sample type="proto" /><!-- Comment -->\n\n{/* JSX comment */}' 
+      }
+    }
+  ];
+  
+  const result = buildLLMsTxt(mockAeps);
+  
+  // Verify AEPs are sorted by ID
+  const lines = result.split('\n');
+  const aep1Index = lines.findIndex(line => line.includes('AEP-1 AEP Purpose'));
+  const aep133Index = lines.findIndex(line => line.includes('AEP-133 Standard Methods'));
+  const aep140Index = lines.findIndex(line => line.includes('AEP-140 Field Behavior'));
+  
+  if (aep1Index === -1 || aep133Index === -1 || aep140Index === -1) {
+    throw new Error('Not all AEPs found in output');
+  }
+  
+  if (!(aep1Index < aep133Index && aep133Index < aep140Index)) {
+    throw new Error('AEPs not sorted correctly by ID');
+  }
+  
+  // Verify section separators
+  if (!result.includes('\n---\n')) {
+    throw new Error('Section separators not found');
+  }
+  
+  // Verify MDX artifacts are removed
+  if (result.includes('import {') || result.includes('<Sample') || result.includes('{/* JSX comment */}')) {
+    throw new Error('MDX artifacts not properly removed');
+  }
+  
+  // Verify HTML comments are removed
+  if (result.includes('<!-- Comment -->')) {
+    throw new Error('HTML comments not properly removed');
+  }
+  
+  // Verify proper heading format
+  if (!result.includes('# AEP-1 AEP Purpose and Guidelines') || 
+      !result.includes('# AEP-133 Standard Methods: Create') ||
+      !result.includes('# AEP-140 Field Behavior')) {
+    throw new Error('Heading format incorrect');
+  }
+  
+  // Verify content is present
+  if (!result.includes('This document describes the AEP process') ||
+      !result.includes('Field behavior is important for APIs') ||
+      !result.includes('This AEP defines create methods')) {
+    throw new Error('Content not properly included');
   }
 });
 

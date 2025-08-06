@@ -276,6 +276,29 @@ function buildRedirects(aeps: AEP[]): object {
   return Object.fromEntries(aeps.map((aep) => [`/${aep.slug}`, `/${aep.id}`]));;
 }
 
+export function buildLLMsTxt(aeps: AEP[]): string {
+  // Sort AEPs by ID for consistent ordering
+  const sortedAEPs = aeps.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+  
+  const sections = sortedAEPs.map(aep => {
+    // Get the raw markdown content without frontmatter and components
+    let content = aep.contents.contents;
+    
+    // Remove any remaining component imports or JSX-style tags
+    content = content.replace(/import\s+.*from\s+['"].*['"];?\n?/g, '');
+    content = content.replace(/<[A-Z][^>]*\/?>.*?<\/[A-Z][^>]*>|<[A-Z][^>]*\/>/gs, '');
+    
+    // Clean up any remaining MDX artifacts
+    content = content.replace(/\{\/\*[\s\S]*?\*\/\}/g, ''); // Remove JSX comments
+    content = content.replace(/<!--[\s\S]*?-->/g, ''); // Remove HTML comments
+    content = content.trim();
+    
+    return `# AEP-${aep.id} ${aep.title}\n\n${content}`;
+  });
+  
+  return sections.join('\n\n---\n\n');
+}
+
 function buildHomepage(): Markdown {
   let frontmatter = {
     "title": "AEPs",
@@ -357,6 +380,10 @@ if (AEP_LOC != "") {
 
   buildIndexPage(aeps);
   writeSidebar(buildRedirects(aeps), "redirects.json");
+
+  // Generate llms.txt file with all AEP contents
+  const llmsTxtContent = buildLLMsTxt(aeps);
+  writeFile("public/llms.txt", llmsTxtContent);
 
   let homePage = buildHomepage();
   writeFile("src/content/docs/index.mdx", homePage.build());
