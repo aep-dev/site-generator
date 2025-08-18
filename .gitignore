@@ -20,8 +20,6 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
-src/contents/docs/*.mdx
-
 # Local Netlify folder
 .netlify
 
@@ -30,4 +28,6 @@ generated/*.json
 src/content/docs/*.mdx
 src/content/docs/*.md
 src/content
+!src/content/docs/index.mdx
+
 public/json-schema/**/*.json

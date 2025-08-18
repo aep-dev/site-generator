@@ -299,35 +299,6 @@ export function buildLLMsTxt(aeps: AEP[]): string {
   return sections.join('\n\n---\n\n');
 }
 
-function buildHomepage(): Markdown {
-  let frontmatter = {
-    "title": "AEPs",
-    "description": "Application Enhancement Proposals",
-    "template": "splash",
-    "hero": {
-      "tagline": "An API design specification and ecosystem of clients and tooling for protobuf and HTTP REST APIs.",
-      "image": {
-        "file": "../../assets/aep.svg"
-      },
-      actions: []
-    },
-  }
-
-  let config = loadConfigFiles("hero.yaml");
-  frontmatter.hero.actions = config.hero.buttons.map((button) => ({ text: button.text, link: button.href, icon: "right-arrow" }));
-
-  let contents = `import config from "../../../generated/config.json";
-
-  <HomeGrid sections={config.hero.shortcuts} />
-  `
-  let markdown = new Markdown(contents, frontmatter);
-  markdown.addComponent({
-    "names": ["HomeGrid"],
-    "path": "../../components/HomeGrid.astro"
-  });
-  return markdown;
-}
-
 let sidebar: Sidebar[] = [
   {
     'label': 'Overview',
@@ -384,9 +355,6 @@ if (AEP_LOC != "") {
   // Generate llms.txt file with all AEP contents
   const llmsTxtContent = buildLLMsTxt(aeps);
   writeFile("public/llms.txt", llmsTxtContent);
-
-  let homePage = buildHomepage();
-  writeFile("src/content/docs/index.mdx", homePage.build());
 
   // Write blog
   const entries = await fs.promises.readdir(path.join(AEP_LOC, "blog/"), { withFileTypes: true });
