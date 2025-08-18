@@ -27,7 +27,10 @@ pnpm-debug.log*
 generated/*.json
 src/content/docs/*.mdx
 src/content/docs/*.md
-src/content
+src/content/*
+!src/content/docs/
+src/content/docs/*.mdx
+src/content/docs/*.md
 !src/content/docs/index.mdx
 
 public/json-schema/**/*.json

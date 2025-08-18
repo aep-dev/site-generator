@@ -1,0 +1,44 @@
+---
+title: Application Enhancement Proposals
+description: Rigorous API design guidelines with zero-effort tooling
+template: splash
+image:
+  file: "../../assets/aep.svg"
+hero:
+  tagline: >-
+    Rigorous API design guidelines that give you zero-effort tooling for free.
+  image:
+    file: ../../assets/aep.svg
+  actions:
+    - text: Explore the AEPs
+      link: /general
+      icon: right-arrow
+    - text: View our tools
+      link: /tooling-and-ecosystem
+      icon: right-arrow
+
+---
+import { Card, CardGrid, LinkButton } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Rigorous API design guidelines" icon="open-book">
+    AEPs are built on proven lessons from industry veterans at Google, Microsoft, Roblox, IBM (and others!) plus major contributors to HTTP and IETF specifications.
+
+    Learn from their experience in crafting APIs that are easy to use, maintain, and evolve.
+  </Card>
+
+  <Card title="We have the clients" icon="puzzle">
+    APIs that conform to the AEPs can take advantage of our Terraform provider, UI, CLI, and MCP server with zero-configuration. 
+    The AEP standard is designed to work assuming a wide variety of clients, not just curl.
+
+    <LinkButton href="/tooling-and-ecosystem">View ecosystem</LinkButton>
+  </Card>
+
+  <Card title="Open Standard" icon="approve-check-circle">
+    The AEPs are an open standard not controlled by any single company.
+
+    <LinkButton href="/contributing">Contribute to the project</LinkButton>
+  </Card>
+
+</CardGrid>
+  
