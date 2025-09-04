@@ -21,21 +21,27 @@ hero:
 import { Card, CardGrid, LinkButton } from '@astrojs/starlight/components';
 
 <CardGrid>
-  <Card title="Rigorous API design guidelines" icon="open-book">
-    AEPs are built on proven lessons from industry veterans at Google, Microsoft, Roblox, IBM (and others!) plus major contributors to HTTP and IETF specifications.
+  <Card title="Rigorous API design guidelines" icon="open-book" class="flex flex-col h-full">
+    <div class="flex-grow">
+      AEPs are built on proven lessons from industry veterans at Google, Microsoft, Roblox, IBM (and others!) plus major contributors to HTTP and IETF specifications.
 
-    Learn from their experience in crafting APIs that are easy to use, maintain, and evolve.
+      Learn from their experience in crafting APIs that are easy to use, maintain, and evolve.
+    </div>
   </Card>
 
-  <Card title="We have the clients" icon="puzzle">
-    APIs that conform to the AEPs can take advantage of our Terraform provider, UI, CLI, and MCP server with zero-configuration. 
-    The AEP standard is designed to work assuming a wide variety of clients, not just curl.
+  <Card title="We have the clients" icon="puzzle" class="flex flex-col h-full">
+    <div class="flex-grow">
+      APIs that conform to the AEPs can take advantage of our Terraform provider, UI, CLI, and MCP server with zero-configuration. 
+      The AEP standard is designed to work assuming a wide variety of clients, not just curl.
+    </div>
 
     <LinkButton href="/tooling-and-ecosystem">View ecosystem</LinkButton>
   </Card>
 
-  <Card title="Open Standard" icon="approve-check-circle">
-    The AEPs are an open standard not controlled by any single company.
+  <Card title="Open Standard" icon="approve-check-circle" class="flex flex-col h-full">
+    <div class="flex-grow">
+      The AEPs are an open standard not controlled by any single company.
+    </div>
 
     <LinkButton href="/contributing">Contribute to the project</LinkButton>
   </Card>
