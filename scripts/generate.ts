@@ -252,25 +252,6 @@ function buildFullAEPList(aeps: AEP[]) {
   return response;
 }
 
-function buildIndexPage(aeps: AEP[]) {
-  var sections = [];
-  let groups = readGroupFile(AEP_LOC);
-  for (var group of groups.categories) {
-    sections.push(`# ${group.title}`)
-    sections.push(`<AepList label="${group.title}" />`)
-  }
-
-  var contents = `---
-title: AEPs
-tableOfContents:
-    minHeadingLevel: 1
----
-import AepList from "../../components/AepList/AepList.astro";
-
-${sections.join("\n")}
-`
-  writeFile(`src/content/docs/general.mdx`, contents);
-}
 
 function buildRedirects(aeps: AEP[]): object {
   return Object.fromEntries(aeps.map((aep) => [`/${aep.slug}`, `/${aep.id}`]));;
@@ -378,7 +359,6 @@ if (AEP_LOC != "") {
     writeMarkdown(aep);
   }
 
-  buildIndexPage(aeps);
   writeSidebar(buildRedirects(aeps), "redirects.json");
 
   // Generate llms.txt file with all AEP contents
