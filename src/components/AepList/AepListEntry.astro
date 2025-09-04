@@ -12,7 +12,7 @@ interface Props extends Omit<HTMLAttributes<'a'>, 'title'> {
 const { title, id, state, ...attributes } = Astro.props;
 ---
 
-<div class="grid grid-cols-[1fr_auto] gap-2 border border-gray-500 rounded-lg p-4 shadow-sm relative hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-700 dark:hover:border-gray-200">
+<div class="grid grid-cols-[1fr_auto] gap-2 border border-gray-500 rounded-lg p-4 shadow-sm relative hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-700 dark:hover:border-gray-200" data-status={state}>
 	<span class="flex">
         <span class="text-gray-300 leading-6 w-12 text-right pr-4" set:html={id} />
 		<a class="no-underline leading-[var(--sl-line-height-headings)] relative before:content-[''] before:absolute before:inset-0" {...attributes}>

@@ -1,0 +1,11 @@
+---
+import AepListEntry from "./AepListEntry.astro";
+
+const {category} = Astro.props;
+---
+
+<div id="aep-list-container">
+  {category.items.map((aep) => (
+    <AepListEntry title={aep.title} href={"/" + aep.slug} id={aep.id.toString()} state={aep.status} />
+  ))}
+</div>

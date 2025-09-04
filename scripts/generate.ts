@@ -265,7 +265,7 @@ title: AEPs
 tableOfContents:
     minHeadingLevel: 1
 ---
-import AepList from "../../components/AepList.astro";
+import AepList from "../../components/AepList/AepList.astro";
 
 ${sections.join("\n")}
 `
