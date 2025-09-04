@@ -1,0 +1,54 @@
+---
+import AepList from "./AepList.astro";
+import sideBar from "../../../generated/full_aeps.json";
+
+// Extract categories dynamically from sidebar
+const categories = sideBar.map(item => item.label);
+---
+
+<div>
+  <div class="mb-4 text-right">
+    <select id="global-review-filter" class="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+      <option value="finalized" selected>Finalized</option>
+      <option value="all">All</option>
+    </select>
+  </div>
+
+  {sideBar.map((categoryData) => (
+    <>
+      <h1>{categoryData.label}</h1>
+      <AepList category={categoryData} />
+    </>
+  ))}
+</div>
+
+<script>
+  const globalFilterSelect = document.getElementById('global-review-filter') as HTMLSelectElement;
+  
+  function filterAllAeps() {
+    const filterValue = globalFilterSelect.value;
+    const allListContainers = document.querySelectorAll('[id^="aep-list-container"]');
+    
+    allListContainers.forEach((container) => {
+      const aepEntries = container.querySelectorAll('[data-status]') || [];
+      
+      aepEntries.forEach((entry) => {
+        const status = entry.getAttribute('data-status');
+        let shouldShow = true;
+        
+        if (filterValue === 'finalized') {
+          shouldShow = status !== 'reviewing';
+        } else if (filterValue === 'all') {
+          shouldShow = true;
+        }
+        
+        (entry as HTMLElement).style.display = shouldShow ? 'block' : 'none';
+      });
+    });
+  }
+  
+  globalFilterSelect.addEventListener('change', filterAllAeps);
+  
+  // Apply default filter on page load
+  setTimeout(filterAllAeps, 0);
+</script>

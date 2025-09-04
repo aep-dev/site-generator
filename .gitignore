@@ -29,5 +29,8 @@ src/contents/docs/*.mdx
 generated/*.json
 src/content/docs/*.mdx
 src/content/docs/*.md
-src/content
+src/content/*
+!src/content/docs/
+src/content/docs/*
+!src/content/docs/general.mdx
 public/json-schema/**/*.json
