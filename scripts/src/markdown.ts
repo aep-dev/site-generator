@@ -43,7 +43,7 @@ class Markdown {
         }
     }
 
-    public build() : string {
+    public build(): string {
         return `---
 ${dump(this.frontmatter)}
 ---
@@ -149,7 +149,7 @@ ${tabContents(match[3].trimStart())}
 </Aside>`
             this.contents = this.contents.replace(match[0], formatted_results);
         }
-        this.addComponent({'names': ['Aside'], 'path': '@astrojs/starlight/components'});
+        this.addComponent({ 'names': ['Aside'], 'path': '@astrojs/starlight/components' });
         return this;
     }
 
@@ -179,10 +179,20 @@ ${tabContents(match[3].trimStart())}
         return this;
     }
 
+    public substituteStandaloneAEPReferences() {
+        // Convert standalone AEP references (case-insensitive) to links
+        // This matches "aep-XXX" where X is a number, but avoids matching within existing links
+        this.contents = this.contents.replace(/ (aep-\d+)\b/gi, (match, aepRef) => {
+            const aepId = aepRef.replace(/^aep-/i, '');
+            return ` [${aepRef}](/${aepId})`;
+        });
+        return this;
+    }
+
 }
 
 function buildMarkdown(contents: string, folder: string): Markdown {
-    let result = new Markdown(contents);
+    let result = new Markdown(contents, {});
     return result.substituteSamples(folder)
         .substituteTabs()
         .substituteHTMLComments()
@@ -193,7 +203,8 @@ function buildMarkdown(contents: string, folder: string): Markdown {
         .substituteLinks()
         .substituteGraphviz()
         .substituteEBNF()
-        .substituteAEPLinks();
+        .substituteStandaloneAEPReferences()
+        .substituteAEPLinks()
 }
 
 function tabContents(contents: string): string {
