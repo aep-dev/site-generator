@@ -32,7 +32,9 @@ export default defineConfig({
       './src/styles/global.css',
     ],
     plugins: [
-      starlightBlog(),
+      starlightBlog(
+        {'navigation': 'none'}
+      ),
       starlightSidebarTopics(sidebar, {'exclude': ['/blog', '/blog/**/*']}),
     ],
     social: [
