@@ -6,14 +6,14 @@ image:
   file: "../../assets/aep.svg"
 hero:
   tagline: >-
-    Rigorous API design guidelines that give you zero-effort tooling for free.
+    An API design specification and guideline with open source, zero-effort tooling and clients.
   image:
     file: ../../assets/aep.svg
   actions:
     - text: Explore the AEPs
       link: /general
       icon: right-arrow
-    - text: View our tools
+    - text: View our ecosystem
       link: /tooling-and-ecosystem
       icon: right-arrow
 
@@ -27,24 +27,39 @@ import { Card, CardGrid, LinkButton } from '@astrojs/starlight/components';
 
       Learn from their experience in crafting APIs that are easy to use, maintain, and evolve.
     </div>
+
+    <LinkButton href="/blog/history-of-aeps/">Read about the history of AEPs</LinkButton>
   </Card>
 
   <Card title="We have the clients" icon="puzzle" class="flex flex-col h-full">
     <div class="flex-grow">
-      APIs that conform to the AEPs can take advantage of our Terraform provider, UI, CLI, and MCP server with zero-configuration. 
-      The AEP standard is designed to work assuming a wide variety of clients, not just curl.
+      APIs that conform to the AEPs can take advantage of our Terraform provider, UI, CLI, and MCP server with zero-configuration.
+      The AEPs were designed with a wide variety of clients in mind, not just curl.
     </div>
 
     <LinkButton href="/tooling-and-ecosystem">View ecosystem</LinkButton>
   </Card>
 
-  <Card title="Open Standard" icon="approve-check-circle" class="flex flex-col h-full">
+  <Card title="An Open Standard" icon="approve-check-circle" class="flex flex-col h-full">
     <div class="flex-grow">
-      The AEPs are an open standard not controlled by any single company.
+      In addition to providing API design guidance, the AEPs also publish versioned editions.
+      Tooling maintained by this project can be used with any API that conforms to these editions.
     </div>
 
+    <LinkButton href="/editions">Learn about AEP editions</LinkButton>
     <LinkButton href="/contributing">Contribute to the project</LinkButton>
   </Card>
 
+  <Card title="Read our blog" icon="approve-check-circle" class="flex flex-col h-full">
+    <div class="flex-grow">
+      To find out about our recent work, check out our blog, where post our roadmap, as well
+      as articles around design details of the AEPs and the ecosystem.
+    </div>
+
+    <LinkButton href="/blog">Visit the blog</LinkButton>
+  </Card>
+
+
+
 </CardGrid>
-  
+
