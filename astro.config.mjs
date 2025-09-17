@@ -54,7 +54,8 @@ export default defineConfig({
     components: {
       'Head': './src/components/overrides/Head.astro',
       'SkipLink': './src/components/overrides/SkipLink.astro',
-      'TableOfContents': './src/components/overrides/TableOfContents.astro'
+      'TableOfContents': './src/components/overrides/TableOfContents.astro',
+      'ThemeSelect': './src/components/overrides/ThemeSelect.astro'
     }
   })],
 
