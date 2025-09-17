@@ -342,24 +342,28 @@ let sidebar: Sidebar[] = [
     'label': 'Overview',
     'link': '1',
     'icon': 'bars',
+    'id': 'overview',
     'items': [],
   },
   {
     'label': 'AEPs',
     'link': '/general',
     'icon': 'open-book',
+    'id': 'aeps',
     'items': [],
   },
   {
     'label': 'Tooling',
     'link': '/tooling-and-ecosystem',
     'icon': 'puzzle',
+    'id': 'tooling',
     'items': [],
   },
   {
     'label': 'Blog',
     'link': '/blog',
     'icon': 'document',
+    'id': 'blog',
     'items': [],
   }
 ];

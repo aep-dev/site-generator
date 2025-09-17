@@ -39,6 +39,7 @@ interface Sidebar {
   label: string
   link: string
   icon: string
+  id: string
   items: z.infer<typeof SidebarItems>
 }
 

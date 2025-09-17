@@ -37,6 +37,11 @@ export default defineConfig({
         {'navigation': 'none'}
       ),
       starlightSidebarTopics(sidebar, {
+        topics: {
+          'aeps': aepEditions.editions
+            .filter(edition => edition.folder !== '.')
+            .flatMap(edition => [`/${edition.folder}`, `/${edition.folder}/**/*`])
+        },
         'exclude': [
           '/blog',
           '/blog/**/*',
