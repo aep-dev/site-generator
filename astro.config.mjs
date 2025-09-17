@@ -12,6 +12,7 @@ import tailwindcss from '@tailwindcss/vite';
 let sidebar = JSON.parse(fs.readFileSync("generated/sidebar.json"));
 let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));
 let config = JSON.parse(fs.readFileSync("generated/config.json"));
+let aepEditions = JSON.parse(fs.readFileSync("aep-editions.json"));
 
 
 // https://astro.build/config
@@ -35,7 +36,20 @@ export default defineConfig({
       starlightBlog(
         {'navigation': 'none'}
       ),
-      starlightSidebarTopics(sidebar, {'exclude': ['/blog', '/blog/**/*']}),
+      starlightSidebarTopics(sidebar, {
+        topics: {
+          'aeps': aepEditions.editions
+            .filter(edition => edition.folder !== '.')
+            .flatMap(edition => [`/${edition.folder}`, `/${edition.folder}/**/*`])
+        },
+        'exclude': [
+          '/blog',
+          '/blog/**/*',
+          ...aepEditions.editions
+            .filter(edition => edition.folder !== '.')
+            .flatMap(edition => [`/${edition.folder}`, `/${edition.folder}/**/*`])
+        ]
+      }),
     ],
     social: [
       {icon: 'github', label: 'GitHub', href: config.urls.repo},
@@ -43,9 +57,11 @@ export default defineConfig({
       {icon: 'youtube', label: 'YouTube', href: 'https://youtube.com/@aepdev/videos'}
     ],
     components: {
+      'Banner': './src/components/overrides/Banner.astro',
       'Head': './src/components/overrides/Head.astro',
       'SkipLink': './src/components/overrides/SkipLink.astro',
-      'TableOfContents': './src/components/overrides/TableOfContents.astro'
+      'TableOfContents': './src/components/overrides/TableOfContents.astro',
+      'ThemeSelect': './src/components/overrides/ThemeSelect.astro'
     }
   })],
 

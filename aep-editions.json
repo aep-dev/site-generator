@@ -1,0 +1,8 @@
+{
+  "editions": [
+    {
+      "name": "latest",
+      "folder": "."
+    }
+  ]
+}
