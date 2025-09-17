@@ -52,6 +52,7 @@ export default defineConfig({
       {icon: 'youtube', label: 'YouTube', href: 'https://youtube.com/@aepdev/videos'}
     ],
     components: {
+      'Banner': './src/components/overrides/Banner.astro',
       'Head': './src/components/overrides/Head.astro',
       'SkipLink': './src/components/overrides/SkipLink.astro',
       'TableOfContents': './src/components/overrides/TableOfContents.astro',
