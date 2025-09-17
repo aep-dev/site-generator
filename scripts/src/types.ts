@@ -45,11 +45,11 @@ interface Sidebar {
 interface AEP {
   title: string;
   id: string;
+  slug: string;
   frontmatter: object;
   contents: Markdown;
   category: string;
   order: number;
-  slug: string;
 }
 
 interface LinterRule {

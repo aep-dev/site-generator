@@ -162,6 +162,8 @@ function buildAEP(files: string[], folder: string): AEP {
   const yaml = load(yaml_text);
 
   yaml.title = getTitle(md_text).replace('\n', '');
+  let slug = yaml.slug;
+  delete yaml.slug;
 
   let contents = buildMarkdown(md_text, folder);
 
@@ -178,17 +180,15 @@ function buildAEP(files: string[], folder: string): AEP {
   return {
     title: yaml.title,
     id: yaml.id,
+    slug: slug,
     frontmatter: yaml,
     category: yaml.placement.category,
     order: yaml.placement.order,
-    slug: yaml.slug,
     contents: contents,
   }
 }
 
 function writeMarkdown(aep: AEP) {
-  aep.contents.frontmatter.slug = aep.id.toString();
-
   const filePath = path.join("src/content/docs", `${aep.id}.mdx`)
   writeFile(filePath, aep.contents.build());
 }
@@ -301,7 +301,6 @@ function buildFullAEPList(aeps: AEP[]) {
         return {
           'title': aep.title,
           'id': aep.id,
-          'slug': aep.slug,
           'status': aep.frontmatter.state,
         };
       }),
@@ -312,7 +311,7 @@ function buildFullAEPList(aeps: AEP[]) {
 
 
 function buildRedirects(aeps: AEP[]): object {
-  return Object.fromEntries(aeps.map((aep) => [`/${aep.slug}`, `/${aep.id}`]));;
+  return Object.fromEntries(aeps.map((aep) => [`/${aep.id}`, `/${aep.slug}`]));;
 }
 
 export function buildLLMsTxt(aeps: AEP[]): string {
