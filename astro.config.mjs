@@ -12,6 +12,7 @@ import tailwindcss from '@tailwindcss/vite';
 let sidebar = JSON.parse(fs.readFileSync("generated/sidebar.json"));
 let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));
 let config = JSON.parse(fs.readFileSync("generated/config.json"));
+let aepEditions = JSON.parse(fs.readFileSync("aep-editions.json"));
 
 
 // https://astro.build/config
@@ -35,7 +36,15 @@ export default defineConfig({
       starlightBlog(
         {'navigation': 'none'}
       ),
-      starlightSidebarTopics(sidebar, {'exclude': ['/blog', '/blog/**/*']}),
+      starlightSidebarTopics(sidebar, {
+        'exclude': [
+          '/blog',
+          '/blog/**/*',
+          ...aepEditions.editions
+            .filter(edition => edition.folder !== '.')
+            .flatMap(edition => [`/${edition.folder}`, `/${edition.folder}/**/*`])
+        ]
+      }),
     ],
     social: [
       {icon: 'github', label: 'GitHub', href: config.urls.repo},

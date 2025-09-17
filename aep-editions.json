@@ -1,0 +1,12 @@
+{
+  "editions": [
+    {
+      "name": "latest",
+      "folder": "."
+    },
+    {
+      "name": "2025",
+      "folder": "aep-2025"
+    }
+  ]
+}

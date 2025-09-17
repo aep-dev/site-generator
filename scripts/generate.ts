@@ -169,7 +169,7 @@ function buildAEP(files: string[], folder: string): AEP {
 
   contents.frontmatter = yaml;
   contents.addComponent({ 'names': ['Aside', 'Tabs', 'TabItem'], 'path': '@astrojs/starlight/components' })
-  contents.addComponent({ 'names': ['Sample'], 'path': '../../components/Sample.astro' })
+  contents.addComponent({ 'names': ['Sample'], 'path': '/src/components/Sample.astro' })
 
   contents.frontmatter['prev'] = false;
   contents.frontmatter['next'] = false;
@@ -311,7 +311,7 @@ function buildFullAEPList(aeps: AEP[]) {
 
 
 function buildRedirects(aeps: AEP[]): object {
-  return Object.fromEntries(aeps.map((aep) => [`/${aep.id}`, `/${aep.slug}`]));;
+  return Object.fromEntries(aeps.map((aep) => [`/${aep.slug}`, `/${aep.id}`]));;
 }
 
 export function buildLLMsTxt(aeps: AEP[]): string {
