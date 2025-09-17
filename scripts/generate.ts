@@ -11,6 +11,55 @@ const AEP_LOC = process.env.AEP_LOCATION || "";
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC || "";
 const AEP_COMPONENTS = process.env.AEP_COMPONENTS_LOC || "";
 
+// Logging functions
+function logFolderDetection() {
+  console.log("=== Folder Detection ===");
+  
+  if (AEP_LOC) {
+    console.log(`✓ AEP folder found: ${AEP_LOC}`);
+    if (fs.existsSync(AEP_LOC)) {
+      console.log(`  - Path exists and is accessible`);
+    } else {
+      console.log(`  - ⚠️  Path does not exist`);
+    }
+  } else {
+    console.log(`✗ AEP folder not configured (AEP_LOCATION environment variable)`);
+  }
+  
+  if (AEP_LINTER_LOC) {
+    console.log(`✓ Linter folder found: ${AEP_LINTER_LOC}`);
+    if (fs.existsSync(AEP_LINTER_LOC)) {
+      console.log(`  - Path exists and is accessible`);
+    } else {
+      console.log(`  - ⚠️  Path does not exist`);
+    }
+  } else {
+    console.log(`✗ Linter folder not configured (AEP_LINTER_LOC environment variable)`);
+  }
+  
+  if (AEP_COMPONENTS) {
+    console.log(`✓ Components folder found: ${AEP_COMPONENTS}`);
+    if (fs.existsSync(AEP_COMPONENTS)) {
+      console.log(`  - Path exists and is accessible`);
+    } else {
+      console.log(`  - ⚠️  Path does not exist`);
+    }
+  } else {
+    console.log(`✗ Components folder not configured (AEP_COMPONENTS_LOC environment variable)`);
+  }
+  
+  console.log("");
+}
+
+function logFileRead(filePath: string, source: string = "unknown") {
+  console.log(`📖 Reading file: ${filePath} (source: ${source})`);
+}
+
+function logFileWrite(filePath: string, size?: number) {
+  const sizeInfo = size ? ` (${size} bytes)` : "";
+  console.log(`📝 Writing file: ${filePath}${sizeInfo}`);
+}
+
 async function getFolders(dirPath: string): Promise<string[]> {
   const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
 
@@ -56,7 +105,9 @@ async function getFilePathsRecursive(dirPath: string): Promise<string[]> {
 
 
 async function writePage(dirPath: string, filename: string, outputPath: string, title?: string) {
-  let contents = new Markdown(fs.readFileSync(path.join(dirPath, filename), 'utf-8'), {});
+  const filePath = path.join(dirPath, filename);
+  logFileRead(filePath, "Page content");
+  let contents = new Markdown(fs.readFileSync(filePath, 'utf-8'), {});
   contents.frontmatter = {
     'title': title ?? getTitle(contents.contents)
   }
@@ -82,7 +133,10 @@ function readAEP(dirPath: string): string[] {
   const md_path = path.join(dirPath, "aep.md.j2");
   const yaml_path = path.join(dirPath, "aep.yaml");
 
+  logFileRead(md_path, "AEP markdown template");
   const md_contents = fs.readFileSync(md_path, 'utf8');
+  
+  logFileRead(yaml_path, "AEP metadata");
   const yaml_text = fs.readFileSync(yaml_path, 'utf8');
 
   return [md_contents, yaml_text];
@@ -90,6 +144,7 @@ function readAEP(dirPath: string): string[] {
 
 function readGroupFile(dirPath: string): GroupFile {
   const group_path = path.join(dirPath, "aep/general/scope.yaml")
+  logFileRead(group_path, "AEP group configuration");
   const yaml_contents = fs.readFileSync(group_path, "utf-8");
   return load(yaml_contents) as GroupFile;
 }
@@ -175,6 +230,7 @@ async function assembleLinterRules(): Promise<LinterRule[]> {
 }
 
 function buildLinterRule(rulePath: string, aep: string): LinterRule {
+  logFileRead(rulePath, "Linter rule");
   let contents = fs.readFileSync(rulePath, 'utf-8');
   let title = getTitle(contents);
 
@@ -229,6 +285,8 @@ function writeFile(filePath: string, contents: string) {
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir, { recursive: true });
   }
+  
+  logFileWrite(filePath, contents.length);
   fs.writeFileSync(filePath, contents, { flag: "w" });
 }
 
@@ -307,7 +365,11 @@ let sidebar: Sidebar[] = [
   }
 ];
 
+// Log folder detection status
+logFolderDetection();
+
 if (AEP_LOC != "") {
+  console.log("=== Processing AEP Repository ===");
   // Build config.
   let config = loadConfigFiles("hero.yaml", "urls.yaml", "site.yaml");
   writeSidebar(config, "config.json");
@@ -343,7 +405,9 @@ if (AEP_LOC != "") {
     .filter(entry => entry.isFile())
 
   for (var file of files) {
-    let fileContents = fs.readFileSync(path.join(AEP_LOC, "blog", file.name), 'utf-8');
+    const blogFilePath = path.join(AEP_LOC, "blog", file.name);
+    logFileRead(blogFilePath, "Blog post");
+    let fileContents = fs.readFileSync(blogFilePath, 'utf-8');
     writeFile(path.join("src/content/docs/blog", file.name), fileContents);
   }
 
@@ -352,6 +416,7 @@ if (AEP_LOC != "") {
 }
 
 if (AEP_LINTER_LOC != "") {
+  console.log("=== Processing Linter Repository ===");
   // Write linter pages.
   await writePage(AEP_LINTER_LOC, "README.md", "src/content/docs/tooling/linter/index.md", "Protobuf Linter")
 
@@ -372,9 +437,11 @@ if (AEP_LINTER_LOC != "") {
 }
 
 if (AEP_COMPONENTS != "") {
+  console.log("=== Processing Components Repository ===");
   // Read all YAML component files.
   const filePaths = await getFilePathsRecursive(path.join(AEP_COMPONENTS, "json_schema"));
   for (const filePath of filePaths) {
+    logFileRead(filePath, "Component schema");
     const fileContents = fs.readFileSync(filePath, 'utf-8');
     try {
       const contentObject = load(fileContents);
