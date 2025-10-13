@@ -20,6 +20,46 @@ function buildLinterSidebar(
   return addToSidebar(sidebar, "Tooling", contents);
 }
 
+/**
+ * Builds sidebar entries for OpenAPI linter rules.
+ *
+ * @param rules Consolidated linter rules by AEP number
+ * @param sidebar Existing sidebar structure
+ * @returns Updated sidebar with OpenAPI linter entries
+ */
+function buildOpenAPILinterSidebar(
+  rules: ConsolidatedLinterRule[],
+  sidebar: Sidebar[],
+): Sidebar[] {
+  // Guard: Only add if we have rules to display
+  if (rules.length === 0) {
+    console.log("ℹ️  No OpenAPI linter rules to add to sidebar");
+    return sidebar;
+  }
+
+  // Create rule items sorted by AEP number
+  const ruleItems = rules
+    .sort((a, b) => a.aep.localeCompare(b.aep))
+    .map((rule) => `tooling/openapi-linter/rules/${rule.aep}`);
+
+  let contents = [
+    {
+      label: "OpenAPI Linter",
+      items: [
+        "tooling/openapi-linter",
+        {
+          label: "Rules",
+          collapsed: true, // Start collapsed for cleaner UI
+          items: ruleItems,
+        },
+      ],
+    },
+  ];
+
+  console.log(`✓ Added ${ruleItems.length} OpenAPI linter rules to sidebar`);
+  return addToSidebar(sidebar, "Tooling", contents);
+}
+
 function buildSidebar(aeps: AEP[], groups: any, sidebar: Sidebar[]): Sidebar[] {
   let response = [];
   for (var group of groups.categories) {
@@ -52,4 +92,9 @@ function addToSidebar(sidebar: Sidebar[], label: string, items): Sidebar[] {
   return sidebar;
 }
 
-export { buildSidebar, buildLinterSidebar, addToSidebar };
+export {
+  buildSidebar,
+  buildLinterSidebar,
+  buildOpenAPILinterSidebar,
+  addToSidebar,
+};

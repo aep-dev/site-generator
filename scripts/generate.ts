@@ -2,7 +2,12 @@ import * as fs from "fs";
 import * as path from "path";
 
 import loadConfigFiles from "./src/config";
-import { buildSidebar, buildLinterSidebar, addToSidebar } from "./src/sidebar";
+import {
+  buildSidebar,
+  buildLinterSidebar,
+  buildOpenAPILinterSidebar,
+  addToSidebar,
+} from "./src/sidebar";
 import {
   type AEP,
   type ConsolidatedLinterRule,
@@ -15,6 +20,7 @@ import { load, dump } from "js-yaml";
 
 const AEP_LOC = process.env.AEP_LOCATION || "";
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC || "";
+const AEP_OPENAPI_LINTER_LOC = process.env.AEP_OPENAPI_LINTER_LOC || "";
 const AEP_COMPONENTS = process.env.AEP_COMPONENTS_LOC || "";
 
 // Logging functions
@@ -44,6 +50,19 @@ function logFolderDetection() {
   } else {
     console.log(
       `✗ Linter folder not configured (AEP_LINTER_LOC environment variable)`,
+    );
+  }
+
+  if (AEP_OPENAPI_LINTER_LOC) {
+    console.log(`✓ OpenAPI Linter folder found: ${AEP_OPENAPI_LINTER_LOC}`);
+    if (fs.existsSync(AEP_OPENAPI_LINTER_LOC)) {
+      console.log(`  - Path exists and is accessible`);
+    } else {
+      console.log(`  - ⚠️  Path does not exist`);
+    }
+  } else {
+    console.log(
+      `✗ OpenAPI Linter folder not configured (AEP_OPENAPI_LINTER_LOC environment variable)`,
     );
   }
 
@@ -277,6 +296,64 @@ async function assembleLinterRules(): Promise<LinterRule[]> {
   return linterRules;
 }
 
+/**
+ * Assembles OpenAPI linter rules from the aep-openapi-linter repository.
+ *
+ * Structure difference from api-linter:
+ * - api-linter: docs/rules/XXXX/*.md (multiple files per AEP)
+ * - openapi-linter: docs/XXXX.md (one file per AEP)
+ *
+ * @returns Promise<LinterRule[]> Array of linter rules, empty if repo not found
+ */
+async function assembleOpenAPILinterRules(): Promise<LinterRule[]> {
+  // Defensive check: Verify repository exists
+  if (!fs.existsSync(AEP_OPENAPI_LINTER_LOC)) {
+    console.log("ℹ️  OpenAPI linter repository not found, skipping...");
+    console.log(`   Expected location: ${AEP_OPENAPI_LINTER_LOC}`);
+    return [];
+  }
+
+  const docsPath = path.join(AEP_OPENAPI_LINTER_LOC, "docs");
+
+  // Defensive check: Verify docs directory exists
+  if (!fs.existsSync(docsPath)) {
+    console.warn("⚠️  OpenAPI linter docs directory not found");
+    console.warn(`   Expected: ${docsPath}`);
+    return [];
+  }
+
+  let linterRules: LinterRule[] = [];
+
+  try {
+    const files = await fs.promises.readdir(docsPath);
+
+    for (const file of files) {
+      // Process only numbered AEP files (e.g., 0131.md, 0132.md)
+      // Skip index files like rules.md
+      if (file.match(/^\d{4}\.md$/)) {
+        const filePath = path.join(docsPath, file);
+        const aepNumber = file.split(".")[0]; // Extract "0131" from "0131.md"
+
+        try {
+          const rule = buildLinterRule(filePath, aepNumber);
+          linterRules.push(rule);
+          console.log(`✓ Processed OpenAPI linter rule: AEP-${aepNumber}`);
+        } catch (error) {
+          console.error(`❌ Failed to process ${file}:`, error);
+          // Continue processing other files
+        }
+      }
+    }
+
+    console.log(`✓ Assembled ${linterRules.length} OpenAPI linter rules`);
+  } catch (error) {
+    console.error("❌ Error reading OpenAPI linter docs directory:", error);
+    return [];
+  }
+
+  return linterRules;
+}
+
 function buildLinterRule(rulePath: string, aep: string): LinterRule {
   logFileRead(rulePath, "Linter rule");
   let contents = fs.readFileSync(rulePath, "utf-8");
@@ -326,11 +403,10 @@ ${rules_contents.join("\n")}
   return consolidated_rules;
 }
 
-function writeRule(rule: ConsolidatedLinterRule) {
-  const filePath = path.join(
-    `src/content/docs/tooling/linter/rules/`,
-    `${rule.aep}.md`,
-  );
+function writeRule(rule: ConsolidatedLinterRule, outputPath?: string) {
+  const filePath =
+    outputPath ||
+    path.join(`src/content/docs/tooling/linter/rules/`, `${rule.aep}.md`);
   writeFile(filePath, rule.contents);
 }
 
@@ -504,6 +580,44 @@ if (AEP_LINTER_LOC != "") {
   ]);
 } else {
   console.warn("Proto linter repo is not found.");
+}
+
+if (AEP_OPENAPI_LINTER_LOC != "") {
+  console.log("=== Processing OpenAPI Linter Repository ===");
+
+  // Process OpenAPI linter rules
+  const openapiLinterRules = await assembleOpenAPILinterRules();
+
+  if (openapiLinterRules.length > 0) {
+    // Write OpenAPI linter overview page
+    await writePage(
+      AEP_OPENAPI_LINTER_LOC,
+      "README.md",
+      "src/content/docs/tooling/openapi-linter/index.md",
+      "OpenAPI Linter",
+    );
+
+    // Consolidate rules (groups by AEP number)
+    const consolidatedOpenAPIRules = consolidateLinterRule(openapiLinterRules);
+
+    // Write rule markdown files
+    for (const rule of consolidatedOpenAPIRules) {
+      const outputPath = path.join(
+        "src/content/docs/tooling/openapi-linter/rules",
+        `${rule.aep}.md`,
+      );
+      writeRule(rule, outputPath);
+    }
+
+    // Update sidebar navigation
+    sidebar = buildOpenAPILinterSidebar(consolidatedOpenAPIRules, sidebar);
+
+    console.log("✅ OpenAPI linter integration complete\n");
+  } else {
+    console.log("ℹ️  No OpenAPI linter rules found, skipping integration\n");
+  }
+} else {
+  console.log("ℹ️  OpenAPI linter repo not configured, skipping...\n");
 }
 
 if (AEP_COMPONENTS != "") {
