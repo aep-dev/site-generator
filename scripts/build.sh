@@ -22,8 +22,6 @@ if [ ! -d "${AEP_COMPONENTS}" ]; then
     git clone https://github.com/aep-dev/aep-components.git "${AEP_COMPONENTS_LOC}"
 fi
 
-cd "${SG_DIRECTORY}" || exit
-
 npm install
 npx playwright install --with-deps chromium
 npm run generate
