@@ -17,28 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     container: node:20
     steps:
-      - uses: actions/checkout@v3
-      - name: Clone aep.dev
-        uses: actions/checkout@v3
-        with:
-          repository: aep-dev/aep.dev
-          path: "./aep-dev"
-      - name: Clone Proto linter
-        uses: actions/checkout@v3
-        with:
-          repository: aep-dev/api-linter
-          path: "./api-linter"
-      - name: Clone AEP Components
-        uses: actions/checkout@v3
-        with:
-          repository: aep-dev/aep-components
-          path: "./aep-components"
-      - name: Install all dependencies.
-        run: npm install
-      - name: Install playwright with chromium
-        run: npx playwright install --with-deps chromium
       - name: Generate all static pages.
-        run: AEP_LOCATION=./aep-dev AEP_LINTER_LOC=./api-linter AEP_COMPONENTS_LOC=./aep-components npm run generate
+        run: ./scripts/build.sh
       - name: Install, build, and upload your site output
         uses: withastro/action@v2
   deploy:
