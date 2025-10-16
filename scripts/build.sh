@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -x
 export SG_DIRECTOR="${PWD}"
-export AEP_DIRECTORY="/tmp/aeps"
+export AEP_LOCATION="/tmp/aeps"
 export AEP_LINTER_LOC="/tmp/api-linter"
 export AEP_OPENAPI_LINTER_LOC="/tmp/aep-openapi-linter"
 export AEP_COMPONENTS_LOC="/tmp/aep-components"
 
-if [ ! -d "${AEP_DIRECTORY}" ]; then
-    git clone https://github.com/aep-dev/site-generator.git "${AEP_DIRECTORY}"
+if [ ! -d "${AEP_LOCATION}" ]; then
+    git clone https://github.com/aep-dev/aeps.git "${AEP_LOCATION}"
 fi
 
 if [ ! -d "${AEP_LINTER_LOC}" ]; then
