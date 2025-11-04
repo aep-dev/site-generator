@@ -218,6 +218,8 @@ function buildAEP(files: string[], folder: string): AEP {
   const yaml = load(yaml_text);
 
   yaml.title = getTitle(md_text).replace("\n", "");
+  let slug = yaml.slug;
+  delete yaml.slug;
 
   let contents = buildMarkdown(md_text, folder);
 
@@ -228,7 +230,7 @@ function buildAEP(files: string[], folder: string): AEP {
   });
   contents.addComponent({
     names: ["Sample"],
-    path: "../../components/Sample.astro",
+    path: "/src/components/Sample.astro",
   });
 
   contents.frontmatter["prev"] = false;
@@ -240,17 +242,15 @@ function buildAEP(files: string[], folder: string): AEP {
   return {
     title: yaml.title,
     id: yaml.id,
+    slug: slug,
     frontmatter: yaml,
     category: yaml.placement.category,
     order: yaml.placement.order,
-    slug: yaml.slug,
     contents: contents,
   };
 }
 
 function writeMarkdown(aep: AEP) {
-  aep.contents.frontmatter.slug = aep.id.toString();
-
   const filePath = path.join("src/content/docs", `${aep.id}.mdx`);
   writeFile(filePath, aep.contents.build());
 }
@@ -478,24 +478,28 @@ let sidebar: Sidebar[] = [
     label: "Overview",
     link: "1",
     icon: "bars",
+    id: "overview",
     items: [],
   },
   {
     label: "AEPs",
     link: "/general",
     icon: "open-book",
+    id: "aeps",
     items: [],
   },
   {
     label: "Tooling",
     link: "/tooling-and-ecosystem",
     icon: "puzzle",
+    id: "tooling",
     items: [],
   },
   {
     label: "Blog",
     link: "/blog",
     icon: "document",
+    id: "blog",
     items: [],
   },
 ];
