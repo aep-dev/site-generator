@@ -36,6 +36,7 @@ const AEP_LOC = process.env.AEP_LOCATION || "";
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC || "";
 const AEP_OPENAPI_LINTER_LOC = process.env.AEP_OPENAPI_LINTER_LOC || "";
 const AEP_COMPONENTS = process.env.AEP_COMPONENTS_LOC || "";
+const AEP_EDITION_2026 = process.env.AEP_EDITION_2026 || "";
 
 // Logging functions
 function logFolderDetection() {
@@ -90,6 +91,19 @@ function logFolderDetection() {
   } else {
     console.log(
       `✗ Components folder not configured (AEP_COMPONENTS_LOC environment variable)`,
+    );
+  }
+
+  if (AEP_EDITION_2026) {
+    console.log(`✓ AEP Edition 2026 folder found: ${AEP_EDITION_2026}`);
+    if (fs.existsSync(AEP_EDITION_2026)) {
+      console.log(`  - Path exists and is accessible`);
+    } else {
+      console.log(`  - ⚠️  Path does not exist`);
+    }
+  } else {
+    console.log(
+      `✗ AEP Edition 2026 folder not configured (AEP_EDITION_2026 environment variable)`,
     );
   }
 
@@ -474,6 +488,32 @@ if (AEP_COMPONENTS != "") {
       console.error(`Error converting ${filePath} to YAML: ${e}`);
     }
   }
+}
+
+if (AEP_EDITION_2026 != "") {
+  console.log("=== Processing AEP Edition 2026 ===");
+  // Build out AEPs from the 2026 edition
+  const aep_folders_2026 = await getFolders(
+    path.join(AEP_EDITION_2026, "aep/general/"),
+  );
+  for (var folder of aep_folders_2026) {
+    try {
+      const files = readAEP(folder);
+      const aep = buildAEP(files, folder);
+
+      // Write to aep-2026 directory instead of root
+      aep.contents.frontmatter.slug = aep.id.toString();
+      const filePath = path.join("src/content/docs/aep-2026", `${aep.id}.mdx`);
+      writeFile(filePath, aep.contents.build());
+
+      console.log(`✓ Processed AEP-${aep.id} for 2026 edition`);
+    } catch (e) {
+      console.log(`AEP ${folder} failed with error ${e}`);
+    }
+  }
+  console.log("✅ AEP Edition 2026 processing complete\n");
+} else {
+  console.log("ℹ️  AEP Edition 2026 repo not configured, skipping...\n");
 }
 
 writeSidebar(sidebar, "sidebar.json");
