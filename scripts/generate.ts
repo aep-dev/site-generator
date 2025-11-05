@@ -17,6 +17,19 @@ import {
 } from "./src/types";
 import { buildMarkdown, Markdown } from "./src/markdown";
 import { load, dump } from "js-yaml";
+import {
+  assembleLinterRules,
+  assembleOpenAPILinterRules,
+  consolidateLinterRule,
+  writeRule,
+} from "./src/linter";
+import {
+  logFileRead,
+  logFileWrite,
+  getTitle,
+  writeFile,
+  getFolders,
+} from "./src/utils";
 
 const AEP_LOC = process.env.AEP_LOCATION || "";
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC || "";
@@ -82,39 +95,6 @@ function logFolderDetection() {
   console.log("");
 }
 
-function logFileRead(filePath: string, source: string = "unknown") {
-  console.log(`📖 Reading file: ${filePath} (source: ${source})`);
-}
-
-function logFileWrite(filePath: string, size?: number) {
-  const sizeInfo = size ? ` (${size} bytes)` : "";
-  console.log(`📝 Writing file: ${filePath}${sizeInfo}`);
-}
-
-async function getFolders(dirPath: string): Promise<string[]> {
-  const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
-
-  const folders = entries
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => path.join(dirPath, entry.name));
-
-  return folders;
-}
-
-async function getLinterRules(dirPath: string): Promise<string[]> {
-  const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
-
-  const folders = entries
-    .filter(
-      (entry) =>
-        entry.isFile() &&
-        entry.name.endsWith(".md") &&
-        !entry.name.endsWith("index.md"),
-    )
-    .map((entry) => path.join(dirPath, entry.name));
-
-  return folders;
-}
 
 async function getFilePaths(dirPath: string): Promise<string[]> {
   const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
@@ -205,12 +185,6 @@ function readGroupFile(dirPath: string): GroupFile {
   return load(yaml_contents) as GroupFile;
 }
 
-function getTitle(contents: string): string {
-  var title_regex = /# (.*)\n/;
-  const matches = contents.match(title_regex);
-  return matches[1]!.replaceAll(":", "-").replaceAll("`", "");
-}
-
 function buildAEP(files: string[], folder: string): AEP {
   const md_text = files[0];
   const yaml_text = files[1];
@@ -271,153 +245,6 @@ async function assembleAEPs(): Promise<AEP[]> {
     }
   }
   return AEPs;
-}
-
-async function assembleLinterRules(): Promise<LinterRule[]> {
-  let linterRules = [];
-  const linter_rule_folders = await getFolders(
-    path.join(AEP_LINTER_LOC, "docs/rules/"),
-  );
-  for (var folder of linter_rule_folders) {
-    try {
-      const linter_files = await getLinterRules(folder);
-      for (var linter_file of linter_files) {
-        linterRules.push(
-          buildLinterRule(
-            linter_file,
-            folder.split("/")[folder.split("/").length - 1],
-          ),
-        );
-      }
-    } catch (e) {
-      console.log(`Linter Rule ${folder} failed with error ${e}`);
-    }
-  }
-  return linterRules;
-}
-
-/**
- * Assembles OpenAPI linter rules from the aep-openapi-linter repository.
- *
- * Structure difference from api-linter:
- * - api-linter: docs/rules/XXXX/*.md (multiple files per AEP)
- * - openapi-linter: docs/XXXX.md (one file per AEP)
- *
- * @returns Promise<LinterRule[]> Array of linter rules, empty if repo not found
- */
-async function assembleOpenAPILinterRules(): Promise<LinterRule[]> {
-  // Defensive check: Verify repository exists
-  if (!fs.existsSync(AEP_OPENAPI_LINTER_LOC)) {
-    console.log("ℹ️  OpenAPI linter repository not found, skipping...");
-    console.log(`   Expected location: ${AEP_OPENAPI_LINTER_LOC}`);
-    return [];
-  }
-
-  const docsPath = path.join(AEP_OPENAPI_LINTER_LOC, "docs");
-
-  // Defensive check: Verify docs directory exists
-  if (!fs.existsSync(docsPath)) {
-    console.warn("⚠️  OpenAPI linter docs directory not found");
-    console.warn(`   Expected: ${docsPath}`);
-    return [];
-  }
-
-  let linterRules: LinterRule[] = [];
-
-  try {
-    const files = await fs.promises.readdir(docsPath);
-
-    for (const file of files) {
-      // Process only numbered AEP files (e.g., 0131.md, 0132.md)
-      // Skip index files like rules.md
-      if (file.match(/^\d{4}\.md$/)) {
-        const filePath = path.join(docsPath, file);
-        const aepNumber = file.split(".")[0]; // Extract "0131" from "0131.md"
-
-        try {
-          const rule = buildLinterRule(filePath, aepNumber);
-          linterRules.push(rule);
-          console.log(`✓ Processed OpenAPI linter rule: AEP-${aepNumber}`);
-        } catch (error) {
-          console.error(`❌ Failed to process ${file}:`, error);
-          // Continue processing other files
-        }
-      }
-    }
-
-    console.log(`✓ Assembled ${linterRules.length} OpenAPI linter rules`);
-  } catch (error) {
-    console.error("❌ Error reading OpenAPI linter docs directory:", error);
-    return [];
-  }
-
-  return linterRules;
-}
-
-function buildLinterRule(rulePath: string, aep: string): LinterRule {
-  logFileRead(rulePath, "Linter rule");
-  let contents = fs.readFileSync(rulePath, "utf-8");
-  let title = getTitle(contents);
-
-  contents = contents.replace("---", `---\ntitle: ${title}`);
-
-  let filename = rulePath.split("/")[rulePath.split("/").length - 1];
-
-  return {
-    title: title,
-    aep: aep,
-    contents: contents,
-    filename: filename,
-    slug: filename.split(".")[0],
-  };
-}
-
-function consolidateLinterRule(
-  linterRules: LinterRule[],
-): ConsolidatedLinterRule[] {
-  let rules = {};
-  for (var rule of linterRules) {
-    if (rule.aep in rules) {
-      rules[rule.aep].push(rule);
-    } else {
-      rules[rule.aep] = [rule];
-    }
-  }
-
-  let consolidated_rules = [];
-  for (var key in rules) {
-    let rules_contents = rules[key].map(
-      (aep) => `<details>
-<summary>${aep.title}</summary>
-${aep.contents.replace(/---[\s\S]*?---/m, "")}
-</details>
-`,
-    );
-    let contents = `---
-title: AEP-${rules[key][0].aep} Linter Rules
----
-${rules_contents.join("\n")}
-`;
-    consolidated_rules.push({ contents: contents, aep: rules[key][0].aep });
-  }
-  return consolidated_rules;
-}
-
-function writeRule(rule: ConsolidatedLinterRule, outputPath?: string) {
-  const filePath =
-    outputPath ||
-    path.join(`src/content/docs/tooling/linter/rules/`, `${rule.aep}.md`);
-  writeFile(filePath, rule.contents);
-}
-
-function writeFile(filePath: string, contents: string) {
-  const outDir = path.dirname(filePath);
-  if (!fs.existsSync(outDir)) {
-    fs.mkdirSync(outDir, { recursive: true });
-  }
-
-  logFileWrite(filePath, contents.length);
-  fs.writeFileSync(filePath, contents, { flag: "w" });
 }
 
 function buildFullAEPList(aeps: AEP[]) {
@@ -568,8 +395,8 @@ if (AEP_LINTER_LOC != "") {
   );
 
   // Write out linter rules.
-  let linter_rules = await assembleLinterRules();
-  let consolidated_rules = consolidateLinterRule(linter_rules);
+  let linter_rules = await assembleLinterRules(AEP_LINTER_LOC);
+  let consolidated_rules = consolidateLinterRule({ linterRules: linter_rules });
   for (var rule of consolidated_rules) {
     writeRule(rule);
   }
@@ -586,7 +413,9 @@ if (AEP_OPENAPI_LINTER_LOC != "") {
   console.log("=== Processing OpenAPI Linter Repository ===");
 
   // Process OpenAPI linter rules
-  const openapiLinterRules = await assembleOpenAPILinterRules();
+  const openapiLinterRules = await assembleOpenAPILinterRules(
+    AEP_OPENAPI_LINTER_LOC,
+  );
 
   if (openapiLinterRules.length > 0) {
     // Write OpenAPI linter overview page
@@ -598,7 +427,9 @@ if (AEP_OPENAPI_LINTER_LOC != "") {
     );
 
     // Consolidate rules (groups by AEP number)
-    const consolidatedOpenAPIRules = consolidateLinterRule(openapiLinterRules);
+    const consolidatedOpenAPIRules = consolidateLinterRule({
+      linterRules: openapiLinterRules,
+    });
 
     // Write rule markdown files
     for (const rule of consolidatedOpenAPIRules) {
