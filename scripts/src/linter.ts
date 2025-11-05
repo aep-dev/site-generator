@@ -110,7 +110,9 @@ export async function assembleOpenAPILinterRules(
               const matchIndex = match.index!;
               const title = match[1];
               const nextMatchIndex =
-                i < matches.length - 1 ? matches[i + 1].index! : fileContents.length;
+                i < matches.length - 1
+                  ? matches[i + 1].index!
+                  : fileContents.length;
 
               // Extract content for this H2 section
               const sectionContent = fileContents.substring(
@@ -159,10 +161,7 @@ export async function assembleOpenAPILinterRules(
 /**
  * Builds a single linter rule from a file
  */
-export function buildLinterRule(
-  rulePath: string,
-  aep: string,
-): LinterRule {
+export function buildLinterRule(rulePath: string, aep: string): LinterRule {
   logFileRead(rulePath, "Linter rule");
   let contents = fs.readFileSync(rulePath, "utf-8");
   let title = getTitle(contents);
@@ -226,10 +225,7 @@ ${preambleSection}${rules_contents.join("\n")}
 /**
  * Writes a consolidated rule to disk
  */
-export function writeRule(
-  rule: ConsolidatedLinterRule,
-  outputPath?: string,
-) {
+export function writeRule(rule: ConsolidatedLinterRule, outputPath?: string) {
   const filePath =
     outputPath ||
     path.join(`src/content/docs/tooling/linter/rules/`, `${rule.aep}.md`);

@@ -95,7 +95,6 @@ function logFolderDetection() {
   console.log("");
 }
 
-
 async function getFilePaths(dirPath: string): Promise<string[]> {
   const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
 
