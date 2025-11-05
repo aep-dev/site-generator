@@ -104,6 +104,10 @@ export async function assembleOpenAPILinterRules(
               `✓ Processed OpenAPI linter rule: AEP-${aepNumber} (single rule)`,
             );
           } else {
+            // Extract preamble (content before first H2)
+            const firstH2Index = matches[0].index!;
+            const preamble = fileContents.substring(0, firstH2Index).trim();
+
             // Split by H2 sections
             for (let i = 0; i < matches.length; i++) {
               const match = matches[i];
@@ -135,6 +139,7 @@ export async function assembleOpenAPILinterRules(
                 contents: `---\ntitle: ${title}\n---\n${ruleContent}`,
                 filename: `${aepNumber}-${slug}.md`,
                 slug: `${aepNumber}-${slug}`,
+                preamble: i === 0 ? preamble : undefined, // Add preamble to first rule
               });
             }
 
@@ -210,8 +215,9 @@ ${aep.contents.replace(/---[\s\S]*?---/m, "")}
 `,
     );
 
-    // Construct content with optional preamble before rules
-    const preambleSection = preamble ? `${preamble}\n\n` : "";
+    // Extract preamble from first rule if available, otherwise use provided preamble
+    const rulePreamble = rules[key][0].preamble || preamble;
+    const preambleSection = rulePreamble ? `${rulePreamble}\n\n` : "";
     let contents = `---
 title: AEP-${rules[key][0].aep} Linter Rules
 ---
