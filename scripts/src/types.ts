@@ -63,6 +63,7 @@ interface LinterRule {
   contents: Markdown;
   filename: string;
   slug: string;
+  preamble?: string;
 }
 
 interface ConsolidatedLinterRule {
