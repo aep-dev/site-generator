@@ -502,7 +502,7 @@ if (AEP_EDITION_2026 != "") {
       const aep = buildAEP(files, folder);
 
       // Write to aep-2026 directory instead of root
-      aep.contents.frontmatter.slug = aep.id.toString();
+      aep.contents.frontmatter.slug = `aep-2026/${aep.id.toString()}`;
       const filePath = path.join("src/content/docs/aep-2026", `${aep.id}.mdx`);
       writeFile(filePath, aep.contents.build());
 
