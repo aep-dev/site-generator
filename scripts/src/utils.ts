@@ -39,6 +39,19 @@ export function writeFile(filePath: string, contents: string) {
 }
 
 /**
+ * Copies a file, creating directories as needed
+ */
+export function copyFile(sourcePath: string, destinationPath: string) {
+  const outDir = path.dirname(destinationPath);
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
+  }
+
+  logFileWrite(destinationPath);
+  fs.copyFileSync(sourcePath, destinationPath);
+}
+
+/**
  * Gets all folders in a directory
  */
 export async function getFolders(dirPath: string): Promise<string[]> {
