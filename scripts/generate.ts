@@ -29,6 +29,7 @@ import {
   getTitle,
   writeFile,
   getFolders,
+  copyFile,
 } from "./src/utils";
 
 const AEP_LOC = process.env.AEP_LOCATION || "";
@@ -372,8 +373,7 @@ if (AEP_LOC != "") {
   for (var file of files) {
     const blogFilePath = path.join(AEP_LOC, "blog", file.name);
     logFileRead(blogFilePath, "Blog post");
-    let fileContents = fs.readFileSync(blogFilePath, "utf-8");
-    writeFile(path.join("src/content/docs/blog", file.name), fileContents);
+    copyFile(blogFilePath, path.join("src/content/docs/blog", file.name));
   }
 } else {
   console.warn("AEP repo is not found.");
