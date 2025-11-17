@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "generate": "tsx scripts/generate.ts",
-    "test": "tsx test/sampleCode.test.ts",
+    "test": "tsx test/sampleCode.test.ts && tsx test/jinja2Validation.test.ts",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write ."
   },
