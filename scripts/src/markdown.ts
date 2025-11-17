@@ -74,16 +74,18 @@ ${this.contents}
 
     for (const match of matches) {
       const tagContent = match[1].trim();
-      const isSupported = supportedTags.some(pattern => pattern.test(tagContent));
+      const isSupported = supportedTags.some((pattern) =>
+        pattern.test(tagContent),
+      );
 
       if (!isSupported) {
         throw new Error(
           `Unsupported Jinja2 tag found: {% ${tagContent} %}\n` +
-          `Only the following tags are supported:\n` +
-          `  - {% tab proto %}\n` +
-          `  - {% tab oas %}\n` +
-          `  - {% endtabs %}\n` +
-          `  - {% sample ... %}`
+            `Only the following tags are supported:\n` +
+            `  - {% tab proto %}\n` +
+            `  - {% tab oas %}\n` +
+            `  - {% endtabs %}\n` +
+            `  - {% sample ... %}`,
         );
       }
     }
