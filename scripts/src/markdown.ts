@@ -60,6 +60,37 @@ ${this.contents}
 `;
   }
 
+  public validateJinja2Tags() {
+    // Find all Jinja2 tags in the content
+    const jinja2Regex = /\{%\s*([^%]+?)\s*%\}/g;
+    const matches = this.contents.matchAll(jinja2Regex);
+
+    const supportedTags = [
+      /^tab\s+proto\s*-?$/,
+      /^tab\s+oas\s*-?$/,
+      /^endtabs\s*-?$/,
+      /^sample\s+/,
+    ];
+
+    for (const match of matches) {
+      const tagContent = match[1].trim();
+      const isSupported = supportedTags.some(pattern => pattern.test(tagContent));
+
+      if (!isSupported) {
+        throw new Error(
+          `Unsupported Jinja2 tag found: {% ${tagContent} %}\n` +
+          `Only the following tags are supported:\n` +
+          `  - {% tab proto %}\n` +
+          `  - {% tab oas %}\n` +
+          `  - {% endtabs %}\n` +
+          `  - {% sample ... %}`
+        );
+      }
+    }
+
+    return this;
+  }
+
   public substituteHTMLComments() {
     this.contents = this.contents.replace(
       /<!--\s*([\s\S]*?)-->/g,
@@ -224,6 +255,7 @@ ${tabContents(match[3].trimStart())}
 function buildMarkdown(contents: string, folder: string): Markdown {
   let result = new Markdown(contents, {});
   return result
+    .validateJinja2Tags()
     .substituteSamples(folder)
     .substituteTabs()
     .substituteHTMLComments()
