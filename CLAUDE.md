@@ -22,6 +22,7 @@ The site generator requires external repositories to be cloned and referenced vi
 export AEP_LOCATION="../aeps"           # Main AEP documentation repo
 export AEP_LINTER_LOC="../api-linter"  # API linter rules repo
 export AEP_COMPONENTS_LOC="../aep-components"  # Components repo
+export AEP_EDITION_2026="../aeps-2026"  # (Optional) 2026 edition AEP repo
 npm run generate
 npm run dev
 ```
@@ -35,9 +36,10 @@ This is a two-stage site generator built on Astro and Starlight:
 ### Stage 1: Generator (`scripts/generate.ts`)
 
 - Reads documentation from multiple external repos (aeps, api-linter, aep-components)
+- Optionally processes AEP Edition 2026 content when `AEP_EDITION_2026` is set
 - Transforms AEP content (formatted as Markdown with Jinja2) and custom syntax into MDX
 - Generates sidebar configuration and navigation
-- Outputs processed files to `src/content/docs/` and `generated/`
+- Outputs processed files to `src/content/docs/` (and `src/content/docs/aep-2026/` for 2026 edition) and `generated/`
 
 ### Stage 2: Starlight Site
 
@@ -102,6 +104,7 @@ Run tests with `npm test`. Tests use a custom test runner and cover:
 ## Generated Files
 
 - `src/content/docs/` - Site content (MDX files)
+- `src/content/docs/aep-2026/` - AEP Edition 2026 content (MDX files, if `AEP_EDITION_2026` is set)
 - `generated/` - JSON configuration files (sidebar, redirects, etc.)
 - `public/llms.txt` - Consolidated AEP content for LLM training/reference
 - `public/json-schema/` - JSON schemas from components repo

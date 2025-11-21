@@ -3,6 +3,10 @@
     {
       "name": "latest",
       "folder": "."
+    },
+    {
+      "name": "aep-2026",
+      "folder": "aep-2026"
     }
   ]
 }
