@@ -12,10 +12,7 @@ const latestUrl = latestEdition ? getVersionedPath(editionsConfig, Astro.url.pat
 {
   isOlderVersion && (
     <div>
-      This content is for {currentEdition.name}. Switch to the
-      {/* prettier-ignore */}
-      <a href={latestUrl}>latest version</a>
-      for up-to-date documentation.
+      This content is for the {currentEdition.name} edition
     </div>
   )
 }
