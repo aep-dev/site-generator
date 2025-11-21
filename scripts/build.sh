@@ -24,8 +24,7 @@ if [ ! -d "${AEP_COMPONENTS}" ]; then
 fi
 
 if [ ! -d "${AEP_EDITION_2026}" ]; then
-    git clone https://github.com/aep-dev/aeps.git "${AEP_EDITION_2026}"
-    # TODO: Checkout the repo at a specific tag or branch for the 2026 edition
+    git clone --single-branch --branch aep-2026 https://github.com/aep-dev/aeps.git "${AEP_EDITION_2026}"
 fi
 
 npm install
