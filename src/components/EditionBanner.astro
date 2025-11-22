@@ -3,9 +3,9 @@ import editionsConfig from '../../aep-editions.json'
 import { getEditionFromPath, getVersionedPath } from '../utils/versions'
 
 const currentEdition = getEditionFromPath(editionsConfig, Astro.url.pathname)
-const latestEdition = editionsConfig.editions.find(e => e.name === 'latest')
+const latestEdition = editionsConfig.editions.find(e => e.folder === '.')
 
-const isOlderVersion = currentEdition && currentEdition.name !== 'latest'
+const isOlderVersion = currentEdition && currentEdition.folder !== '.'
 const latestUrl = latestEdition ? getVersionedPath(editionsConfig, Astro.url.pathname, latestEdition) : null
 ---
 
