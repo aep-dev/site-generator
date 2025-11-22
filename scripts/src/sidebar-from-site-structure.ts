@@ -1,46 +1,46 @@
 import * as fs from "fs";
-import type { Contents } from "./page-contents";
+import type { SiteStructure } from "./site-structure";
 import type { Sidebar } from "./types";
 
 /**
- * Read contents structure from a JSON file
+ * Read site structure from a JSON file
  */
-function readContents(inputPath: string): Contents {
+function readSiteStructure(inputPath: string): SiteStructure {
   if (!fs.existsSync(inputPath)) {
-    throw new Error(`Contents file not found: ${inputPath}`);
+    throw new Error(`Site structure file not found: ${inputPath}`);
   }
 
   const json = fs.readFileSync(inputPath, "utf-8");
-  const contents = JSON.parse(json) as Contents;
-  console.log(`✓ Read contents from ${inputPath}`);
-  return contents;
+  const siteStructure = JSON.parse(json) as SiteStructure;
+  console.log(`✓ Read site structure from ${inputPath}`);
+  return siteStructure;
 }
 
 /**
- * Assembles a complete sidebar structure from a Contents object
+ * Assembles a complete sidebar structure from a SiteStructure object
  */
-function assembleSidebarFromContents(contents: Contents): Sidebar[] {
+function assembleSidebarFromSiteStructure(siteStructure: SiteStructure): Sidebar[] {
   const sidebar: Sidebar[] = [
     {
       label: "Overview",
       link: "1",
       icon: "bars",
       id: "overview",
-      items: assembleOverviewItems(contents),
+      items: assembleOverviewItems(siteStructure),
     },
     {
       label: "AEPs",
       link: "/general",
       icon: "open-book",
       id: "aeps",
-      items: assembleAEPItems(contents),
+      items: assembleAEPItems(siteStructure),
     },
     {
       label: "Tooling",
       link: "/tooling-and-ecosystem",
       icon: "puzzle",
       id: "tooling",
-      items: assembleToolingItems(contents),
+      items: assembleToolingItems(siteStructure),
     },
     {
       label: "Blog",
@@ -55,21 +55,21 @@ function assembleSidebarFromContents(contents: Contents): Sidebar[] {
 }
 
 /**
- * Assemble overview section items from contents
+ * Assemble overview section items from site structure
  */
-function assembleOverviewItems(contents: Contents): any[] {
-  return contents.overview.pages.map((page) => page.link);
+function assembleOverviewItems(siteStructure: SiteStructure): any[] {
+  return siteStructure.overview.pages.map((page) => page.link);
 }
 
 /**
- * Assemble AEP section items from contents
+ * Assemble AEP section items from site structure
  */
-function assembleAEPItems(contents: Contents): any[] {
+function assembleAEPItems(siteStructure: SiteStructure): any[] {
   const items: any[] = [];
 
   // Get the main edition (assuming it's the one without a special name or "general")
   // For now, we'll process all editions and use the first one as the main one
-  const editionNames = Object.keys(contents.aeps.editions);
+  const editionNames = Object.keys(siteStructure.aeps.editions);
 
   if (editionNames.length === 0) {
     return items;
@@ -80,7 +80,7 @@ function assembleAEPItems(contents: Contents): any[] {
     ["general", "main", "default"].includes(name.toLowerCase()),
   ) || editionNames[0];
 
-  const mainEdition = contents.aeps.editions[mainEditionName];
+  const mainEdition = siteStructure.aeps.editions[mainEditionName];
 
   // Build items from categories
   for (const category of mainEdition.categories) {
@@ -97,13 +97,13 @@ function assembleAEPItems(contents: Contents): any[] {
 }
 
 /**
- * Assemble tooling section items from contents
+ * Assemble tooling section items from site structure
  */
-function assembleToolingItems(contents: Contents): any[] {
+function assembleToolingItems(siteStructure: SiteStructure): any[] {
   const items: any[] = [];
 
   // Add regular tooling pages
-  for (const page of contents.tooling.pages) {
+  for (const page of siteStructure.tooling.pages) {
     items.push({
       label: page.label,
       link: page.link,
@@ -111,7 +111,7 @@ function assembleToolingItems(contents: Contents): any[] {
   }
 
   // Add Protobuf Linter section if we have linter rules
-  if (contents.tooling.linterRules && contents.tooling.linterRules.length > 0) {
+  if (siteStructure.tooling.linterRules && siteStructure.tooling.linterRules.length > 0) {
     items.push({
       label: "Protobuf Linter",
       items: [
@@ -119,7 +119,7 @@ function assembleToolingItems(contents: Contents): any[] {
         {
           label: "Rules",
           collapsed: true,
-          items: contents.tooling.linterRules.map(
+          items: siteStructure.tooling.linterRules.map(
             (rule) => `tooling/linter/rules/${rule}`,
           ),
         },
@@ -129,8 +129,8 @@ function assembleToolingItems(contents: Contents): any[] {
 
   // Add OpenAPI Linter section if we have OpenAPI linter rules
   if (
-    contents.tooling.openAPILinterRules &&
-    contents.tooling.openAPILinterRules.length > 0
+    siteStructure.tooling.openAPILinterRules &&
+    siteStructure.tooling.openAPILinterRules.length > 0
   ) {
     items.push({
       label: "OpenAPI Linter",
@@ -139,7 +139,7 @@ function assembleToolingItems(contents: Contents): any[] {
         {
           label: "Rules",
           collapsed: true,
-          items: contents.tooling.openAPILinterRules.map(
+          items: siteStructure.tooling.openAPILinterRules.map(
             (rule) => `tooling/openapi-linter/rules/${rule}`,
           ),
         },
@@ -150,4 +150,4 @@ function assembleToolingItems(contents: Contents): any[] {
   return items;
 }
 
-export { readContents, assembleSidebarFromContents };
+export { readSiteStructure, assembleSidebarFromSiteStructure };

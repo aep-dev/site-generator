@@ -32,16 +32,16 @@ import {
   copyFile,
 } from "./src/utils";
 import {
-  createEmptyContents,
+  createEmptySiteStructure,
   addOverviewPage,
   addToolingPage,
   addLinterRules,
   addOpenAPILinterRules,
   addAEPEdition,
-  writeContents,
-  type Contents,
-} from "./src/page-contents";
-import { assembleSidebarFromContents } from "./src/sidebar-from-contents";
+  writeSiteStructure,
+  type SiteStructure,
+} from "./src/site-structure";
+import { assembleSidebarFromSiteStructure } from "./src/sidebar-from-site-structure";
 
 const AEP_LOC = process.env.AEP_LOCATION || "";
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC || "";
@@ -190,10 +190,10 @@ async function writePages(
   return sidebar;
 }
 
-async function writePagesToContents(
+async function writePagesToSiteStructure(
   dirPath: string,
-  contents: Contents,
-): Promise<Contents> {
+  siteStructure: SiteStructure,
+): Promise<SiteStructure> {
   const entries = await fs.promises.readdir(
     path.join(dirPath, "pages/general/"),
     { withFileTypes: true },
@@ -210,15 +210,15 @@ async function writePagesToContents(
       path.join("src/content/docs", file.name),
     );
     const link = file.name.replace(".md", "");
-    addOverviewPage(contents, { label: link, link });
+    addOverviewPage(siteStructure, { label: link, link });
   }
   writePage(
     dirPath,
     "CONTRIBUTING.md",
     path.join("src/content/docs", "contributing.md"),
   );
-  addOverviewPage(contents, { label: "contributing", link: "contributing" });
-  return contents;
+  addOverviewPage(siteStructure, { label: "contributing", link: "contributing" });
+  return siteStructure;
 }
 
 function readAEP(dirPath: string): string[] {
@@ -390,8 +390,8 @@ let sidebar: Sidebar[] = [
 // Log folder detection status
 logFolderDetection();
 
-// Create contents structure
-let contents = createEmptyContents();
+// Create site structure
+let siteStructure = createEmptySiteStructure();
 
 if (AEP_LOC != "") {
   console.log("=== Processing AEP Repository ===");
@@ -401,7 +401,7 @@ if (AEP_LOC != "") {
 
   // Write assorted pages.
   sidebar = await writePages(AEP_LOC, sidebar);
-  contents = await writePagesToContents(AEP_LOC, contents);
+  siteStructure = await writePagesToSiteStructure(AEP_LOC, siteStructure);
 
   // Build out AEPs.
   let aeps = await assembleAEPs();
@@ -409,9 +409,9 @@ if (AEP_LOC != "") {
   // Build sidebar (old way).
   sidebar = buildSidebar(aeps, readGroupFile(AEP_LOC), sidebar);
 
-  // Add AEPs to contents structure
+  // Add AEPs to site structure
   const groups = readGroupFile(AEP_LOC);
-  addAEPEdition(contents, "general", aeps, groups);
+  addAEPEdition(siteStructure, "general", aeps, groups);
 
   let full_aeps = buildFullAEPList(aeps);
   writeSidebar(full_aeps, "full_aeps.json");
@@ -473,12 +473,12 @@ if (AEP_LINTER_LOC != "") {
     { label: "Website", link: "tooling/website" },
   ]);
 
-  // Add to contents structure
+  // Add to site structure
   addLinterRules(
-    contents,
+    siteStructure,
     consolidated_rules.map((r) => r.aep),
   );
-  addToolingPage(contents, { label: "Website", link: "tooling/website" });
+  addToolingPage(siteStructure, { label: "Website", link: "tooling/website" });
 } else {
   console.warn("Proto linter repo is not found.");
 }
@@ -517,9 +517,9 @@ if (AEP_OPENAPI_LINTER_LOC != "") {
     // Update sidebar navigation
     sidebar = buildOpenAPILinterSidebar(consolidatedOpenAPIRules, sidebar);
 
-    // Add to contents structure
+    // Add to site structure
     addOpenAPILinterRules(
-      contents,
+      siteStructure,
       consolidatedOpenAPIRules.map((r) => r.aep),
     );
 
@@ -579,12 +579,12 @@ if (AEP_EDITION_2026 != "") {
   console.log("ℹ️  AEP Edition 2026 repo not configured, skipping...\n");
 }
 
-// Write contents structure to JSON
-writeContents(contents, "generated/contents.json");
+// Write site structure to JSON
+writeSiteStructure(siteStructure, "generated/site-structure.json");
 
-// Assemble sidebar from contents and write it
-const sidebarFromContents = assembleSidebarFromContents(contents);
-writeSidebar(sidebarFromContents, "sidebar-from-contents.json");
+// Assemble sidebar from site structure and write it
+const sidebarFromSiteStructure = assembleSidebarFromSiteStructure(siteStructure);
+writeSidebar(sidebarFromSiteStructure, "sidebar-from-site-structure.json");
 
 // Write original sidebar (for backwards compatibility during transition)
 writeSidebar(sidebar, "sidebar.json");

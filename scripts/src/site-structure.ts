@@ -65,32 +65,32 @@ interface AEPsSection {
 }
 
 /**
- * Top-level contents structure
+ * Top-level site structure representing all content organization
  */
-interface Contents {
+interface SiteStructure {
   overview: OverviewSection;
   aeps: AEPsSection;
   tooling: ToolingSection;
 }
 
 /**
- * Write contents structure to a JSON file
+ * Write site structure to a JSON file
  */
-function writeContents(contents: Contents, outputPath: string): void {
+function writeSiteStructure(siteStructure: SiteStructure, outputPath: string): void {
   const dir = path.dirname(outputPath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  const json = JSON.stringify(contents, null, 2);
+  const json = JSON.stringify(siteStructure, null, 2);
   fs.writeFileSync(outputPath, json, "utf-8");
-  console.log(`✓ Wrote contents to ${outputPath}`);
+  console.log(`✓ Wrote site structure to ${outputPath}`);
 }
 
 /**
- * Create an empty Contents structure
+ * Create an empty SiteStructure
  */
-function createEmptyContents(): Contents {
+function createEmptySiteStructure(): SiteStructure {
   return {
     overview: {
       pages: [],
@@ -107,33 +107,33 @@ function createEmptyContents(): Contents {
 /**
  * Add a page to the overview section
  */
-function addOverviewPage(contents: Contents, page: PageItem): Contents {
-  contents.overview.pages.push(page);
-  return contents;
+function addOverviewPage(siteStructure: SiteStructure, page: PageItem): SiteStructure {
+  siteStructure.overview.pages.push(page);
+  return siteStructure;
 }
 
 /**
  * Add a page to the tooling section
  */
-function addToolingPage(contents: Contents, page: PageItem): Contents {
-  contents.tooling.pages.push(page);
-  return contents;
+function addToolingPage(siteStructure: SiteStructure, page: PageItem): SiteStructure {
+  siteStructure.tooling.pages.push(page);
+  return siteStructure;
 }
 
 /**
  * Add linter rules to the tooling section
  */
-function addLinterRules(contents: Contents, rules: string[]): Contents {
-  contents.tooling.linterRules = rules;
-  return contents;
+function addLinterRules(siteStructure: SiteStructure, rules: string[]): SiteStructure {
+  siteStructure.tooling.linterRules = rules;
+  return siteStructure;
 }
 
 /**
  * Add OpenAPI linter rules to the tooling section
  */
-function addOpenAPILinterRules(contents: Contents, rules: string[]): Contents {
-  contents.tooling.openAPILinterRules = rules;
-  return contents;
+function addOpenAPILinterRules(siteStructure: SiteStructure, rules: string[]): SiteStructure {
+  siteStructure.tooling.openAPILinterRules = rules;
+  return siteStructure;
 }
 
 /**
@@ -171,26 +171,26 @@ function buildAEPCategories(
 }
 
 /**
- * Add an edition of AEPs to the contents
+ * Add an edition of AEPs to the site structure
  */
 function addAEPEdition(
-  contents: Contents,
+  siteStructure: SiteStructure,
   editionName: string,
   aeps: AEP[],
   groups: { categories: { code: string; title: string }[] },
-): Contents {
+): SiteStructure {
   const categories = buildAEPCategories(aeps, groups);
 
-  contents.aeps.editions[editionName] = {
+  siteStructure.aeps.editions[editionName] = {
     name: editionName,
     categories,
   };
 
-  return contents;
+  return siteStructure;
 }
 
 export type {
-  Contents,
+  SiteStructure,
   OverviewSection,
   AEPsSection,
   ToolingSection,
@@ -201,8 +201,8 @@ export type {
 };
 
 export {
-  writeContents,
-  createEmptyContents,
+  writeSiteStructure,
+  createEmptySiteStructure,
   addOverviewPage,
   addToolingPage,
   addLinterRules,
