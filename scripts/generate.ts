@@ -39,7 +39,6 @@ import {
   addOpenAPILinterRules,
   addAEPEdition,
   writeContents,
-  readContents,
   type Contents,
 } from "./src/page-contents";
 import { assembleSidebarFromContents } from "./src/sidebar-from-contents";

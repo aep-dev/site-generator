@@ -88,20 +88,6 @@ function writeContents(contents: Contents, outputPath: string): void {
 }
 
 /**
- * Read contents structure from a JSON file
- */
-function readContents(inputPath: string): Contents {
-  if (!fs.existsSync(inputPath)) {
-    throw new Error(`Contents file not found: ${inputPath}`);
-  }
-
-  const json = fs.readFileSync(inputPath, "utf-8");
-  const contents = JSON.parse(json) as Contents;
-  console.log(`✓ Read contents from ${inputPath}`);
-  return contents;
-}
-
-/**
  * Create an empty Contents structure
  */
 function createEmptyContents(): Contents {
@@ -216,7 +202,6 @@ export type {
 
 export {
   writeContents,
-  readContents,
   createEmptyContents,
   addOverviewPage,
   addToolingPage,

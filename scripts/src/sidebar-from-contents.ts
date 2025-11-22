@@ -1,5 +1,20 @@
+import * as fs from "fs";
 import type { Contents } from "./page-contents";
 import type { Sidebar } from "./types";
+
+/**
+ * Read contents structure from a JSON file
+ */
+function readContents(inputPath: string): Contents {
+  if (!fs.existsSync(inputPath)) {
+    throw new Error(`Contents file not found: ${inputPath}`);
+  }
+
+  const json = fs.readFileSync(inputPath, "utf-8");
+  const contents = JSON.parse(json) as Contents;
+  console.log(`✓ Read contents from ${inputPath}`);
+  return contents;
+}
 
 /**
  * Assembles a complete sidebar structure from a Contents object
@@ -135,4 +150,4 @@ function assembleToolingItems(contents: Contents): any[] {
   return items;
 }
 
-export { assembleSidebarFromContents };
+export { readContents, assembleSidebarFromContents };

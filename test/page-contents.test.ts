@@ -7,7 +7,10 @@ import {
   addOpenAPILinterRules,
   addAEPEdition,
 } from "../scripts/src/page-contents";
-import { assembleSidebarFromContents } from "../scripts/src/sidebar-from-contents";
+import {
+  assembleSidebarFromContents,
+  readContents,
+} from "../scripts/src/sidebar-from-contents";
 
 describe("Page Contents", () => {
   it("should create an empty contents structure", () => {
