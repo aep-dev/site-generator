@@ -242,7 +242,7 @@ ${tabContents(match[3].trimStart())}
     );
     this.addComponent({
       names: ["AepLink"],
-      path: "../../components/AepLink.astro",
+      path: "@components/AepLink.astro",
     });
     return this;
   }
@@ -256,7 +256,7 @@ ${tabContents(match[3].trimStart())}
     });
     this.addComponent({
       names: ["AepLink"],
-      path: "../../components/AepLink.astro",
+      path: "@components/AepLink.astro",
     });
     return this;
   }
@@ -272,7 +272,7 @@ ${tabContents(match[3].trimStart())}
     );
     this.addComponent({
       names: ["AepLink"],
-      path: "../../components/AepLink.astro",
+      path: "@components/AepLink.astro",
     });
     return this;
   }
