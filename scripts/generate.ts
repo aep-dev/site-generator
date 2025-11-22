@@ -3,17 +3,10 @@ import * as path from "path";
 
 import loadConfigFiles from "./src/config";
 import {
-  buildSidebar,
-  buildLinterSidebar,
-  buildOpenAPILinterSidebar,
-  addToSidebar,
-} from "./src/sidebar";
-import {
   type AEP,
   type ConsolidatedLinterRule,
   type GroupFile,
   type LinterRule,
-  type Sidebar,
 } from "./src/types";
 import { buildMarkdown, Markdown } from "./src/markdown";
 import { load, dump } from "js-yaml";
@@ -158,36 +151,6 @@ async function writePage(
     title: title ?? getTitle(contents.contents),
   };
   writeFile(outputPath, contents.removeTitle().build());
-}
-
-async function writePages(
-  dirPath: string,
-  sidebar: Sidebar[],
-): Promise<Sidebar[]> {
-  const entries = await fs.promises.readdir(
-    path.join(dirPath, "pages/general/"),
-    { withFileTypes: true },
-  );
-
-  let files = entries.filter(
-    (entry) => entry.isFile() && entry.name.endsWith(".md"),
-  );
-
-  for (var file of files) {
-    writePage(
-      path.join(dirPath, "pages/general"),
-      file.name,
-      path.join("src/content/docs", file.name),
-    );
-    addToSidebar(sidebar, "Overview", [file.name.replace(".md", "")]);
-  }
-  writePage(
-    dirPath,
-    "CONTRIBUTING.md",
-    path.join("src/content/docs", "contributing.md"),
-  );
-  addToSidebar(sidebar, "Overview", ["contributing"]);
-  return sidebar;
 }
 
 async function writePagesToSiteStructure(
@@ -359,37 +322,6 @@ export function buildLLMsTxt(aeps: AEP[]): string {
   return sections.join("\n\n---\n\n");
 }
 
-let sidebar: Sidebar[] = [
-  {
-    label: "Overview",
-    link: "1",
-    icon: "bars",
-    id: "overview",
-    items: [],
-  },
-  {
-    label: "AEPs",
-    link: "/general",
-    icon: "open-book",
-    id: "aeps",
-    items: [],
-  },
-  {
-    label: "Tooling",
-    link: "/tooling-and-ecosystem",
-    icon: "puzzle",
-    id: "tooling",
-    items: [],
-  },
-  {
-    label: "Blog",
-    link: "/blog",
-    icon: "document",
-    id: "blog",
-    items: [],
-  },
-];
-
 // Log folder detection status
 logFolderDetection();
 
@@ -403,14 +335,10 @@ if (AEP_LOC != "") {
   writeSidebar(config, "config.json");
 
   // Write assorted pages.
-  sidebar = await writePages(AEP_LOC, sidebar);
   siteStructure = await writePagesToSiteStructure(AEP_LOC, siteStructure);
 
   // Build out AEPs.
   let aeps = await assembleAEPs();
-
-  // Build sidebar (old way).
-  sidebar = buildSidebar(aeps, readGroupFile(AEP_LOC), sidebar);
 
   // Add AEPs to site structure
   const groups = readGroupFile(AEP_LOC);
@@ -471,11 +399,6 @@ if (AEP_LINTER_LOC != "") {
     writeRule(rule);
   }
 
-  sidebar = buildLinterSidebar(consolidated_rules, sidebar);
-  sidebar = addToSidebar(sidebar, "Tooling", [
-    { label: "Website", link: "tooling/website" },
-  ]);
-
   // Add to site structure
   addLinterRules(
     siteStructure,
@@ -516,9 +439,6 @@ if (AEP_OPENAPI_LINTER_LOC != "") {
       );
       writeRule(rule, outputPath);
     }
-
-    // Update sidebar navigation
-    sidebar = buildOpenAPILinterSidebar(consolidatedOpenAPIRules, sidebar);
 
     // Add to site structure
     addOpenAPILinterRules(
@@ -586,9 +506,5 @@ if (AEP_EDITION_2026 != "") {
 writeSiteStructure(siteStructure, "generated/site-structure.json");
 
 // Assemble sidebar from site structure and write it
-const sidebarFromSiteStructure =
-  assembleSidebarFromSiteStructure(siteStructure);
-writeSidebar(sidebarFromSiteStructure, "sidebar-from-site-structure.json");
-
-// Write original sidebar (for backwards compatibility during transition)
-writeSidebar(sidebar, "sidebar.json");
+const sidebar = assembleSidebarFromSiteStructure(siteStructure);
+writeSidebar(sidebar, "sidebar-from-site-structure.json");

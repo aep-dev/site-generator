@@ -164,7 +164,7 @@ function buildAEPCategories(
   for (const group of groups.categories) {
     const categoryAEPs = aeps
       .filter((aep) => aep.category === group.code)
-      .sort((a, b) => a.order - b.order)
+      .sort((a, b) => (a.id > b.id ? 1 : -1))
       .map((aep) => ({
         id: aep.id,
         title: aep.title,
