@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import type { AEP } from "./types";
+import type { AEP } from "../../scripts/src/types";
 
 /**
  * Represents a single page item in the navigation
@@ -52,6 +52,7 @@ interface ToolingSection {
  */
 interface Edition {
   name: string;
+  folder?: string;
   categories: AEPCategory[];
 }
 
@@ -178,15 +179,51 @@ function addAEPEdition(
   editionName: string,
   aeps: AEP[],
   groups: { categories: { code: string; title: string }[] },
+  folder?: string,
 ): SiteStructure {
   const categories = buildAEPCategories(aeps, groups);
 
   siteStructure.aeps.editions[editionName] = {
     name: editionName,
+    folder,
     categories,
   };
 
   return siteStructure;
+}
+
+/**
+ * Get the latest edition name from a site structure.
+ * The latest edition is determined by:
+ * 1. Edition with folder = "." (current directory)
+ * 2. Edition named "general", "main", or "default"
+ * 3. First edition in the list
+ */
+function getLatestEditionName(siteStructure: SiteStructure): string | null {
+  const editionNames = Object.keys(siteStructure.aeps.editions);
+
+  if (editionNames.length === 0) {
+    return null;
+  }
+
+  // Check for edition with folder = "."
+  const currentFolderEdition = editionNames.find(
+    (name) => siteStructure.aeps.editions[name].folder === ".",
+  );
+  if (currentFolderEdition) {
+    return currentFolderEdition;
+  }
+
+  // Check for standard names
+  const standardEdition = editionNames.find((name) =>
+    ["general", "main", "default"].includes(name.toLowerCase()),
+  );
+  if (standardEdition) {
+    return standardEdition;
+  }
+
+  // Fall back to first edition
+  return editionNames[0];
 }
 
 export type {
@@ -209,4 +246,5 @@ export {
   addOpenAPILinterRules,
   addAEPEdition,
   buildAEPCategories,
+  getLatestEditionName,
 };

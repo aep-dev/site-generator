@@ -40,8 +40,8 @@ import {
   addAEPEdition,
   writeSiteStructure,
   type SiteStructure,
-} from "./src/site-structure";
-import { assembleSidebarFromSiteStructure } from "./src/sidebar-from-site-structure";
+} from "../src/utils/site-structure";
+import { assembleSidebarFromSiteStructure } from "../src/utils/sidebar-from-site-structure";
 
 const AEP_LOC = process.env.AEP_LOCATION || "";
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC || "";
@@ -411,7 +411,7 @@ if (AEP_LOC != "") {
 
   // Add AEPs to site structure
   const groups = readGroupFile(AEP_LOC);
-  addAEPEdition(siteStructure, "general", aeps, groups);
+  addAEPEdition(siteStructure, "general", aeps, groups, ".");
 
   let full_aeps = buildFullAEPList(aeps);
   writeSidebar(full_aeps, "full_aeps.json");

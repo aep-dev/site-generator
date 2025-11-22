@@ -1,6 +1,6 @@
 import * as fs from "fs";
-import type { SiteStructure } from "./site-structure";
-import type { Sidebar } from "./types";
+import { getLatestEditionName, type SiteStructure } from "./site-structure";
+import type { Sidebar } from "../../scripts/src/types";
 
 /**
  * Read site structure from a JSON file
@@ -66,24 +66,16 @@ function assembleOverviewItems(siteStructure: SiteStructure): any[] {
  */
 function assembleAEPItems(siteStructure: SiteStructure): any[] {
   const items: any[] = [];
+  const latestEditionName = getLatestEditionName(siteStructure);
 
-  // Get the main edition (assuming it's the one without a special name or "general")
-  // For now, we'll process all editions and use the first one as the main one
-  const editionNames = Object.keys(siteStructure.aeps.editions);
-
-  if (editionNames.length === 0) {
+  if (!latestEditionName) {
     return items;
   }
 
-  // Use the first edition (or look for "general"/"main")
-  const mainEditionName = editionNames.find((name) =>
-    ["general", "main", "default"].includes(name.toLowerCase()),
-  ) || editionNames[0];
-
-  const mainEdition = siteStructure.aeps.editions[mainEditionName];
+  const latestEdition = siteStructure.aeps.editions[latestEditionName];
 
   // Build items from categories
-  for (const category of mainEdition.categories) {
+  for (const category of latestEdition.categories) {
     items.push({
       label: category.title,
       items: category.aeps.map((aep) => ({
@@ -110,8 +102,11 @@ function assembleToolingItems(siteStructure: SiteStructure): any[] {
     });
   }
 
-  // Add Protobuf Linter section if we have linter rules
-  if (siteStructure.tooling.linterRules && siteStructure.tooling.linterRules.length > 0) {
+  // Add Protobuf Linter section
+  if (
+    siteStructure.tooling.linterRules &&
+    siteStructure.tooling.linterRules.length > 0
+  ) {
     items.push({
       label: "Protobuf Linter",
       items: [
@@ -127,7 +122,7 @@ function assembleToolingItems(siteStructure: SiteStructure): any[] {
     });
   }
 
-  // Add OpenAPI Linter section if we have OpenAPI linter rules
+  // Add OpenAPI Linter section
   if (
     siteStructure.tooling.openAPILinterRules &&
     siteStructure.tooling.openAPILinterRules.length > 0

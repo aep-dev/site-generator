@@ -6,11 +6,11 @@ import {
   addLinterRules,
   addOpenAPILinterRules,
   addAEPEdition,
-} from "../scripts/src/site-structure";
+} from "../src/utils/site-structure";
 import {
   assembleSidebarFromSiteStructure,
   readSiteStructure,
-} from "../scripts/src/sidebar-from-site-structure";
+} from "../src/utils/sidebar-from-site-structure";
 
 describe("Site Structure", () => {
   it("should create an empty site structure", () => {
