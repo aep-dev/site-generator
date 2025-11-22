@@ -232,23 +232,47 @@ ${tabContents(match[3].trimStart())}
 
   public substituteAEPLinks() {
     // The original site generator knew to magically replace [Create][aep-133] style links with their matching links.
-    // We need to first make these valid Markdown links that point to the correct link.
+    // We now use the AepLink component to make these edition-aware.
     this.contents = this.contents.replace(
       /\[([^\]]+)\]\[(aep-[^\]]+)\]/g,
       (match, first, second) => {
-        const alteredSecond = second.replace("aep-", "/"); // Remove 'aep-'
-        return `[${first}](${alteredSecond})`;
+        const aepNumber = second.replace("aep-", ""); // Remove 'aep-' prefix
+        return `<AepLink href="/${aepNumber}">${first}</AepLink>`;
       },
     );
+    this.addComponent({
+      names: ["AepLink"],
+      path: "../../components/AepLink.astro",
+    });
     return this;
   }
 
   public substituteStandaloneAEPReferences() {
-    // Convert standalone AEP references (case-insensitive) to links
+    // Convert standalone AEP references (case-insensitive) to edition-aware links
     // This matches "aep-XXX" where X is a number, but avoids matching within existing links
     this.contents = this.contents.replace(/ (aep-\d+)\b/gi, (match, aepRef) => {
       const aepId = aepRef.replace(/^aep-/i, "");
-      return ` [${aepRef}](/${aepId})`;
+      return ` <AepLink href="/${aepId}">${aepRef}</AepLink>`;
+    });
+    this.addComponent({
+      names: ["AepLink"],
+      path: "../../components/AepLink.astro",
+    });
+    return this;
+  }
+
+  public substitutePlainAEPLinks() {
+    // Convert plain markdown links to AEP numbers into AepLink components
+    // Matches [text](/123) or [text](123) where 123 is a number
+    this.contents = this.contents.replace(
+      /\[([^\]]+)\]\(\/(\d+)\)/g,
+      (match, text, aepNumber) => {
+        return `<AepLink href="/${aepNumber}">${text}</AepLink>`;
+      },
+    );
+    this.addComponent({
+      names: ["AepLink"],
+      path: "../../components/AepLink.astro",
     });
     return this;
   }
@@ -269,7 +293,8 @@ function buildMarkdown(contents: string, folder: string): Markdown {
     .substituteGraphviz()
     .substituteEBNF()
     .substituteStandaloneAEPReferences()
-    .substituteAEPLinks();
+    .substituteAEPLinks()
+    .substitutePlainAEPLinks();
 }
 
 function tabContents(contents: string): string {
