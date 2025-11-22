@@ -136,9 +136,9 @@ function assembleToolingItems(siteStructure: SiteStructure): any[] {
         {
           label: "Rules",
           collapsed: true,
-          items: siteStructure.tooling.openAPILinterRules.map(
-            (rule) => `tooling/openapi-linter/rules/${rule}`,
-          ),
+          items: siteStructure.tooling.openAPILinterRules
+            .sort((a, b) => a.localeCompare(b))
+            .map((rule) => `tooling/openapi-linter/rules/${rule}`),
         },
       ],
     });
