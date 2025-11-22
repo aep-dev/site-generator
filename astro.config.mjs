@@ -4,9 +4,6 @@ import * as fs from "fs";
 import rehypeMermaid from "rehype-mermaid";
 import starlightBlog from "starlight-blog";
 import starlightSidebarTopics from "starlight-sidebar-topics";
-
-import tailwindcss from "@tailwindcss/vite";
-
 import tailwindcss from "@tailwindcss/vite";
 
 let sidebar = JSON.parse(
