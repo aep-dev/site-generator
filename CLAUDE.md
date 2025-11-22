@@ -12,6 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `npm run preview`                             | Preview build locally                                      |
 | `npm run generate`                            | Run generator script to create content from external repos |
 | `npm test`                                    | Run test suite using tsx                                   |
+| `npm run prettier:check`                      | Check code formatting with Prettier                        |
+| `npm run prettier:write`                      | Format all code with Prettier                              |
 | `npx playwright install --with-deps chromium` | Install Playwright with Chromium for testing               |
 
 ## Local Development Setup
@@ -90,6 +92,29 @@ Run tests with `npm test`. Tests use a custom test runner and cover:
 - Sample code extraction and formatting
 - YAML processing with JSONPath queries
 - Error handling for invalid content
+
+## Code Formatting
+
+This project uses Prettier for consistent code formatting.
+
+**IMPORTANT: Always format code before committing:**
+
+```bash
+npm run prettier:write
+```
+
+**Formatting Guidelines:**
+
+- Run `npm run prettier:write` after making any code changes
+- All TypeScript, JavaScript, JSON, Markdown, and YAML files should be formatted
+- Prettier configuration is defined in the project root
+- CI checks will fail if code is not properly formatted
+
+**For Claude Code:**
+
+- **ALWAYS** run `npm run prettier:write` before committing changes
+- This is mandatory for all code contributions
+- Do not skip this step, even for small changes
 
 ## Content Generation Flow
 

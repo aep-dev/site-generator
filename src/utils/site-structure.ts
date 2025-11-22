@@ -77,7 +77,10 @@ interface SiteStructure {
 /**
  * Write site structure to a JSON file
  */
-function writeSiteStructure(siteStructure: SiteStructure, outputPath: string): void {
+function writeSiteStructure(
+  siteStructure: SiteStructure,
+  outputPath: string,
+): void {
   const dir = path.dirname(outputPath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -108,7 +111,10 @@ function createEmptySiteStructure(): SiteStructure {
 /**
  * Add a page to the overview section
  */
-function addOverviewPage(siteStructure: SiteStructure, page: PageItem): SiteStructure {
+function addOverviewPage(
+  siteStructure: SiteStructure,
+  page: PageItem,
+): SiteStructure {
   siteStructure.overview.pages.push(page);
   return siteStructure;
 }
@@ -116,7 +122,10 @@ function addOverviewPage(siteStructure: SiteStructure, page: PageItem): SiteStru
 /**
  * Add a page to the tooling section
  */
-function addToolingPage(siteStructure: SiteStructure, page: PageItem): SiteStructure {
+function addToolingPage(
+  siteStructure: SiteStructure,
+  page: PageItem,
+): SiteStructure {
   siteStructure.tooling.pages.push(page);
   return siteStructure;
 }
@@ -124,7 +133,10 @@ function addToolingPage(siteStructure: SiteStructure, page: PageItem): SiteStruc
 /**
  * Add linter rules to the tooling section
  */
-function addLinterRules(siteStructure: SiteStructure, rules: string[]): SiteStructure {
+function addLinterRules(
+  siteStructure: SiteStructure,
+  rules: string[],
+): SiteStructure {
   siteStructure.tooling.linterRules = rules;
   return siteStructure;
 }
@@ -132,7 +144,10 @@ function addLinterRules(siteStructure: SiteStructure, rules: string[]): SiteStru
 /**
  * Add OpenAPI linter rules to the tooling section
  */
-function addOpenAPILinterRules(siteStructure: SiteStructure, rules: string[]): SiteStructure {
+function addOpenAPILinterRules(
+  siteStructure: SiteStructure,
+  rules: string[],
+): SiteStructure {
   siteStructure.tooling.openAPILinterRules = rules;
   return siteStructure;
 }

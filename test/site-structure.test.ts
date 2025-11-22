@@ -93,7 +93,12 @@ describe("Site Structure", () => {
       categories: [{ code: "design-patterns", title: "Design Patterns" }],
     };
 
-    siteStructure = addAEPEdition(siteStructure, "general", mockAEPs, mockGroups);
+    siteStructure = addAEPEdition(
+      siteStructure,
+      "general",
+      mockAEPs,
+      mockGroups,
+    );
 
     if (!siteStructure.aeps.editions["general"]) {
       throw new Error("Expected general edition to be set");
@@ -101,7 +106,9 @@ describe("Site Structure", () => {
     if (siteStructure.aeps.editions["general"].categories.length !== 1) {
       throw new Error("Expected 1 category");
     }
-    if (siteStructure.aeps.editions["general"].categories[0].aeps.length !== 1) {
+    if (
+      siteStructure.aeps.editions["general"].categories[0].aeps.length !== 1
+    ) {
       throw new Error("Expected 1 AEP in category");
     }
   });
@@ -130,7 +137,12 @@ describe("Site Structure", () => {
     const mockGroups = {
       categories: [{ code: "design-patterns", title: "Design Patterns" }],
     };
-    siteStructure = addAEPEdition(siteStructure, "general", mockAEPs, mockGroups);
+    siteStructure = addAEPEdition(
+      siteStructure,
+      "general",
+      mockAEPs,
+      mockGroups,
+    );
 
     // Add some tooling pages
     siteStructure = addToolingPage(siteStructure, {

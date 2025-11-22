@@ -19,7 +19,9 @@ function readSiteStructure(inputPath: string): SiteStructure {
 /**
  * Assembles a complete sidebar structure from a SiteStructure object
  */
-function assembleSidebarFromSiteStructure(siteStructure: SiteStructure): Sidebar[] {
+function assembleSidebarFromSiteStructure(
+  siteStructure: SiteStructure,
+): Sidebar[] {
   const sidebar: Sidebar[] = [
     {
       label: "Overview",

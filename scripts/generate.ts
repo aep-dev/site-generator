@@ -217,7 +217,10 @@ async function writePagesToSiteStructure(
     "CONTRIBUTING.md",
     path.join("src/content/docs", "contributing.md"),
   );
-  addOverviewPage(siteStructure, { label: "contributing", link: "contributing" });
+  addOverviewPage(siteStructure, {
+    label: "contributing",
+    link: "contributing",
+  });
   return siteStructure;
 }
 
@@ -583,7 +586,8 @@ if (AEP_EDITION_2026 != "") {
 writeSiteStructure(siteStructure, "generated/site-structure.json");
 
 // Assemble sidebar from site structure and write it
-const sidebarFromSiteStructure = assembleSidebarFromSiteStructure(siteStructure);
+const sidebarFromSiteStructure =
+  assembleSidebarFromSiteStructure(siteStructure);
 writeSidebar(sidebarFromSiteStructure, "sidebar-from-site-structure.json");
 
 // Write original sidebar (for backwards compatibility during transition)
