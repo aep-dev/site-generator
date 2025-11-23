@@ -483,6 +483,7 @@ if (AEP_COMPONENTS != "") {
 if (AEP_EDITION_2026 != "") {
   console.log("=== Processing AEP Edition 2026 ===");
   // Build out AEPs from the 2026 edition
+  let aeps2026 = [];
   const aep_folders_2026 = await getFolders(
     path.join(AEP_EDITION_2026, "aep/general/"),
   );
@@ -490,6 +491,7 @@ if (AEP_EDITION_2026 != "") {
     try {
       const files = readAEP(folder);
       const aep = buildAEP(files, folder);
+      aeps2026.push(aep);
 
       // Write to aep-2026 directory instead of root
       aep.contents.frontmatter.slug = `aep-2026/${aep.id.toString()}`;
@@ -501,6 +503,15 @@ if (AEP_EDITION_2026 != "") {
       console.log(`AEP ${folder} failed with error ${e}`);
     }
   }
+
+  // Add 2026 edition to site structure
+  const groups2026 = readGroupFile(AEP_EDITION_2026);
+  addAEPEdition(siteStructure, "aep-2026", aeps2026, groups2026, "aep-2026");
+
+  // Build and write full AEP list for 2026 edition
+  let full_aeps_2026 = buildFullAEPList(aeps2026);
+  writeSidebar(full_aeps_2026, "full_aeps_aep-2026.json");
+
   console.log("✅ AEP Edition 2026 processing complete\n");
 } else {
   console.log("ℹ️  AEP Edition 2026 repo not configured, skipping...\n");
