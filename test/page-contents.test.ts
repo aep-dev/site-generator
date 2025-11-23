@@ -1,4 +1,4 @@
-import { describe, it, expect } from "../test/lib/index";
+import { describe, it, expect } from "@jest/globals";
 import {
   createEmptySiteStructure as createEmptyContents,
   addOverviewPage,
