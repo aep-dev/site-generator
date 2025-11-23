@@ -23,8 +23,7 @@ Also check out [List][aep-132] and [Update][aep-134].
     expect(
       markdown.components.some(
         (c) =>
-          c.names.includes("AepLink") &&
-          c.path === "@components/AepLink.astro",
+          c.names.includes("AepLink") && c.path === "@components/AepLink.astro",
       ),
     ).toBe(true);
   });
@@ -50,8 +49,7 @@ Another reference to AEP-789 (case insensitive).
     expect(
       markdown.components.some(
         (c) =>
-          c.names.includes("AepLink") &&
-          c.path === "@components/AepLink.astro",
+          c.names.includes("AepLink") && c.path === "@components/AepLink.astro",
       ),
     ).toBe(true);
   });
@@ -77,8 +75,7 @@ Also check [List](/132) and [Update](/134).
     expect(
       markdown.components.some(
         (c) =>
-          c.names.includes("AepLink") &&
-          c.path === "@components/AepLink.astro",
+          c.names.includes("AepLink") && c.path === "@components/AepLink.astro",
       ),
     ).toBe(true);
   });
