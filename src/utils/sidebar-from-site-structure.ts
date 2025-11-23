@@ -64,7 +64,7 @@ function assembleOverviewItems(siteStructure: SiteStructure): any[] {
 }
 
 /**
- * Assemble AEP section items from site structure
+ * Assemble AEP section items from site structure (uses latest edition)
  */
 function assembleAEPItems(siteStructure: SiteStructure): any[] {
   const items: any[] = [];
@@ -83,6 +83,40 @@ function assembleAEPItems(siteStructure: SiteStructure): any[] {
       items: category.aeps.map((aep) => ({
         label: `${aep.id}. ${aep.title}`,
         link: aep.id.toString(),
+      })),
+    });
+  }
+
+  return items;
+}
+
+/**
+ * Assemble AEP section items for a specific edition with edition-aware paths
+ */
+function assembleAEPItemsForEdition(
+  siteStructure: SiteStructure,
+  editionName: string,
+  editionFolder?: string,
+): any[] {
+  const items: any[] = [];
+  const edition = siteStructure.aeps.editions[editionName];
+
+  if (!edition) {
+    return items;
+  }
+
+  // Determine the path prefix for this edition
+  const isDefaultEdition = !editionFolder || editionFolder === ".";
+  const pathPrefix = isDefaultEdition ? "" : `/${editionFolder}`;
+  const aepListLink = isDefaultEdition ? "/aep_list" : `${pathPrefix}/aep_list`;
+
+  // Build items from categories with edition-aware paths
+  for (const category of edition.categories) {
+    items.push({
+      label: category.title,
+      items: category.aeps.map((aep) => ({
+        label: `${aep.id}. ${aep.title}`,
+        link: isDefaultEdition ? aep.id.toString() : `${pathPrefix}/${aep.id}`,
       })),
     });
   }
@@ -147,4 +181,66 @@ function assembleToolingItems(siteStructure: SiteStructure): any[] {
   return items;
 }
 
-export { readSiteStructure, assembleSidebarFromSiteStructure };
+/**
+ * Assembles sidebars for all editions in the site structure
+ * Returns a map of edition names to their respective sidebar configurations
+ */
+function assembleSidebarsByEdition(
+  siteStructure: SiteStructure,
+): Record<string, Sidebar[]> {
+  const sidebars: Record<string, Sidebar[]> = {};
+
+  // Generate a sidebar for each edition
+  for (const [editionName, edition] of Object.entries(
+    siteStructure.aeps.editions,
+  )) {
+    const isDefaultEdition = !edition.folder || edition.folder === ".";
+    const pathPrefix = isDefaultEdition ? "" : `/${edition.folder}`;
+    const aepListLink = isDefaultEdition
+      ? "/aep_list"
+      : `${pathPrefix}/aep_list`;
+
+    sidebars[editionName] = [
+      {
+        label: "Overview",
+        link: "1",
+        icon: "bars",
+        id: "overview",
+        items: assembleOverviewItems(siteStructure),
+      },
+      {
+        label: "AEPs",
+        link: aepListLink,
+        icon: "open-book",
+        id: "aeps",
+        items: assembleAEPItemsForEdition(
+          siteStructure,
+          editionName,
+          edition.folder,
+        ),
+      },
+      {
+        label: "Tooling",
+        link: "/tooling-and-ecosystem",
+        icon: "puzzle",
+        id: "tooling",
+        items: assembleToolingItems(siteStructure),
+      },
+      {
+        label: "Blog",
+        link: "/blog",
+        icon: "document",
+        id: "blog",
+        items: [],
+      },
+    ];
+  }
+
+  return sidebars;
+}
+
+export {
+  readSiteStructure,
+  assembleSidebarFromSiteStructure,
+  assembleSidebarsByEdition,
+};

@@ -12,9 +12,16 @@ const isLatestEdition = (edition) => edition.folder === ".";
 let sidebar = JSON.parse(
   fs.readFileSync("generated/sidebar-from-site-structure.json"),
 );
+let sidebarsByEdition = JSON.parse(
+  fs.readFileSync("generated/sidebars-by-edition.json"),
+);
 let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));
 let config = JSON.parse(fs.readFileSync("generated/config.json"));
 let aepEditions = JSON.parse(fs.readFileSync("aep-editions.json"));
+
+// Get sidebars for each edition
+// The default edition is named "general" with folder "."
+const defaultSidebar = sidebarsByEdition["general"] || sidebar;
 
 // https://astro.build/config
 export default defineConfig({
@@ -34,26 +41,34 @@ export default defineConfig({
       ],
       plugins: [
         starlightBlog({ navigation: "none" }),
-        starlightSidebarTopics(sidebar, {
-          topics: {
-            aeps: aepEditions.editions
-              .filter((edition) => !isLatestEdition(edition))
-              .flatMap((edition) => [
-                `/${edition.folder}`,
-                `/${edition.folder}/**/*`,
-              ]),
+        starlightSidebarTopics([
+          {
+            label: "AEP",
+            link: "/",
+            icon: "open-book",
+            items: defaultSidebar,
+            badge: { text: "2028 Preview", variant: "tip" },
           },
-          exclude: [
-            "/blog",
-            "/blog/**/*",
-            ...aepEditions.editions
-              .filter((edition) => !isLatestEdition(edition))
-              .flatMap((edition) => [
-                `/${edition.folder}`,
-                `/${edition.folder}/**/*`,
-              ]),
-          ],
-        }),
+          ...aepEditions.editions
+            .filter((edition) => !isLatestEdition(edition))
+            .map((edition) => {
+              const editionSidebar =
+                sidebarsByEdition[edition.folder] || defaultSidebar;
+              return {
+                label: `AEP ${edition.name.includes("2026") ? "2026 Edition" : edition.name}`,
+                link: `/${edition.folder}/`,
+                icon: "seti:clock",
+                items: editionSidebar,
+                badge: { text: "Archived", variant: "caution" },
+                matcher(path, locale) {
+                  return (
+                    path === `/${edition.folder}` ||
+                    path.startsWith(`/${edition.folder}/`)
+                  );
+                },
+              };
+            }),
+        ]),
       ],
       social: [
         { icon: "github", label: "GitHub", href: config.urls.repo },
