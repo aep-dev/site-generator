@@ -12,16 +12,17 @@ const latestUrl = latestEdition ? getVersionedPath(editionsConfig, Astro.url.pat
 {
   isOlderVersion && (
     <div>
-      This content is for the {currentEdition.name} edition
+      You are viewing {currentEdition.name}
     </div>
   )
 }
 
 <style>
   div {
-    background-color: var(--sl-color-orange-low);
+    background-color: var(--sl-color-blue-low);
     box-shadow: var(--sl-shadow-sm);
-    color: var(--sl-color-orange-high);
+    color: var(--sl-color-blue-high);
+    font-size: 1.1rem;
     line-height: var(--sl-line-height-headings);
     padding: var(--sl-nav-pad-y) var(--sl-nav-pad-x);
     text-align: center;
@@ -29,6 +30,6 @@ const latestUrl = latestEdition ? getVersionedPath(editionsConfig, Astro.url.pat
   }
 
   div a {
-    color: var(--sl-color-orange-high);
+    color: var(--sl-color-blue-high);
   }
 </style>
