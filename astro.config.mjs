@@ -52,7 +52,6 @@ export default defineConfig({
           ],
         }),
       ],
-      sidebar: [],
       social: [
         { icon: "github", label: "GitHub", href: config.urls.repo },
         {
