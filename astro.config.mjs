@@ -43,6 +43,7 @@ export default defineConfig({
           exclude: [
             "/blog",
             "/blog/**/*",
+            "/aep_list",
             ...aepEditions.editions
               .filter((edition) => edition.folder !== ".")
               .flatMap((edition) => [
