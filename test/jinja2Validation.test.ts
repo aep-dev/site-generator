@@ -1,19 +1,9 @@
 import { Markdown, buildMarkdown } from "../scripts/src/markdown";
+import { describe, it, expect } from "@jest/globals";
 
-// Simple test function
-function runTest(testName: string, testFn: () => void) {
-  try {
-    testFn();
-    console.log(`✅ ${testName} - PASSED`);
-  } catch (error) {
-    console.error(`❌ ${testName} - FAILED:`, error);
-    process.exit(1);
-  }
-}
-
-// Test 1: Valid Jinja2 tags should not throw errors
-runTest("Valid Jinja2 tags should not throw errors", () => {
-  const validContent = `
+describe("Jinja2 Validation", () => {
+  it("should not throw errors for valid Jinja2 tags", () => {
+    const validContent = `
 # Test Document
 
 This is a test with valid Jinja2 tags.
@@ -29,14 +19,13 @@ Some OAS content
 {% sample 'example.yaml', 'token1' %}
 `;
 
-  // Should not throw
-  const markdown = new Markdown(validContent, {});
-  markdown.validateJinja2Tags();
-});
+    // Should not throw
+    const markdown = new Markdown(validContent, {});
+    expect(() => markdown.validateJinja2Tags()).not.toThrow();
+  });
 
-// Test 2: Invalid Jinja2 tag should throw error
-runTest("Invalid Jinja2 tag should throw error", () => {
-  const invalidContent = `
+  it("should throw error for invalid Jinja2 tag", () => {
+    const invalidContent = `
 # Test Document
 
 This has an unsupported tag.
@@ -46,49 +35,40 @@ This has an unsupported tag.
 {% endfor %}
 `;
 
-  const markdown = new Markdown(invalidContent, {});
+    const markdown = new Markdown(invalidContent, {});
 
-  try {
-    markdown.validateJinja2Tags();
-    throw new Error("Expected error was not thrown");
-  } catch (error) {
-    if (!error.message.includes("Unsupported Jinja2 tag found")) {
-      throw new Error(
-        `Expected 'Unsupported Jinja2 tag found' error, got: ${error.message}`,
-      );
-    }
+    expect(() => markdown.validateJinja2Tags()).toThrow(
+      "Unsupported Jinja2 tag found",
+    );
+
     // Verify the error message lists supported tags
-    if (!error.message.includes("{% tab proto %}")) {
-      throw new Error("Error message should list supported tags");
+    try {
+      markdown.validateJinja2Tags();
+    } catch (error: any) {
+      expect(error.message).toContain("{% tab proto %}");
     }
-  }
-});
+  });
 
-// Test 3: Multiple invalid tags should report the first one
-runTest("Invalid Jinja2 tag with specific tag name in error", () => {
-  const invalidContent = `
+  it("should report the first invalid tag with specific tag name in error", () => {
+    const invalidContent = `
 {% if condition %}
 Some content
 {% endif %}
 `;
 
-  const markdown = new Markdown(invalidContent, {});
+    const markdown = new Markdown(invalidContent, {});
 
-  try {
-    markdown.validateJinja2Tags();
-    throw new Error("Expected error was not thrown");
-  } catch (error) {
-    if (!error.message.includes("if condition")) {
-      throw new Error(
-        `Expected error to mention 'if condition', got: ${error.message}`,
-      );
+    expect(() => markdown.validateJinja2Tags()).toThrow();
+
+    try {
+      markdown.validateJinja2Tags();
+    } catch (error: any) {
+      expect(error.message).toContain("if condition");
     }
-  }
-});
+  });
 
-// Test 4: Tab tags with optional dash should be valid
-runTest("Tab tags with optional dash should be valid", () => {
-  const contentWithDash = `
+  it("should accept tab tags with optional dash", () => {
+    const contentWithDash = `
 {% tab proto -%}
 Content
 {% tab oas -%}
@@ -96,39 +76,29 @@ More content
 {% endtabs -%}
 `;
 
-  const markdown = new Markdown(contentWithDash, {});
-  markdown.validateJinja2Tags(); // Should not throw
-});
+    const markdown = new Markdown(contentWithDash, {});
+    expect(() => markdown.validateJinja2Tags()).not.toThrow();
+  });
 
-// Test 5: Sample tags with various arguments should be valid
-runTest("Sample tags with various arguments should be valid", () => {
-  const sampleContent = `
+  it("should accept sample tags with various arguments", () => {
+    const sampleContent = `
 {% sample 'file.proto', 'arg1', 'arg2' %}
 {% sample 'file.yaml', 'arg1' %}
 {% sample 'any/path/file.proto', 'token', 'another' %}
 `;
 
-  const markdown = new Markdown(sampleContent, {});
-  markdown.validateJinja2Tags(); // Should not throw
-});
+    const markdown = new Markdown(sampleContent, {});
+    expect(() => markdown.validateJinja2Tags()).not.toThrow();
+  });
 
-// Test 6: buildMarkdown should validate tags
-runTest("buildMarkdown should validate and throw for invalid tags", () => {
-  const invalidContent = `
+  it("should validate tags in buildMarkdown and throw for invalid tags", () => {
+    const invalidContent = `
 # Test
 {% extends "base.html" %}
 `;
 
-  try {
-    buildMarkdown(invalidContent, "/some/folder");
-    throw new Error("Expected error was not thrown");
-  } catch (error) {
-    if (!error.message.includes("Unsupported Jinja2 tag found")) {
-      throw new Error(
-        `Expected 'Unsupported Jinja2 tag found' error, got: ${error.message}`,
-      );
-    }
-  }
+    expect(() => buildMarkdown(invalidContent, "/some/folder")).toThrow(
+      "Unsupported Jinja2 tag found",
+    );
+  });
 });
-
-console.log("\n🎉 All Jinja2 validation tests passed!");

@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | `npm run build`                               | Build production site to ./dist/                           |
 | `npm run preview`                             | Preview build locally                                      |
 | `npm run generate`                            | Run generator script to create content from external repos |
-| `npm test`                                    | Run test suite using tsx                                   |
+| `npm test`                                    | Run test suite using Jest                                  |
 | `npm run prettier:check`                      | Check code formatting with Prettier                        |
 | `npm run prettier:write`                      | Format all code with Prettier                              |
 | `npx playwright install --with-deps chromium` | Install Playwright with Chromium for testing               |
@@ -87,11 +87,15 @@ This is a two-stage site generator built on Astro and Starlight:
 
 ## Testing
 
-Run tests with `npm test`. Tests use a custom test runner and cover:
+Run tests with `npm test`. Tests use Jest and cover:
 
 - Sample code extraction and formatting
 - YAML processing with JSONPath queries
 - Error handling for invalid content
+- Jinja2 tag validation
+- Site structure and page contents utilities
+
+Tests are located in the `test/` directory and use the `.test.ts` extension. All tests use Jest's `describe`, `it`, and `expect` functions for organizing and asserting test cases.
 
 ## Code Formatting
 

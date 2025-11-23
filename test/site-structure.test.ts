@@ -1,4 +1,4 @@
-import { describe, it } from "../test/lib/index";
+import { describe, it, expect } from "../test/lib/index";
 import {
   createEmptySiteStructure,
   addOverviewPage,
@@ -15,15 +15,9 @@ import {
 describe("Site Structure", () => {
   it("should create an empty site structure", () => {
     const siteStructure = createEmptySiteStructure();
-    if (siteStructure.overview.pages.length !== 0) {
-      throw new Error("Expected overview pages to be empty");
-    }
-    if (Object.keys(siteStructure.aeps.editions).length !== 0) {
-      throw new Error("Expected AEPs editions to be empty");
-    }
-    if (siteStructure.tooling.pages.length !== 0) {
-      throw new Error("Expected tooling pages to be empty");
-    }
+    expect(siteStructure.overview.pages.length).toBe(0);
+    expect(Object.keys(siteStructure.aeps.editions).length).toBe(0);
+    expect(siteStructure.tooling.pages.length).toBe(0);
   });
 
   it("should add overview pages", () => {
@@ -32,12 +26,8 @@ describe("Site Structure", () => {
       label: "contributing",
       link: "contributing",
     });
-    if (siteStructure.overview.pages.length !== 1) {
-      throw new Error("Expected 1 overview page");
-    }
-    if (siteStructure.overview.pages[0].label !== "contributing") {
-      throw new Error("Expected page label to be 'contributing'");
-    }
+    expect(siteStructure.overview.pages.length).toBe(1);
+    expect(siteStructure.overview.pages[0].label).toBe("contributing");
   });
 
   it("should add tooling pages", () => {
@@ -46,34 +36,22 @@ describe("Site Structure", () => {
       label: "Website",
       link: "tooling/website",
     });
-    if (siteStructure.tooling.pages.length !== 1) {
-      throw new Error("Expected 1 tooling page");
-    }
-    if (siteStructure.tooling.pages[0].label !== "Website") {
-      throw new Error("Expected page label to be 'Website'");
-    }
+    expect(siteStructure.tooling.pages.length).toBe(1);
+    expect(siteStructure.tooling.pages[0].label).toBe("Website");
   });
 
   it("should add linter rules", () => {
     let siteStructure = createEmptySiteStructure();
     siteStructure = addLinterRules(siteStructure, ["0001", "0002"]);
-    if (!siteStructure.tooling.linterRules) {
-      throw new Error("Expected linter rules to be set");
-    }
-    if (siteStructure.tooling.linterRules.length !== 2) {
-      throw new Error("Expected 2 linter rules");
-    }
+    expect(siteStructure.tooling.linterRules).toBeDefined();
+    expect(siteStructure.tooling.linterRules?.length).toBe(2);
   });
 
   it("should add OpenAPI linter rules", () => {
     let siteStructure = createEmptySiteStructure();
     siteStructure = addOpenAPILinterRules(siteStructure, ["0001", "0002"]);
-    if (!siteStructure.tooling.openAPILinterRules) {
-      throw new Error("Expected OpenAPI linter rules to be set");
-    }
-    if (siteStructure.tooling.openAPILinterRules.length !== 2) {
-      throw new Error("Expected 2 OpenAPI linter rules");
-    }
+    expect(siteStructure.tooling.openAPILinterRules).toBeDefined();
+    expect(siteStructure.tooling.openAPILinterRules?.length).toBe(2);
   });
 
   it("should add AEP edition", () => {
@@ -100,17 +78,11 @@ describe("Site Structure", () => {
       mockGroups,
     );
 
-    if (!siteStructure.aeps.editions["general"]) {
-      throw new Error("Expected general edition to be set");
-    }
-    if (siteStructure.aeps.editions["general"].categories.length !== 1) {
-      throw new Error("Expected 1 category");
-    }
-    if (
-      siteStructure.aeps.editions["general"].categories[0].aeps.length !== 1
-    ) {
-      throw new Error("Expected 1 AEP in category");
-    }
+    expect(siteStructure.aeps.editions["general"]).toBeDefined();
+    expect(siteStructure.aeps.editions["general"].categories.length).toBe(1);
+    expect(
+      siteStructure.aeps.editions["general"].categories[0].aeps.length,
+    ).toBe(1);
   });
 
   it("should assemble sidebar from site structure", () => {
@@ -153,32 +125,18 @@ describe("Site Structure", () => {
     // Assemble sidebar
     const sidebar = assembleSidebarFromSiteStructure(siteStructure);
 
-    if (sidebar.length !== 4) {
-      throw new Error("Expected 4 sidebar sections");
-    }
+    expect(sidebar.length).toBe(4);
 
     const overviewSection = sidebar.find((s) => s.label === "Overview");
-    if (!overviewSection) {
-      throw new Error("Expected Overview section");
-    }
-    if (overviewSection.items.length !== 1) {
-      throw new Error("Expected 1 item in Overview section");
-    }
+    expect(overviewSection).toBeDefined();
+    expect(overviewSection?.items.length).toBe(1);
 
     const aepsSection = sidebar.find((s) => s.label === "AEPs");
-    if (!aepsSection) {
-      throw new Error("Expected AEPs section");
-    }
-    if (aepsSection.items.length !== 1) {
-      throw new Error("Expected 1 category in AEPs section");
-    }
+    expect(aepsSection).toBeDefined();
+    expect(aepsSection?.items.length).toBe(1);
 
     const toolingSection = sidebar.find((s) => s.label === "Tooling");
-    if (!toolingSection) {
-      throw new Error("Expected Tooling section");
-    }
-    if (toolingSection.items.length !== 1) {
-      throw new Error("Expected 1 item in Tooling section");
-    }
+    expect(toolingSection).toBeDefined();
+    expect(toolingSection?.items.length).toBe(1);
   });
 });
