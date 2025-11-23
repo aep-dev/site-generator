@@ -5,23 +5,24 @@ import rehypeMermaid from "rehype-mermaid";
 import starlightBlog from "starlight-blog";
 import starlightSidebarTopics from "starlight-sidebar-topics";
 import tailwindcss from "@tailwindcss/vite";
+import { assembleSidebarsByEdition } from "./src/utils/sidebar-from-site-structure.ts";
 
 // Helper function to check if an edition is the latest
 const isLatestEdition = (edition) => edition.folder === ".";
 
-let sidebar = JSON.parse(
-  fs.readFileSync("generated/sidebar-from-site-structure.json"),
-);
-let sidebarsByEdition = JSON.parse(
-  fs.readFileSync("generated/sidebars-by-edition.json"),
+// Load configuration files
+let siteStructure = JSON.parse(
+  fs.readFileSync("generated/site-structure.json"),
 );
 let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));
 let config = JSON.parse(fs.readFileSync("generated/config.json"));
 let aepEditions = JSON.parse(fs.readFileSync("aep-editions.json"));
 
-// Get sidebars for each edition
-// The default edition is named "general" with folder "."
-const defaultSidebar = sidebarsByEdition["general"] || sidebar;
+// Build sidebars for each edition from the site structure
+const sidebarsByEdition = assembleSidebarsByEdition(siteStructure);
+
+// Get the default sidebar (for the "general" edition with folder ".")
+const defaultSidebar = sidebarsByEdition["general"] || [];
 
 // https://astro.build/config
 export default defineConfig({
