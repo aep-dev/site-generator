@@ -1,26 +1,11 @@
 ---
 import AepListEntry from "./AepListEntry.astro";
-import editionsConfig from '../../../aep-editions.json'
-import { getEditionFromPath, isLatestEdition } from '../../utils/versions'
 
 const {category} = Astro.props;
-
-// Get the current edition based on the page's pathname
-const currentEdition = getEditionFromPath(editionsConfig, Astro.url.pathname)
 ---
 
 <div id="aep-list-container">
-  {category.items.map((aep) => {
-    // Construct edition-aware href
-    let href: string
-    if (!isLatestEdition(currentEdition)) {
-      href = `/${currentEdition!.folder}/${aep.id}`
-    } else {
-      href = `/${aep.id}`
-    }
-
-    return (
-      <AepListEntry title={aep.title} href={href} id={aep.id.toString()} state={aep.status} />
-    )
-  })}
+  {category.items.map((aep) => (
+    <AepListEntry title={aep.title} href={"/" + aep.id} id={aep.id.toString()} state={aep.status} />
+  ))}
 </div>

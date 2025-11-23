@@ -3,7 +3,6 @@ import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import FullAepList from "../../components/AepList/FullAepList.astro";
-import EditionBanner from "../../components/EditionBanner.astro";
 import * as fs from "fs";
 import type { SiteStructure } from "../../utils/site-structure";
 
@@ -33,7 +32,6 @@ export const getStaticPaths = (async () => {
 const { edition } = Astro.props;
 ---
 
-<EditionBanner />
 <StarlightPage
   frontmatter={{
     title: "AEPs",

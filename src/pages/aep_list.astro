@@ -1,7 +1,6 @@
 ---
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import FullAepList from "../components/AepList/FullAepList.astro";
-import EditionBanner from "../components/EditionBanner.astro";
 import * as fs from "fs";
 import type { SiteStructure } from "../utils/site-structure";
 import { getLatestEditionName } from "../utils/site-structure";
@@ -19,7 +18,6 @@ if (!latestEditionName) {
 const edition = siteStructure.aeps.editions[latestEditionName];
 ---
 
-<EditionBanner />
 <StarlightPage
   frontmatter={{
     title: "AEPs",
