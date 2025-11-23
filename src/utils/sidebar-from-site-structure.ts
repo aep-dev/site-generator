@@ -32,7 +32,7 @@ function assembleSidebarFromSiteStructure(
     },
     {
       label: "AEPs",
-      link: "/list",
+      link: "/aep_list",
       icon: "open-book",
       id: "aeps",
       items: assembleAEPItems(siteStructure),
