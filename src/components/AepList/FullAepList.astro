@@ -1,6 +1,14 @@
 ---
 import AepList from "./AepList.astro";
-import sideBar from "../../../generated/full_aeps.json";
+import type { Edition } from "../../utils/site-structure";
+
+const { edition } = Astro.props as { edition: Edition };
+
+// Transform categories to match the expected format for AepList
+const sideBar = edition.categories.map((category) => ({
+  label: category.title,
+  items: category.aeps,
+}));
 
 // Extract categories dynamically from sidebar
 const categories = sideBar.map(item => item.label);

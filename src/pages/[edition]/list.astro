@@ -1,0 +1,43 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import FullAepList from "../../components/AepList/FullAepList.astro";
+import * as fs from "fs";
+import type { SiteStructure } from "../../utils/site-structure";
+
+export const getStaticPaths = (async () => {
+  // Load site structure to get all editions
+  const siteStructurePath = "generated/site-structure.json";
+  const jsonContent = fs.readFileSync(siteStructurePath, "utf-8");
+  const siteStructure: SiteStructure = JSON.parse(jsonContent);
+
+  // Generate paths for all non-latest editions
+  const paths = Object.keys(siteStructure.aeps.editions)
+    .filter((editionName) => {
+      const edition = siteStructure.aeps.editions[editionName];
+      return edition.folder !== "."; // Exclude latest edition
+    })
+    .map((editionName) => {
+      const edition = siteStructure.aeps.editions[editionName];
+      return {
+        params: { edition: edition.folder },
+        props: { edition },
+      };
+    });
+
+  return paths;
+}) satisfies GetStaticPaths;
+
+const { edition } = Astro.props;
+---
+
+<StarlightPage
+  frontmatter={{
+    title: "AEPs",
+    tableOfContents: { minHeadingLevel: 1 },
+  }}
+  headings={[]}
+>
+  <FullAepList edition={edition} />
+</StarlightPage>

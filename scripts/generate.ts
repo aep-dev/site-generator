@@ -269,29 +269,6 @@ async function assembleAEPs(): Promise<AEP[]> {
   return AEPs;
 }
 
-function buildFullAEPList(aeps: AEP[]) {
-  let response = [];
-  let groups = readGroupFile(AEP_LOC);
-
-  for (var group of groups.categories) {
-    response.push({
-      label: group.title,
-      items: aeps
-        .filter((aep) => aep.category == group.code)
-        .sort((a1, a2) => (a1.order > a2.order ? 1 : -1))
-        .map((aep) => {
-          return {
-            title: aep.title,
-            id: aep.id,
-            slug: aep.slug,
-            status: aep.frontmatter.state,
-          };
-        }),
-    });
-  }
-  return response;
-}
-
 function buildRedirects(aeps: AEP[]): object {
   return Object.fromEntries(aeps.map((aep) => [`/${aep.slug}`, `/${aep.id}`]));
 }
@@ -343,9 +320,6 @@ if (AEP_LOC != "") {
   // Add AEPs to site structure
   const groups = readGroupFile(AEP_LOC);
   addAEPEdition(siteStructure, "general", aeps, groups, ".");
-
-  let full_aeps = buildFullAEPList(aeps);
-  writeSidebar(full_aeps, "full_aeps.json");
 
   // Write AEPs to files (only categorized ones to match sidebar).
   const validCategories = new Set(groups.categories.map((c) => c.code));
@@ -483,6 +457,7 @@ if (AEP_COMPONENTS != "") {
 if (AEP_EDITION_2026 != "") {
   console.log("=== Processing AEP Edition 2026 ===");
   // Build out AEPs from the 2026 edition
+  let aeps2026 = [];
   const aep_folders_2026 = await getFolders(
     path.join(AEP_EDITION_2026, "aep/general/"),
   );
@@ -490,6 +465,7 @@ if (AEP_EDITION_2026 != "") {
     try {
       const files = readAEP(folder);
       const aep = buildAEP(files, folder);
+      aeps2026.push(aep);
 
       // Write to aep-2026 directory instead of root
       aep.contents.frontmatter.slug = `aep-2026/${aep.id.toString()}`;
@@ -501,6 +477,11 @@ if (AEP_EDITION_2026 != "") {
       console.log(`AEP ${folder} failed with error ${e}`);
     }
   }
+
+  // Add 2026 edition to site structure
+  const groups2026 = readGroupFile(AEP_EDITION_2026);
+  addAEPEdition(siteStructure, "aep-2026", aeps2026, groups2026, "aep-2026");
+
   console.log("✅ AEP Edition 2026 processing complete\n");
 } else {
   console.log("ℹ️  AEP Edition 2026 repo not configured, skipping...\n");

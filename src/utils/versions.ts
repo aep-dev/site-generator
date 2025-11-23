@@ -61,5 +61,6 @@ export function getVersionedPath(
 export function isVersionedPage(path: string): boolean {
   const segments = path.split("/").filter(Boolean);
   const lastSegment = segments[segments.length - 1];
-  return /^\d+$/.test(lastSegment);
+  // Show version selector on AEP pages (ending with numbers) and AepList pages (ending with "list")
+  return /^\d+$/.test(lastSegment) || lastSegment === "list";
 }
