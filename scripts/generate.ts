@@ -347,15 +347,19 @@ if (AEP_LOC != "") {
   let full_aeps = buildFullAEPList(aeps);
   writeSidebar(full_aeps, "full_aeps.json");
 
-  // Write AEPs to files.
-  for (var aep of aeps) {
+  // Write AEPs to files (only categorized ones to match sidebar).
+  const validCategories = new Set(groups.categories.map((c) => c.code));
+  const categorizedAEPs = aeps.filter((aep) =>
+    validCategories.has(aep.category),
+  );
+  for (var aep of categorizedAEPs) {
     writeMarkdown(aep);
   }
 
-  writeSidebar(buildRedirects(aeps), "redirects.json");
+  writeSidebar(buildRedirects(categorizedAEPs), "redirects.json");
 
   // Generate llms.txt file with all AEP contents
-  const llmsTxtContent = buildLLMsTxt(aeps);
+  const llmsTxtContent = buildLLMsTxt(categorizedAEPs);
   writeFile("public/llms.txt", llmsTxtContent);
 
   // Write blog
