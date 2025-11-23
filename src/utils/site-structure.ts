@@ -160,19 +160,23 @@ function buildAEPCategories(
   groups: { categories: { code: string; title: string }[] },
 ): AEPCategory[] {
   const categories: AEPCategory[] = [];
+  const categorizedAEPIds = new Set<string>();
 
   for (const group of groups.categories) {
     const categoryAEPs = aeps
       .filter((aep) => aep.category === group.code)
       .sort((a, b) => (a.id > b.id ? 1 : -1))
-      .map((aep) => ({
-        id: aep.id,
-        title: aep.title,
-        slug: aep.slug,
-        status: (aep.frontmatter as any).state as string | undefined,
-        category: aep.category,
-        order: aep.order,
-      }));
+      .map((aep) => {
+        categorizedAEPIds.add(aep.id);
+        return {
+          id: aep.id,
+          title: aep.title,
+          slug: aep.slug,
+          status: (aep.frontmatter as any).state as string | undefined,
+          category: aep.category,
+          order: aep.order,
+        };
+      });
 
     if (categoryAEPs.length > 0) {
       categories.push({
@@ -181,6 +185,27 @@ function buildAEPCategories(
         aeps: categoryAEPs,
       });
     }
+  }
+
+  // Add uncategorized AEPs to an "Other" category
+  const uncategorizedAEPs = aeps
+    .filter((aep) => !categorizedAEPIds.has(aep.id))
+    .sort((a, b) => (a.id > b.id ? 1 : -1))
+    .map((aep) => ({
+      id: aep.id,
+      title: aep.title,
+      slug: aep.slug,
+      status: (aep.frontmatter as any).state as string | undefined,
+      category: aep.category,
+      order: aep.order,
+    }));
+
+  if (uncategorizedAEPs.length > 0) {
+    categories.push({
+      code: "other",
+      title: "Other",
+      aeps: uncategorizedAEPs,
+    });
   }
 
   return categories;
