@@ -1,29 +1,32 @@
 ---
 import AepList from "./AepList.astro";
 import * as fs from "fs";
+import type { SiteStructure } from "../../utils/site-structure";
 
 const { edition = "general" } = Astro.props;
 
-// Load the appropriate full_aeps JSON file based on edition
-const jsonFileName = edition === "general"
-  ? "full_aeps.json"
-  : `full_aeps_${edition}.json`;
-const jsonPath = `generated/${jsonFileName}`;
-
-let sideBar = [];
+// Load site structure
+const siteStructurePath = "generated/site-structure.json";
+let siteStructure: SiteStructure;
 try {
-  const jsonContent = fs.readFileSync(jsonPath, "utf-8");
-  sideBar = JSON.parse(jsonContent);
+  const jsonContent = fs.readFileSync(siteStructurePath, "utf-8");
+  siteStructure = JSON.parse(jsonContent);
 } catch (e) {
-  console.error(`Failed to load ${jsonPath}:`, e);
-  // Fall back to general edition if specific edition file not found
-  try {
-    const fallbackContent = fs.readFileSync("generated/full_aeps.json", "utf-8");
-    sideBar = JSON.parse(fallbackContent);
-  } catch (fallbackError) {
-    console.error("Failed to load fallback full_aeps.json:", fallbackError);
-  }
+  console.error(`Failed to load ${siteStructurePath}:`, e);
+  throw new Error(`Site structure not found at ${siteStructurePath}`);
 }
+
+// Get the edition data
+const editionData = siteStructure.aeps.editions[edition];
+if (!editionData) {
+  throw new Error(`Edition "${edition}" not found in site structure`);
+}
+
+// Transform categories to match the expected format for AepList
+const sideBar = editionData.categories.map((category) => ({
+  label: category.title,
+  items: category.aeps,
+}));
 
 // Extract categories dynamically from sidebar
 const categories = sideBar.map(item => item.label);

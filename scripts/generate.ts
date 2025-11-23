@@ -269,29 +269,6 @@ async function assembleAEPs(): Promise<AEP[]> {
   return AEPs;
 }
 
-function buildFullAEPList(aeps: AEP[]) {
-  let response = [];
-  let groups = readGroupFile(AEP_LOC);
-
-  for (var group of groups.categories) {
-    response.push({
-      label: group.title,
-      items: aeps
-        .filter((aep) => aep.category == group.code)
-        .sort((a1, a2) => (a1.order > a2.order ? 1 : -1))
-        .map((aep) => {
-          return {
-            title: aep.title,
-            id: aep.id,
-            slug: aep.slug,
-            status: aep.frontmatter.state,
-          };
-        }),
-    });
-  }
-  return response;
-}
-
 function buildRedirects(aeps: AEP[]): object {
   return Object.fromEntries(aeps.map((aep) => [`/${aep.slug}`, `/${aep.id}`]));
 }
@@ -343,9 +320,6 @@ if (AEP_LOC != "") {
   // Add AEPs to site structure
   const groups = readGroupFile(AEP_LOC);
   addAEPEdition(siteStructure, "general", aeps, groups, ".");
-
-  let full_aeps = buildFullAEPList(aeps);
-  writeSidebar(full_aeps, "full_aeps.json");
 
   // Write AEPs to files (only categorized ones to match sidebar).
   const validCategories = new Set(groups.categories.map((c) => c.code));
@@ -507,10 +481,6 @@ if (AEP_EDITION_2026 != "") {
   // Add 2026 edition to site structure
   const groups2026 = readGroupFile(AEP_EDITION_2026);
   addAEPEdition(siteStructure, "aep-2026", aeps2026, groups2026, "aep-2026");
-
-  // Build and write full AEP list for 2026 edition
-  let full_aeps_2026 = buildFullAEPList(aeps2026);
-  writeSidebar(full_aeps_2026, "full_aeps_aep-2026.json");
 
   console.log("✅ AEP Edition 2026 processing complete\n");
 } else {
