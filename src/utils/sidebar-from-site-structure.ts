@@ -82,7 +82,7 @@ function assembleAEPItems(siteStructure: SiteStructure): any[] {
       label: category.title,
       items: category.aeps.map((aep) => ({
         label: `${aep.id}. ${aep.title}`,
-        link: aep.id,
+        link: aep.id.toString(),
       })),
     });
   }
