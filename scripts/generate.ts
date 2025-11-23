@@ -3,17 +3,10 @@ import * as path from "path";
 
 import loadConfigFiles from "./src/config";
 import {
-  buildSidebar,
-  buildLinterSidebar,
-  buildOpenAPILinterSidebar,
-  addToSidebar,
-} from "./src/sidebar";
-import {
   type AEP,
   type ConsolidatedLinterRule,
   type GroupFile,
   type LinterRule,
-  type Sidebar,
 } from "./src/types";
 import { buildMarkdown, Markdown } from "./src/markdown";
 import { load, dump } from "js-yaml";
@@ -31,6 +24,17 @@ import {
   getFolders,
   copyFile,
 } from "./src/utils";
+import {
+  createEmptySiteStructure,
+  addOverviewPage,
+  addToolingPage,
+  addLinterRules,
+  addOpenAPILinterRules,
+  addAEPEdition,
+  writeSiteStructure,
+  type SiteStructure,
+} from "../src/utils/site-structure";
+import { assembleSidebarFromSiteStructure } from "../src/utils/sidebar-from-site-structure";
 
 const AEP_LOC = process.env.AEP_LOCATION || "";
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC || "";
@@ -149,10 +153,10 @@ async function writePage(
   writeFile(outputPath, contents.removeTitle().build());
 }
 
-async function writePages(
+async function writePagesToSiteStructure(
   dirPath: string,
-  sidebar: Sidebar[],
-): Promise<Sidebar[]> {
+  siteStructure: SiteStructure,
+): Promise<SiteStructure> {
   const entries = await fs.promises.readdir(
     path.join(dirPath, "pages/general/"),
     { withFileTypes: true },
@@ -168,15 +172,19 @@ async function writePages(
       file.name,
       path.join("src/content/docs", file.name),
     );
-    addToSidebar(sidebar, "Overview", [file.name.replace(".md", "")]);
+    const link = file.name.replace(".md", "");
+    addOverviewPage(siteStructure, { label: link, link });
   }
   writePage(
     dirPath,
     "CONTRIBUTING.md",
     path.join("src/content/docs", "contributing.md"),
   );
-  addToSidebar(sidebar, "Overview", ["contributing"]);
-  return sidebar;
+  addOverviewPage(siteStructure, {
+    label: "contributing",
+    link: "contributing",
+  });
+  return siteStructure;
 }
 
 function readAEP(dirPath: string): string[] {
@@ -314,39 +322,11 @@ export function buildLLMsTxt(aeps: AEP[]): string {
   return sections.join("\n\n---\n\n");
 }
 
-let sidebar: Sidebar[] = [
-  {
-    label: "Overview",
-    link: "1",
-    icon: "bars",
-    id: "overview",
-    items: [],
-  },
-  {
-    label: "AEPs",
-    link: "/general",
-    icon: "open-book",
-    id: "aeps",
-    items: [],
-  },
-  {
-    label: "Tooling",
-    link: "/tooling-and-ecosystem",
-    icon: "puzzle",
-    id: "tooling",
-    items: [],
-  },
-  {
-    label: "Blog",
-    link: "/blog",
-    icon: "document",
-    id: "blog",
-    items: [],
-  },
-];
-
 // Log folder detection status
 logFolderDetection();
+
+// Create site structure
+let siteStructure = createEmptySiteStructure();
 
 if (AEP_LOC != "") {
   console.log("=== Processing AEP Repository ===");
@@ -355,26 +335,31 @@ if (AEP_LOC != "") {
   writeSidebar(config, "config.json");
 
   // Write assorted pages.
-  sidebar = await writePages(AEP_LOC, sidebar);
+  siteStructure = await writePagesToSiteStructure(AEP_LOC, siteStructure);
 
   // Build out AEPs.
   let aeps = await assembleAEPs();
 
-  // Build sidebar.
-  sidebar = buildSidebar(aeps, readGroupFile(AEP_LOC), sidebar);
+  // Add AEPs to site structure
+  const groups = readGroupFile(AEP_LOC);
+  addAEPEdition(siteStructure, "general", aeps, groups, ".");
 
   let full_aeps = buildFullAEPList(aeps);
   writeSidebar(full_aeps, "full_aeps.json");
 
-  // Write AEPs to files.
-  for (var aep of aeps) {
+  // Write AEPs to files (only categorized ones to match sidebar).
+  const validCategories = new Set(groups.categories.map((c) => c.code));
+  const categorizedAEPs = aeps.filter((aep) =>
+    validCategories.has(aep.category),
+  );
+  for (var aep of categorizedAEPs) {
     writeMarkdown(aep);
   }
 
-  writeSidebar(buildRedirects(aeps), "redirects.json");
+  writeSidebar(buildRedirects(categorizedAEPs), "redirects.json");
 
   // Generate llms.txt file with all AEP contents
-  const llmsTxtContent = buildLLMsTxt(aeps);
+  const llmsTxtContent = buildLLMsTxt(categorizedAEPs);
   writeFile("public/llms.txt", llmsTxtContent);
 
   // Write blog
@@ -418,10 +403,12 @@ if (AEP_LINTER_LOC != "") {
     writeRule(rule);
   }
 
-  sidebar = buildLinterSidebar(consolidated_rules, sidebar);
-  sidebar = addToSidebar(sidebar, "Tooling", [
-    { label: "Website", link: "tooling/website" },
-  ]);
+  // Add to site structure
+  addLinterRules(
+    siteStructure,
+    consolidated_rules.map((r) => r.aep),
+  );
+  addToolingPage(siteStructure, { label: "Website", link: "tooling/website" });
 } else {
   console.warn("Proto linter repo is not found.");
 }
@@ -457,8 +444,11 @@ if (AEP_OPENAPI_LINTER_LOC != "") {
       writeRule(rule, outputPath);
     }
 
-    // Update sidebar navigation
-    sidebar = buildOpenAPILinterSidebar(consolidatedOpenAPIRules, sidebar);
+    // Add to site structure
+    addOpenAPILinterRules(
+      siteStructure,
+      consolidatedOpenAPIRules.map((r) => r.aep),
+    );
 
     console.log("✅ OpenAPI linter integration complete\n");
   } else {
@@ -516,4 +506,9 @@ if (AEP_EDITION_2026 != "") {
   console.log("ℹ️  AEP Edition 2026 repo not configured, skipping...\n");
 }
 
-writeSidebar(sidebar, "sidebar.json");
+// Write site structure to JSON
+writeSiteStructure(siteStructure, "generated/site-structure.json");
+
+// Assemble sidebar from site structure and write it
+const sidebar = assembleSidebarFromSiteStructure(siteStructure);
+writeSidebar(sidebar, "sidebar-from-site-structure.json");
