@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "generate": "tsx scripts/generate.ts",
-    "test": "tsx test/sampleCode.test.ts && tsx test/jinja2Validation.test.ts",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write ."
   },
@@ -32,10 +32,14 @@
     "vite-plugin-radar": "^0.9.6"
   },
   "devDependencies": {
+    "@jest/globals": "^30.2.0",
+    "@types/jest": "^30.0.0",
     "glob": "^11.0.0",
+    "jest": "^30.2.0",
     "js-yaml": "^4.1.0",
     "nunjucks": "^3.2.4",
     "prettier": "^3.6.2",
+    "ts-jest": "^29.4.5",
     "tsx": "^4.17.0",
     "typescript": "^5.5.4"
   },
