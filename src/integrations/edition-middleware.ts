@@ -35,6 +35,9 @@ function getEditionFromPath(pathname: string): string {
   return "general";
 }
 
+/**
+ * Middleware to detect the current edition and store it in locals
+ */
 export const onRequest = defineMiddleware(async (context, next) => {
   // Detect edition from the current path
   const editionFolder = getEditionFromPath(context.url.pathname);

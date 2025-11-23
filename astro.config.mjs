@@ -5,6 +5,7 @@ import rehypeMermaid from "rehype-mermaid";
 import starlightBlog from "starlight-blog";
 import starlightSidebarTopics from "starlight-sidebar-topics";
 import tailwindcss from "@tailwindcss/vite";
+import { starlightEditionAwareSidebar } from "./src/integrations/starlight-edition-aware-sidebar.ts";
 
 // Load configuration files
 let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));
@@ -21,6 +22,7 @@ export default defineConfig({
   },
 
   integrations: [
+    starlightEditionAwareSidebar(),
     starlight({
       title: "AEP",
       customCss: [
