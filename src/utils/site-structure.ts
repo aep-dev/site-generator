@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import type { AEP } from "../../scripts/src/types";
+import { isLatestEdition } from "./versions";
 
 /**
  * Represents a single page item in the navigation
@@ -221,9 +222,9 @@ function getLatestEditionName(siteStructure: SiteStructure): string | null {
     return null;
   }
 
-  // Check for edition with folder = "."
-  const currentFolderEdition = editionNames.find(
-    (name) => siteStructure.aeps.editions[name].folder === ".",
+  // Check for edition with folder = "." (latest edition)
+  const currentFolderEdition = editionNames.find((name) =>
+    isLatestEdition(siteStructure.aeps.editions[name]),
   );
   if (currentFolderEdition) {
     return currentFolderEdition;

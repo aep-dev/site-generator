@@ -1,6 +1,6 @@
 ---
 import editionsConfig from '../../aep-editions.json'
-import { getEditionFromPath } from '../utils/versions'
+import { getEditionFromPath, isLatestEdition } from '../utils/versions'
 
 interface Props {
   href: string
@@ -17,9 +17,9 @@ const currentEdition = getEditionFromPath(editionsConfig, Astro.url.pathname)
 
 // Construct the edition-aware link
 let editionAwareHref: string
-if (currentEdition?.folder && currentEdition.folder !== '.') {
+if (!isLatestEdition(currentEdition)) {
   // If we're in a versioned edition, prefix the link with the edition folder
-  editionAwareHref = `/${currentEdition.folder}/${aepNumber}`
+  editionAwareHref = `/${currentEdition!.folder}/${aepNumber}`
 } else {
   // Default edition (root)
   editionAwareHref = `/${aepNumber}`
