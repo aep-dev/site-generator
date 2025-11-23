@@ -18,15 +18,18 @@ export const getStaticPaths = (async () => {
       const edition = siteStructure.aeps.editions[editionName];
       return edition.folder !== "."; // Exclude latest edition
     })
-    .map((editionName) => ({
-      params: { edition: siteStructure.aeps.editions[editionName].folder },
-      props: { editionName },
-    }));
+    .map((editionName) => {
+      const edition = siteStructure.aeps.editions[editionName];
+      return {
+        params: { edition: edition.folder },
+        props: { edition },
+      };
+    });
 
   return paths;
 }) satisfies GetStaticPaths;
 
-const { editionName } = Astro.props;
+const { edition } = Astro.props;
 ---
 
 <StarlightPage

@@ -5,7 +5,7 @@ import * as fs from "fs";
 import type { SiteStructure } from "../utils/site-structure";
 import { getLatestEditionName } from "../utils/site-structure";
 
-// Load site structure to get the latest edition name
+// Load site structure to get the latest edition
 const siteStructurePath = "generated/site-structure.json";
 const jsonContent = fs.readFileSync(siteStructurePath, "utf-8");
 const siteStructure: SiteStructure = JSON.parse(jsonContent);
@@ -14,6 +14,8 @@ const latestEditionName = getLatestEditionName(siteStructure);
 if (!latestEditionName) {
   throw new Error("No latest edition found in site structure");
 }
+
+const edition = siteStructure.aeps.editions[latestEditionName];
 ---
 
 <StarlightPage
@@ -23,5 +25,5 @@ if (!latestEditionName) {
   }}
   headings={[]}
 >
-  <FullAepList edition={latestEditionName} />
+  <FullAepList edition={edition} />
 </StarlightPage>

@@ -1,29 +1,11 @@
 ---
 import AepList from "./AepList.astro";
-import * as fs from "fs";
-import type { SiteStructure } from "../../utils/site-structure";
+import type { Edition } from "../../utils/site-structure";
 
-const { edition } = Astro.props;
-
-// Load site structure
-const siteStructurePath = "generated/site-structure.json";
-let siteStructure: SiteStructure;
-try {
-  const jsonContent = fs.readFileSync(siteStructurePath, "utf-8");
-  siteStructure = JSON.parse(jsonContent);
-} catch (e) {
-  console.error(`Failed to load ${siteStructurePath}:`, e);
-  throw new Error(`Site structure not found at ${siteStructurePath}`);
-}
-
-// Get the edition data
-const editionData = siteStructure.aeps.editions[edition];
-if (!editionData) {
-  throw new Error(`Edition "${edition}" not found in site structure`);
-}
+const { edition } = Astro.props as { edition: Edition };
 
 // Transform categories to match the expected format for AepList
-const sideBar = editionData.categories.map((category) => ({
+const sideBar = edition.categories.map((category) => ({
   label: category.title,
   items: category.aeps,
 }));
