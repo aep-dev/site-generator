@@ -7,6 +7,10 @@ interface EditionsConfig {
   editions: Edition[];
 }
 
+export function isLatestEdition(edition: Edition | undefined): boolean {
+  return edition?.folder === ".";
+}
+
 export function getEditionFromPath(
   editionsConfig: EditionsConfig,
   currentPath: string,
@@ -15,7 +19,7 @@ export function getEditionFromPath(
 
   for (const edition of editionsConfig.editions) {
     if (
-      edition.folder === "." &&
+      isLatestEdition(edition) &&
       !pathSegments.some((segment) =>
         editionsConfig.editions.some((e) => e.folder === segment),
       )
@@ -23,12 +27,12 @@ export function getEditionFromPath(
       return edition;
     }
 
-    if (edition.folder !== "." && pathSegments.includes(edition.folder)) {
+    if (!isLatestEdition(edition) && pathSegments.includes(edition.folder)) {
       return edition;
     }
   }
 
-  return editionsConfig.editions.find((e) => e.folder === ".");
+  return editionsConfig.editions.find((e) => isLatestEdition(e));
 }
 
 export function getVersionedPath(
@@ -40,14 +44,14 @@ export function getVersionedPath(
 
   const currentEdition = getEditionFromPath(editionsConfig, currentPath);
 
-  if (currentEdition?.folder && currentEdition.folder !== ".") {
+  if (currentEdition && !isLatestEdition(currentEdition)) {
     const editionIndex = pathSegments.indexOf(currentEdition.folder);
     if (editionIndex !== -1) {
       pathSegments.splice(editionIndex, 1);
     }
   }
 
-  if (targetEdition.folder !== ".") {
+  if (!isLatestEdition(targetEdition)) {
     pathSegments.unshift(targetEdition.folder);
   }
 

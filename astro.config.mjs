@@ -6,6 +6,9 @@ import starlightBlog from "starlight-blog";
 import starlightSidebarTopics from "starlight-sidebar-topics";
 import tailwindcss from "@tailwindcss/vite";
 
+// Helper function to check if an edition is the latest
+const isLatestEdition = (edition) => edition.folder === ".";
+
 let sidebar = JSON.parse(
   fs.readFileSync("generated/sidebar-from-site-structure.json"),
 );
@@ -34,7 +37,7 @@ export default defineConfig({
         starlightSidebarTopics(sidebar, {
           topics: {
             aeps: aepEditions.editions
-              .filter((edition) => edition.folder !== ".")
+              .filter((edition) => !isLatestEdition(edition))
               .flatMap((edition) => [
                 `/${edition.folder}`,
                 `/${edition.folder}/**/*`,
@@ -44,7 +47,7 @@ export default defineConfig({
             "/blog",
             "/blog/**/*",
             ...aepEditions.editions
-              .filter((edition) => edition.folder !== ".")
+              .filter((edition) => !isLatestEdition(edition))
               .flatMap((edition) => [
                 `/${edition.folder}`,
                 `/${edition.folder}/**/*`,
