@@ -3,7 +3,7 @@ import AepList from "./AepList.astro";
 import * as fs from "fs";
 import type { SiteStructure } from "../../utils/site-structure";
 
-const { edition = "general" } = Astro.props;
+const { edition } = Astro.props;
 
 // Load site structure
 const siteStructurePath = "generated/site-structure.json";
