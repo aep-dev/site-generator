@@ -6,11 +6,27 @@ import starlightBlog from "starlight-blog";
 import starlightSidebarTopics from "starlight-sidebar-topics";
 import tailwindcss from "@tailwindcss/vite";
 import { starlightEditionAwareSidebar } from "./src/integrations/starlight-edition-aware-sidebar.ts";
+import {
+  assembleSidebarsByEdition,
+  readSiteStructure,
+} from "./src/utils/sidebar-from-site-structure.ts";
 
 // Load configuration files
 let redirects = JSON.parse(fs.readFileSync("generated/redirects.json"));
 let config = JSON.parse(fs.readFileSync("generated/config.json"));
 let aepEditions = JSON.parse(fs.readFileSync("aep-editions.json"));
+
+// Load site structure and build sidebars for all editions
+const siteStructure = readSiteStructure("generated/site-structure.json");
+const sidebarsByEdition = assembleSidebarsByEdition(siteStructure);
+
+// Get the default edition sidebar and strip icon/id for Starlight
+const defaultSidebar = (sidebarsByEdition["general"] || []).map((item) => ({
+  label: item.label,
+  ...(item.link && { link: item.link }),
+  ...(item.items && { items: item.items }),
+  ...(item.collapsed !== undefined && { collapsed: item.collapsed }),
+}));
 
 // https://astro.build/config
 export default defineConfig({
@@ -31,7 +47,7 @@ export default defineConfig({
       ],
       plugins: [
         starlightBlog({ navigation: "none" }),
-        starlightSidebarTopics([], {
+        starlightSidebarTopics(defaultSidebar, {
           topics: {
             aeps: aepEditions.editions
               .filter((edition) => edition.folder !== ".")

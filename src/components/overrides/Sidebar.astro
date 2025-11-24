@@ -11,8 +11,20 @@ const siteStructure: SiteStructure = JSON.parse(
 );
 const sidebarsByEdition = assembleSidebarsByEdition(siteStructure);
 
-// Get edition from locals (set by middleware)
-const edition = Astro.locals.edition || "general";
+// Get edition from middleware (fallback) or determine from topic
+const middlewareEdition = Astro.locals.edition || "general";
+
+// Get the current topic from starlightSidebarTopics route data
+const topicsData = Astro.locals.starlightSidebarTopics;
+const currentTopic = topicsData?.topics?.find((t: any) => t.isCurrent);
+
+// Map topic to edition name
+// If on "aeps" topic (non-default edition), use the edition from URL
+// Otherwise use "general" (default edition)
+let edition = middlewareEdition;
+if (currentTopic && currentTopic.label && currentTopic.label.includes("2026")) {
+  edition = "aep-2026";
+}
 
 // Get the sidebar for this edition
 const editionSidebar = sidebarsByEdition[edition] || sidebarsByEdition["general"] || [];
