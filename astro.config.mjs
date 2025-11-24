@@ -32,6 +32,7 @@ export default defineConfig({
         // Path to your Tailwind base styles:
         "./src/styles/global.css",
       ],
+      sidebar: sidebar,
       plugins: [
         starlightBlog({ navigation: "none" }),
         starlightSidebarTopics(sidebar, {
@@ -71,6 +72,7 @@ export default defineConfig({
       components: {
         Banner: "./src/components/overrides/Banner.astro",
         Head: "./src/components/overrides/Head.astro",
+        Sidebar: "./src/components/overrides/Sidebar.astro",
         SkipLink: "./src/components/overrides/SkipLink.astro",
         TableOfContents: "./src/components/overrides/TableOfContents.astro",
         ThemeSelect: "./src/components/overrides/ThemeSelect.astro",

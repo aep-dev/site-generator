@@ -1,0 +1,220 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import SidebarSublist from '@astrojs/starlight/components/SidebarSublist.astro';
+import type { StarlightRouteData } from '@astrojs/starlight/route-data';
+import TabbedContent from '../tabs/TabbedContent.astro';
+import TabListItem from '../tabs/TabListItem.astro';
+import TabPanel from '../tabs/TabPanel.astro';
+import MobileMenuFooter from '../starlight/MobileMenuFooter.astro';
+import VersionSelect from '../VersionSelect.astro';
+import { getEditionFromPath } from '../../utils/versions';
+import editionsConfig from '../../../aep-editions.json';
+import siteStructure from '../../../generated/site-structure.json';
+import fullSidebar from '../../../generated/sidebar.json';
+
+const { sidebar, id } = Astro.locals.starlightRoute;
+
+// Define sidebar structure with metadata
+interface SidebarWithMeta {
+	label: string;
+	link?: string;
+	icon?: string;
+	id?: string;
+	items: any[];
+}
+
+// Get current edition based on the path
+const currentEdition = getEditionFromPath(editionsConfig, Astro.url.pathname);
+const editionKey = currentEdition?.folder === '.' ? 'general' : currentEdition?.folder || 'general';
+
+type SidebarEntry = StarlightRouteData['sidebar'][number];
+
+// Helper function to strip leading and trailing slashes
+function stripLeadingAndTrailingSlashes(path: string): string {
+	return path.replace(/^\//, '').replace(/\/$/, '');
+}
+
+// Mark current entries
+function markEntries(i: SidebarEntry) {
+	if (i.type === 'group') {
+		i.entries.forEach(markEntries);
+	} else {
+		const itemSlug = stripLeadingAndTrailingSlashes(i.href);
+		i.isCurrent ||= id === itemSlug;
+	}
+}
+
+// Convert any top-level links to groups
+const normalizedSidebar = sidebar.map((entry): Group => {
+	if (entry.type === 'link') {
+		// Convert link to a group with the link as its only entry
+		return {
+			type: 'group',
+			label: entry.label,
+			entries: [entry],
+			collapsed: false,
+			badge: entry.badge
+		};
+	}
+	return entry as Group;
+});
+
+normalizedSidebar.forEach(markEntries);
+
+const makeId = (label: string) => '__tab-' + label.toLowerCase().replaceAll(/\s+/g, '-');
+const isCurrent = (sidebar: SidebarEntry[]): boolean =>
+	sidebar
+		.map((entry) => (entry.type === 'link' ? entry.isCurrent : isCurrent(entry.entries)))
+		.some((entry) => entry === true);
+
+// Get icon from full sidebar metadata
+function getIconForSection(label: string): string {
+	const section = (fullSidebar as SidebarWithMeta[]).find(s => s.label === label);
+	return section?.icon || 'bars';
+}
+
+// Function to build AEP sidebar from site structure based on current edition
+function buildAepSidebar(): SidebarEntry[] {
+	const aepsData = (siteStructure as any).aeps?.editions?.[editionKey];
+	if (!aepsData || !aepsData.categories) {
+		return [];
+	}
+
+	return aepsData.categories.map((category: any) => ({
+		type: 'group' as const,
+		label: category.title,
+		entries: category.aeps.map((aep: any) => ({
+			type: 'link' as const,
+			label: `${aep.id}. ${aep.title}`,
+			href: `/${aep.id}`,
+			isCurrent: id === String(aep.id),
+			badge: undefined,
+			attrs: {}
+		})),
+		collapsed: false,
+		badge: undefined
+	}));
+}
+
+// Replace AEPs section with version-specific content
+const modifiedSidebar = normalizedSidebar.map(group => {
+	if (group.label === 'AEPs') {
+		return {
+			...group,
+			entries: buildAepSidebar()
+		};
+	}
+	return group;
+});
+---
+
+<VersionSelect />
+
+<TabbedContent class="tabbed-sidebar">
+	<Fragment slot="tab-list">
+		{
+			modifiedSidebar.map(({ label, entries }) => (
+				<TabListItem id={makeId(label)} initial={isCurrent(entries)} class="tab-item">
+					<Icon class="icon" name={getIconForSection(label)} /> {label}
+				</TabListItem>
+			))
+		}
+	</Fragment>
+	{
+		modifiedSidebar.map(({ label, entries }) => (
+			<TabPanel id={makeId(label)} initial={isCurrent(entries)}>
+				<SidebarSublist sublist={entries} />
+			</TabPanel>
+		))
+	}
+</TabbedContent>
+
+<div class="md:sl-hidden">
+	<MobileMenuFooter />
+</div>
+
+<style>
+	:global(.sidebar-pane) {
+		overflow-y: scroll;
+	}
+
+	.tabbed-sidebar {
+		--tab-switcher-border-width: 1px;
+		--tab-switcher-padding: calc(0.25rem - var(--tab-switcher-border-width));
+		--tab-item-border-radius: 0.5rem;
+		--tab-switcher-border-radius: calc(
+			var(--tab-item-border-radius) + var(--tab-switcher-padding) + var(--tab-switcher-border-width)
+		);
+		--tab-switcher-border-color: var(--sl-color-hairline-light);
+		--tab-switcher-background-color: var(--sl-color-gray-7, var(--sl-color-gray-6));
+		--tab-switcher-text-color: var(--sl-color-gray-3);
+		--tab-switcher-text-color--active: var(--sl-color-white);
+		--tab-switcher-icon-color: var(--sl-color-gray-4);
+		--tab-switcher-icon-color--active: var(--sl-color-text-accent);
+		--tab-item-background-color--hover: var(--sl-color-gray-6);
+		--tab-item-background-color--active: var(--sl-color-black);
+	}
+
+	:global([data-theme='dark']) .tabbed-sidebar {
+		--tab-switcher-text-color: var(--sl-color-gray-2);
+		--tab-switcher-icon-color: var(--sl-color-gray-3);
+		--tab-item-background-color--hover: var(--sl-color-gray-5);
+	}
+
+	@media (min-width: 50rem) {
+		:global([data-theme='dark']) .tabbed-sidebar {
+			--tab-switcher-background-color: var(--sl-color-black);
+			--tab-item-background-color--hover: var(--sl-color-gray-6);
+			--tab-item-background-color--active: var(--sl-color-gray-6);
+		}
+	}
+
+	.tabbed-sidebar :global(.tab-list) {
+		border: var(--tab-switcher-border-width) solid var(--tab-switcher-border-color);
+		border-radius: var(--tab-switcher-border-radius);
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: var(--tab-switcher-padding);
+		background-color: var(--tab-switcher-background-color);
+		margin-bottom: 1.5rem;
+	}
+
+	:global(.tab-item a) {
+		border: var(--tab-switcher-border-width) solid transparent;
+		border-radius: var(--tab-item-border-radius);
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: calc(0.5rem - var(--tab-switcher-border-width));
+		background-clip: padding-box;
+		line-height: var(--sl-line-height-headings);
+		text-decoration: none;
+		color: var(--tab-switcher-text-color);
+		font-weight: 600;
+	}
+
+	:global(.tab-item a:hover) {
+		color: var(--tab-switcher-text-color--active);
+		background-color: var(--tab-item-background-color--hover);
+	}
+
+	:global(.tab-item a[aria-selected='true']) {
+		border-color: var(--tab-switcher-border-color);
+		color: var(--tab-switcher-text-color--active);
+		background-color: var(--tab-item-background-color--active);
+	}
+
+	.icon {
+		margin: 0.25rem;
+		color: var(--tab-switcher-icon-color);
+	}
+
+	:global(.tab-item a:hover) .icon {
+		color: inherit;
+	}
+
+	:global(.tab-item a[aria-selected='true']) .icon {
+		color: var(--tab-switcher-icon-color--active);
+	}
+</style>
