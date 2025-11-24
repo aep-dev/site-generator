@@ -34,7 +34,6 @@ import {
   writeSiteStructure,
   type SiteStructure,
 } from "../src/utils/site-structure";
-import { assembleSidebarFromSiteStructure } from "../src/utils/sidebar-from-site-structure";
 
 const AEP_LOC = process.env.AEP_LOCATION || "";
 const AEP_LINTER_LOC = process.env.AEP_LINTER_LOC || "";
@@ -489,7 +488,3 @@ if (AEP_EDITION_2026 != "") {
 
 // Write site structure to JSON
 writeSiteStructure(siteStructure, "generated/site-structure.json");
-
-// Assemble sidebar from site structure and write it
-const sidebar = assembleSidebarFromSiteStructure(siteStructure);
-writeSidebar(sidebar, "sidebar-from-site-structure.json");

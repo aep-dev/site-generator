@@ -33,9 +33,20 @@ interface AEPItem {
 }
 
 /**
+ * Metadata for a navigation section
+ */
+interface SectionMetadata {
+  label: string;
+  icon: string;
+  id: string;
+  link: string;
+}
+
+/**
  * Overview section containing general pages
  */
 interface OverviewSection {
+  metadata: SectionMetadata;
   pages: PageItem[];
 }
 
@@ -43,6 +54,7 @@ interface OverviewSection {
  * Tooling section containing linter and other tool pages
  */
 interface ToolingSection {
+  metadata: SectionMetadata;
   pages: PageItem[];
   linterRules?: string[];
   openAPILinterRules?: string[];
@@ -61,9 +73,17 @@ interface Edition {
  * AEPs section containing editions and categories
  */
 interface AEPsSection {
+  metadata: SectionMetadata;
   editions: {
     [editionName: string]: Edition;
   };
+}
+
+/**
+ * Blog section
+ */
+interface BlogSection {
+  metadata: SectionMetadata;
 }
 
 /**
@@ -73,6 +93,7 @@ interface SiteStructure {
   overview: OverviewSection;
   aeps: AEPsSection;
   tooling: ToolingSection;
+  blog: BlogSection;
 }
 
 /**
@@ -98,13 +119,39 @@ function writeSiteStructure(
 function createEmptySiteStructure(): SiteStructure {
   return {
     overview: {
+      metadata: {
+        label: "Overview",
+        icon: "bars",
+        id: "overview",
+        link: "1",
+      },
       pages: [],
     },
     aeps: {
+      metadata: {
+        label: "AEPs",
+        icon: "open-book",
+        id: "aeps",
+        link: "/aep_list",
+      },
       editions: {},
     },
     tooling: {
+      metadata: {
+        label: "Tooling",
+        icon: "puzzle",
+        id: "tooling",
+        link: "/tooling-and-ecosystem",
+      },
       pages: [],
+    },
+    blog: {
+      metadata: {
+        label: "Blog",
+        icon: "document",
+        id: "blog",
+        link: "/blog",
+      },
     },
   };
 }
@@ -247,10 +294,12 @@ export type {
   OverviewSection,
   AEPsSection,
   ToolingSection,
+  BlogSection,
   PageItem,
   AEPCategory,
   AEPItem,
   Edition,
+  SectionMetadata,
 };
 
 export {

@@ -6,26 +6,27 @@ import TabbedContent from '../tabs/TabbedContent.astro';
 import TabListItem from '../tabs/TabListItem.astro';
 import TabPanel from '../tabs/TabPanel.astro';
 import MobileMenuFooter from '../starlight/MobileMenuFooter.astro';
-import VersionSelect from '../VersionSelect.astro';
-import { getEditionFromPath } from '../../utils/versions';
+import { getEditionFromPath, isLatestEdition } from '../../utils/versions';
 import editionsConfig from '../../../aep-editions.json';
 import siteStructure from '../../../generated/site-structure.json';
-import fullSidebar from '../../../generated/sidebar.json';
 
 const { sidebar, id } = Astro.locals.starlightRoute;
-
-// Define sidebar structure with metadata
-interface SidebarWithMeta {
-	label: string;
-	link?: string;
-	icon?: string;
-	id?: string;
-	items: any[];
-}
 
 // Get current edition based on the path
 const currentEdition = getEditionFromPath(editionsConfig, Astro.url.pathname);
 const editionKey = currentEdition?.folder === '.' ? 'general' : currentEdition?.folder || 'general';
+
+// Check if we're on a blog page
+const isBlogPage = Astro.url.pathname.startsWith('/blog');
+
+// Helper to build edition-aware AEP link
+function buildAepLink(aepId: string | number): string {
+	const aepNumber = String(aepId);
+	if (!isLatestEdition(currentEdition)) {
+		return `/${currentEdition!.folder}/${aepNumber}`;
+	}
+	return `/${aepNumber}`;
+}
 
 type SidebarEntry = StarlightRouteData['sidebar'][number];
 
@@ -44,8 +45,20 @@ function markEntries(i: SidebarEntry) {
 	}
 }
 
+// If on a blog page, wrap all sidebar entries in a single "Blog" group
+let sidebarToNormalize = sidebar;
+if (isBlogPage && sidebar.length > 0) {
+	sidebarToNormalize = [{
+		type: 'group' as const,
+		label: 'Blog',
+		entries: sidebar,
+		collapsed: false,
+		badge: undefined
+	}];
+}
+
 // Convert any top-level links to groups
-const normalizedSidebar = sidebar.map((entry): Group => {
+const normalizedSidebar = sidebarToNormalize.map((entry): Group => {
 	if (entry.type === 'link') {
 		// Convert link to a group with the link as its only entry
 		return {
@@ -67,10 +80,16 @@ const isCurrent = (sidebar: SidebarEntry[]): boolean =>
 		.map((entry) => (entry.type === 'link' ? entry.isCurrent : isCurrent(entry.entries)))
 		.some((entry) => entry === true);
 
-// Get icon from full sidebar metadata
+// Get icon from site structure metadata
 function getIconForSection(label: string): string {
-	const section = (fullSidebar as SidebarWithMeta[]).find(s => s.label === label);
-	return section?.icon || 'bars';
+	// Map section labels to their metadata in site structure
+	const sectionMap: Record<string, string> = {
+		'Overview': siteStructure.overview.metadata.icon,
+		'AEPs': siteStructure.aeps.metadata.icon,
+		'Tooling': siteStructure.tooling.metadata.icon,
+		'Blog': siteStructure.blog.metadata.icon,
+	};
+	return sectionMap[label] || 'bars';
 }
 
 // Function to build AEP sidebar from site structure based on current edition
@@ -80,14 +99,17 @@ function buildAepSidebar(): SidebarEntry[] {
 		return [];
 	}
 
+	// Extract the AEP number from the current page id (e.g., "aep-2026/123" -> "123")
+	const currentAepId = id.split('/').pop();
+
 	return aepsData.categories.map((category: any) => ({
 		type: 'group' as const,
 		label: category.title,
 		entries: category.aeps.map((aep: any) => ({
 			type: 'link' as const,
 			label: `${aep.id}. ${aep.title}`,
-			href: `/${aep.id}`,
-			isCurrent: id === String(aep.id),
+			href: buildAepLink(aep.id),
+			isCurrent: currentAepId === String(aep.id),
 			badge: undefined,
 			attrs: {}
 		})),
@@ -97,6 +119,7 @@ function buildAepSidebar(): SidebarEntry[] {
 }
 
 // Replace AEPs section with version-specific content
+// and Blog section with starlight-blog content when on blog pages
 const modifiedSidebar = normalizedSidebar.map(group => {
 	if (group.label === 'AEPs') {
 		return {
@@ -104,11 +127,17 @@ const modifiedSidebar = normalizedSidebar.map(group => {
 			entries: buildAepSidebar()
 		};
 	}
+	// If on a blog page and this is the Blog section, use the sidebar content
+	// that starlight-blog middleware has populated
+	if (group.label === 'Blog' && isBlogPage) {
+		return {
+			...group,
+			entries: sidebar // Use the blog sidebar from starlight-blog
+		};
+	}
 	return group;
 });
 ---
-
-<VersionSelect />
 
 <TabbedContent class="tabbed-sidebar">
 	<Fragment slot="tab-list">
