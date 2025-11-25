@@ -237,3 +237,37 @@ export function writeRule(rule: ConsolidatedLinterRule, outputPath?: string) {
     path.join(`src/content/docs/tooling/linter/rules/`, `${rule.aep}.md`);
   writeFile(filePath, rule.contents);
 }
+
+/**
+ * Writes linter rules as JSON data file for Astro to consume
+ * This allows Astro components to render the rules instead of pre-generating markdown
+ *
+ * @param rules - Array of linter rules to write
+ * @param outputPath - Path to write the JSON file
+ */
+export function writeLinterRulesJSON(
+  rules: LinterRule[],
+  outputPath: string,
+): void {
+  // Ensure the directory exists
+  const dir = path.dirname(outputPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  // Write the rules as JSON
+  writeFile(outputPath, JSON.stringify(rules, null, 2));
+  console.log(`✓ Wrote ${rules.length} linter rules to ${outputPath}`);
+}
+
+/**
+ * Gets unique AEP numbers from linter rules
+ * Used for site structure generation
+ *
+ * @param rules - Array of linter rules
+ * @returns Array of unique AEP numbers, sorted
+ */
+export function getUniqueAeps(rules: LinterRule[]): string[] {
+  const aeps = new Set(rules.map((r) => r.aep));
+  return Array.from(aeps).sort();
+}

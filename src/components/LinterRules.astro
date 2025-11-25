@@ -1,0 +1,81 @@
+---
+/**
+ * LinterRules Component
+ *
+ * Renders a list of linter rules in collapsible <details> elements.
+ * This replaces the consolidation logic previously done in the generate script.
+ *
+ * Props:
+ * - rules: Array of LinterRule objects to render
+ * - preamble: Optional preamble text to display before the rules
+ */
+
+export interface LinterRule {
+  title: string;
+  aep: string;
+  contents: string; // Markdown content with frontmatter
+  filename: string;
+  slug: string;
+  preamble?: string;
+}
+
+export interface Props {
+  rules: LinterRule[];
+  preamble?: string;
+}
+
+const { rules, preamble } = Astro.props;
+
+// Extract preamble from first rule if available, otherwise use provided preamble
+const displayPreamble = rules[0]?.preamble || preamble || "";
+
+// Helper function to strip frontmatter from content
+function stripFrontmatter(content: string): string {
+  return content.replace(/---[\s\S]*?---/m, "").trim();
+}
+---
+
+{displayPreamble && (
+  <div class="preamble" set:html={displayPreamble} />
+)}
+
+{
+  rules.map((rule) => (
+    <details>
+      <summary>{rule.title}</summary>
+      <div set:html={stripFrontmatter(rule.contents)} />
+    </details>
+  ))
+}
+
+<style>
+  .preamble {
+    margin-bottom: 1.5rem;
+  }
+
+  details {
+    margin-bottom: 1rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    padding: 0;
+  }
+
+  summary {
+    padding: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    user-select: none;
+  }
+
+  summary:hover {
+    background-color: var(--sl-color-gray-6);
+  }
+
+  details[open] summary {
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+
+  details > div {
+    padding: 1rem;
+  }
+</style>

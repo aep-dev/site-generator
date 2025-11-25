@@ -2,19 +2,14 @@ import * as fs from "fs";
 import * as path from "path";
 
 import loadConfigFiles from "./src/config";
-import {
-  type AEP,
-  type ConsolidatedLinterRule,
-  type GroupFile,
-  type LinterRule,
-} from "./src/types";
+import { type AEP, type GroupFile, type LinterRule } from "./src/types";
 import { buildMarkdown, Markdown } from "./src/markdown";
 import { load, dump } from "js-yaml";
 import {
   assembleLinterRules,
   assembleOpenAPILinterRules,
-  consolidateLinterRule,
-  writeRule,
+  writeLinterRulesJSON,
+  getUniqueAeps,
 } from "./src/linter";
 import {
   logFileRead,
@@ -371,18 +366,14 @@ if (AEP_LINTER_LOC != "") {
     "",
   );
 
-  // Write out linter rules.
+  // Write out linter rules as JSON for Astro to consume
+  // The rules are now rendered by Astro components instead of being pre-consolidated
+  // See: src/pages/tooling/linter/rules/[aep].astro and src/components/LinterRules.astro
   let linter_rules = await assembleLinterRules(AEP_LINTER_LOC);
-  let consolidated_rules = consolidateLinterRule({ linterRules: linter_rules });
-  for (var rule of consolidated_rules) {
-    writeRule(rule);
-  }
+  writeLinterRulesJSON(linter_rules, "generated/linter-rules/protobuf.json");
 
   // Add to site structure
-  addLinterRules(
-    siteStructure,
-    consolidated_rules.map((r) => r.aep),
-  );
+  addLinterRules(siteStructure, getUniqueAeps(linter_rules));
   addToolingPage(siteStructure, { label: "Website", link: "tooling/website" });
 } else {
   console.warn("Proto linter repo is not found.");
@@ -405,25 +396,16 @@ if (AEP_OPENAPI_LINTER_LOC != "") {
       "OpenAPI Linter",
     );
 
-    // Consolidate rules (groups by AEP number)
-    const consolidatedOpenAPIRules = consolidateLinterRule({
-      linterRules: openapiLinterRules,
-    });
-
-    // Write rule markdown files
-    for (const rule of consolidatedOpenAPIRules) {
-      const outputPath = path.join(
-        "src/content/docs/tooling/openapi-linter/rules",
-        `${rule.aep}.md`,
-      );
-      writeRule(rule, outputPath);
-    }
+    // Write OpenAPI linter rules as JSON for Astro to consume
+    // The rules are now rendered by Astro components instead of being pre-consolidated
+    // See: src/pages/tooling/openapi-linter/rules/[aep].astro and src/components/LinterRules.astro
+    writeLinterRulesJSON(
+      openapiLinterRules,
+      "generated/linter-rules/openapi.json",
+    );
 
     // Add to site structure
-    addOpenAPILinterRules(
-      siteStructure,
-      consolidatedOpenAPIRules.map((r) => r.aep),
-    );
+    addOpenAPILinterRules(siteStructure, getUniqueAeps(openapiLinterRules));
 
     console.log("✅ OpenAPI linter integration complete\n");
   } else {
