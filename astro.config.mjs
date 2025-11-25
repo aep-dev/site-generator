@@ -143,9 +143,7 @@ export default defineConfig({
         "./src/styles/global.css",
       ],
       sidebar: sidebar,
-      plugins: [
-        starlightBlog({ navigation: "none" }),
-      ],
+      plugins: [starlightBlog({ navigation: "none" })],
       social: [
         { icon: "github", label: "GitHub", href: config.urls.repo },
         {
