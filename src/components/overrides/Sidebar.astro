@@ -1,0 +1,543 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import SidebarSublist from '@astrojs/starlight/components/SidebarSublist.astro';
+import type { StarlightRouteData } from '@astrojs/starlight/route-data';
+import TabbedContent from '../tabs/TabbedContent.astro';
+import TabListItem from '../tabs/TabListItem.astro';
+import TabPanel from '../tabs/TabPanel.astro';
+import MobileMenuFooter from '../starlight/MobileMenuFooter.astro';
+import { getEditionFromPath, isLatestEdition } from '../../utils/versions';
+import editionsConfig from '../../../aep-editions.json';
+import siteStructure from '../../../generated/site-structure.json';
+
+const { sidebar: starlightSidebar, id } = Astro.locals.starlightRoute;
+
+// Get current edition based on the path
+const currentEdition = getEditionFromPath(editionsConfig, Astro.url.pathname);
+const editionKey = currentEdition?.folder === '.' ? 'general' : currentEdition?.folder || 'general';
+
+// Check if we're on a blog page
+const isBlogPage = Astro.url.pathname.startsWith('/blog');
+
+// Build blog sidebar from starlightBlog data (available on all pages)
+function buildBlogSidebar(): StarlightRouteData['sidebar'] {
+	const blogData = Astro.locals.starlightBlog;
+	if (!blogData) return [];
+
+	const { locale } = Astro.locals.starlightRoute;
+	const { t } = Astro.locals;
+	const sidebar: StarlightRouteData['sidebar'] = [];
+
+	// All Posts link
+	sidebar.push({
+		type: 'link' as const,
+		label: t('starlightBlog.sidebar.all'),
+		href: '/blog',
+		isCurrent: isBlogPage && id === 'blog',
+		badge: undefined,
+		attrs: {}
+	});
+
+	// Featured posts
+	const featured = blogData.posts.filter(post => post.featured && !post.draft);
+	if (featured.length > 0) {
+		sidebar.push({
+			type: 'group' as const,
+			label: t('starlightBlog.sidebar.featured'),
+			entries: featured.slice(0, 3).map(post => ({
+				type: 'link' as const,
+				label: post.title,
+				href: post.href,
+				isCurrent: Astro.url.pathname === post.href,
+				badge: undefined,
+				attrs: {}
+			})),
+			collapsed: false,
+			badge: undefined
+		});
+	}
+
+	// Recent posts
+	const recent = blogData.posts.filter(post => !post.draft).slice(0, 10);
+	if (recent.length > 0) {
+		sidebar.push({
+			type: 'group' as const,
+			label: t('starlightBlog.sidebar.recent'),
+			entries: recent.map(post => ({
+				type: 'link' as const,
+				label: post.title,
+				href: post.href,
+				isCurrent: Astro.url.pathname === post.href,
+				badge: undefined,
+				attrs: {}
+			})),
+			collapsed: false,
+			badge: undefined
+		});
+	}
+
+	// Tags
+	const tagCounts = new Map<string, { label: string; count: number; href: string }>();
+	for (const post of blogData.posts) {
+		if (post.draft) continue;
+		for (const tag of post.tags) {
+			const existing = tagCounts.get(tag.label);
+			if (existing) {
+				existing.count++;
+			} else {
+				tagCounts.set(tag.label, { label: tag.label, count: 1, href: tag.href });
+			}
+		}
+	}
+
+	if (tagCounts.size > 0) {
+		const sortedTags = [...tagCounts.values()].sort((a, b) => {
+			if (a.count === b.count) return a.label.localeCompare(b.label);
+			return b.count - a.count;
+		});
+
+		sidebar.push({
+			type: 'group' as const,
+			label: t('starlightBlog.sidebar.tags'),
+			entries: sortedTags.map(tag => ({
+				type: 'link' as const,
+				label: `${tag.label} (${tag.count})`,
+				href: tag.href,
+				isCurrent: Astro.url.pathname === tag.href,
+				badge: undefined,
+				attrs: {}
+			})),
+			collapsed: false,
+			badge: undefined
+		});
+	}
+
+	// Authors (only if multiple)
+	if (blogData.authors.length > 1) {
+		const authorCounts = new Map<string, { name: string; count: number }>();
+		for (const post of blogData.posts) {
+			if (post.draft) continue;
+			for (const author of post.authors) {
+				const existing = authorCounts.get(author.name);
+				if (existing) {
+					existing.count++;
+				} else {
+					authorCounts.set(author.name, { name: author.name, count: 1 });
+				}
+			}
+		}
+
+		const sortedAuthors = [...authorCounts.entries()].sort(([, a], [, b]) => {
+			if (a.count === b.count) return a.name.localeCompare(b.name);
+			return b.count - a.count;
+		});
+
+		sidebar.push({
+			type: 'group' as const,
+			label: t('starlightBlog.sidebar.authors'),
+			entries: sortedAuthors.map(([name, { count }]) => {
+				// Find the author's slug from the first post
+				const authorSlug = name.toLowerCase().replace(/\s+/g, '-');
+				return {
+					type: 'link' as const,
+					label: `${name} (${count})`,
+					href: `/blog/authors/${authorSlug}`,
+					isCurrent: Astro.url.pathname === `/blog/authors/${authorSlug}`,
+					badge: undefined,
+					attrs: {}
+				};
+			}),
+			collapsed: false,
+			badge: undefined
+		});
+	}
+
+	// RSS feed
+	if (Astro.site) {
+		sidebar.push({
+			type: 'link' as const,
+			label: t('starlightBlog.sidebar.rss'),
+			href: '/blog/rss.xml',
+			isCurrent: false,
+			badge: undefined,
+			attrs: {}
+		});
+	}
+
+	return sidebar;
+}
+
+// Build blog sidebar entries (always, not just when on blog page)
+const blogSidebarEntries = buildBlogSidebar();
+
+// Build the base sidebar structure from site-structure.json
+// This gives us Overview, AEPs, Tooling, Blog tabs
+const baseSidebar = [
+	{
+		type: 'group' as const,
+		label: siteStructure.overview.metadata.label,
+		entries: siteStructure.overview.pages.map((page: any) => ({
+			type: 'link' as const,
+			label: page.label,
+			href: `/${page.link}`,
+			isCurrent: false,
+			badge: undefined,
+			attrs: {}
+		})),
+		collapsed: false,
+		badge: undefined
+	},
+	{
+		type: 'group' as const,
+		label: siteStructure.aeps.metadata.label,
+		entries: [], // Will be populated by buildAepSidebar()
+		collapsed: false,
+		badge: undefined
+	},
+	{
+		type: 'group' as const,
+		label: siteStructure.tooling.metadata.label,
+		entries: [], // Will be populated later
+		collapsed: false,
+		badge: undefined
+	},
+	{
+		type: 'group' as const,
+		label: siteStructure.blog.metadata.label,
+		entries: [], // Will be populated with blogSidebarEntries
+		collapsed: false,
+		badge: undefined
+	}
+];
+
+// Always use the base sidebar we constructed (with all tabs)
+const sidebar = baseSidebar;
+
+// Helper to build edition-aware AEP link
+function buildAepLink(aepId: string | number): string {
+	const aepNumber = String(aepId);
+	if (!isLatestEdition(currentEdition)) {
+		return `/${currentEdition!.folder}/${aepNumber}`;
+	}
+	return `/${aepNumber}`;
+}
+
+type SidebarEntry = StarlightRouteData['sidebar'][number];
+
+// Helper function to strip leading and trailing slashes
+function stripLeadingAndTrailingSlashes(path: string): string {
+	return path.replace(/^\//, '').replace(/\/$/, '');
+}
+
+// Mark current entries
+function markEntries(i: SidebarEntry) {
+	if (i.type === 'group') {
+		i.entries.forEach(markEntries);
+	} else {
+		const itemSlug = stripLeadingAndTrailingSlashes(i.href);
+		i.isCurrent ||= id === itemSlug;
+	}
+}
+
+// When on a blog page, starlight-blog replaces the entire sidebar with just blog entries.
+// We need to use the base sidebar from astro.config and populate the Blog section.
+let sidebarToUse = sidebar;
+
+// If NOT on a blog page, use the sidebar from astro.config as-is
+// If on a blog page, we'll use sidebar variable which contains blog entries from starlight-blog
+
+// Convert any top-level links to groups
+const normalizedSidebar = sidebarToUse.map((entry): Group => {
+	if (entry.type === 'link') {
+		// Convert link to a group with the link as its only entry
+		return {
+			type: 'group',
+			label: entry.label,
+			entries: [entry],
+			collapsed: false,
+			badge: entry.badge
+		};
+	}
+	return entry as Group;
+});
+
+normalizedSidebar.forEach(markEntries);
+
+const makeId = (label: string) => '__tab-' + label.toLowerCase().replaceAll(/\s+/g, '-');
+const isCurrent = (sidebar: SidebarEntry[]): boolean =>
+	sidebar
+		.map((entry) => (entry.type === 'link' ? entry.isCurrent : isCurrent(entry.entries)))
+		.some((entry) => entry === true);
+
+// Get icon from site structure metadata
+function getIconForSection(label: string): string {
+	// Map section labels to their metadata in site structure
+	const sectionMap: Record<string, string> = {
+		'Overview': siteStructure.overview.metadata.icon,
+		'AEPs': siteStructure.aeps.metadata.icon,
+		'Tooling': siteStructure.tooling.metadata.icon,
+		'Blog': siteStructure.blog.metadata.icon,
+	};
+	return sectionMap[label] || 'bars';
+}
+
+// Function to build AEP sidebar from site structure based on current edition
+function buildAepSidebar(): SidebarEntry[] {
+	const aepsData = (siteStructure as any).aeps?.editions?.[editionKey];
+	if (!aepsData || !aepsData.categories) {
+		return [];
+	}
+
+	// Extract the AEP number from the current page id (e.g., "aep-2026/123" -> "123")
+	const currentAepId = id.split('/').pop();
+
+	return aepsData.categories.map((category: any) => ({
+		type: 'group' as const,
+		label: category.title,
+		entries: category.aeps.map((aep: any) => ({
+			type: 'link' as const,
+			label: `${aep.id}. ${aep.title}`,
+			href: buildAepLink(aep.id),
+			isCurrent: currentAepId === String(aep.id),
+			badge: undefined,
+			attrs: {}
+		})),
+		collapsed: false,
+		badge: undefined
+	}));
+}
+
+// Populate sections with their content
+const modifiedSidebar = normalizedSidebar.map(group => {
+	// Populate AEPs section with edition-specific content
+	if (group.label === siteStructure.aeps.metadata.label) {
+		return {
+			...group,
+			entries: buildAepSidebar()
+		};
+	}
+
+	// Populate Tooling section
+	if (group.label === siteStructure.tooling.metadata.label) {
+		const toolingEntries: SidebarEntry[] = [];
+
+		// Add tooling pages
+		for (const page of siteStructure.tooling.pages) {
+			toolingEntries.push({
+				type: 'link' as const,
+				label: page.label,
+				href: `/${page.link}`,
+				isCurrent: id === page.link,
+				badge: undefined,
+				attrs: {}
+			});
+		}
+
+		// Add Protobuf Linter section
+		if (siteStructure.tooling.linterRules && siteStructure.tooling.linterRules.length > 0) {
+			toolingEntries.push({
+				type: 'group' as const,
+				label: 'Protobuf Linter',
+				entries: [
+					{
+						type: 'link' as const,
+						label: 'Overview',
+						href: '/tooling/linter',
+						isCurrent: id === 'tooling/linter',
+						badge: undefined,
+						attrs: {}
+					},
+					{
+						type: 'group' as const,
+						label: 'Rules',
+						collapsed: true,
+						entries: siteStructure.tooling.linterRules.map((rule: string) => ({
+							type: 'link' as const,
+							label: `AEP-${rule} Linter Rules`,
+							href: `/tooling/linter/rules/${rule}`,
+							isCurrent: id === `tooling/linter/rules/${rule}`,
+							badge: undefined,
+							attrs: {}
+						})),
+						badge: undefined
+					}
+				],
+				collapsed: false,
+				badge: undefined
+			});
+		}
+
+		// Add OpenAPI Linter section
+		if (siteStructure.tooling.openAPILinterRules && siteStructure.tooling.openAPILinterRules.length > 0) {
+			toolingEntries.push({
+				type: 'group' as const,
+				label: 'OpenAPI Linter',
+				entries: [
+					{
+						type: 'link' as const,
+						label: 'Overview',
+						href: '/tooling/openapi-linter',
+						isCurrent: id === 'tooling/openapi-linter',
+						badge: undefined,
+						attrs: {}
+					},
+					{
+						type: 'group' as const,
+						label: 'Rules',
+						collapsed: true,
+						entries: (siteStructure.tooling.openAPILinterRules as string[])
+							.sort((a, b) => a.localeCompare(b))
+							.map((rule: string) => ({
+								type: 'link' as const,
+								label: `AEP-${rule} Linter Rules`,
+								href: `/tooling/openapi-linter/rules/${rule}`,
+								isCurrent: id === `tooling/openapi-linter/rules/${rule}`,
+								badge: undefined,
+								attrs: {}
+							})),
+						badge: undefined
+					}
+				],
+				collapsed: false,
+				badge: undefined
+			});
+		}
+
+		return {
+			...group,
+			entries: toolingEntries
+		};
+	}
+
+	// Populate Blog section with starlight-blog entries
+	if (group.label === siteStructure.blog.metadata.label) {
+		return {
+			...group,
+			entries: blogSidebarEntries
+		};
+	}
+
+	return group;
+});
+---
+
+<TabbedContent class="tabbed-sidebar">
+	<Fragment slot="tab-list">
+		{
+			modifiedSidebar.map(({ label, entries }) => (
+				<TabListItem id={makeId(label)} initial={isCurrent(entries)} class="tab-item">
+					<Icon class="icon" name={getIconForSection(label)} /> {label}
+				</TabListItem>
+			))
+		}
+	</Fragment>
+	{
+		modifiedSidebar.map(({ label, entries }) => (
+			<TabPanel id={makeId(label)} initial={isCurrent(entries)}>
+				<SidebarSublist sublist={entries} />
+			</TabPanel>
+		))
+	}
+</TabbedContent>
+
+<div class="md:sl-hidden">
+	<MobileMenuFooter />
+</div>
+
+<style>
+	/** Always show the scrollbar gutter. */
+	:global(.sidebar-pane) {
+		overflow-y: scroll;
+	}
+
+	/* Styles for the custom tab switcher. */
+	.tabbed-sidebar {
+		/* Layout variables */
+		--tab-switcher-border-width: 1px;
+		--tab-switcher-padding: calc(0.25rem - var(--tab-switcher-border-width));
+		--tab-item-border-radius: 0.5rem;
+		--tab-switcher-border-radius: calc(
+			var(--tab-item-border-radius) + var(--tab-switcher-padding) + var(--tab-switcher-border-width)
+		);
+
+		/* Color variables */
+		--tab-switcher-border-color: var(--sl-color-hairline-light);
+		--tab-switcher-background-color: var(--sl-color-gray-7, var(--sl-color-gray-6));
+		--tab-switcher-text-color: var(--sl-color-gray-3);
+		--tab-switcher-text-color--active: var(--sl-color-white);
+		--tab-switcher-icon-color: var(--sl-color-gray-4);
+		--tab-switcher-icon-color--active: var(--sl-color-text-accent);
+		--tab-item-background-color--hover: var(--sl-color-gray-6);
+		--tab-item-background-color--active: var(--sl-color-black);
+
+		/* Add separator line and spacing below the entire tab switcher */
+		border-bottom: 1px solid var(--sl-color-hairline-light);
+		padding-bottom: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	/* Dark theme variations */
+	:global([data-theme='dark']) .tabbed-sidebar {
+		--tab-switcher-text-color: var(--sl-color-gray-2);
+		--tab-switcher-icon-color: var(--sl-color-gray-3);
+		--tab-item-background-color--hover: var(--sl-color-gray-5);
+	}
+
+	@media (min-width: 50rem) {
+		/* Dark theme variations with the desktop sidebar visible */
+		:global([data-theme='dark']) .tabbed-sidebar {
+			--tab-switcher-background-color: var(--sl-color-black);
+			--tab-item-background-color--hover: var(--sl-color-gray-6);
+			--tab-item-background-color--active: var(--sl-color-gray-6);
+		}
+	}
+
+	.tabbed-sidebar :global(.tab-list) {
+		border: var(--tab-switcher-border-width) solid var(--tab-switcher-border-color);
+		border-radius: var(--tab-switcher-border-radius);
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding: var(--tab-switcher-padding);
+		background-color: var(--tab-switcher-background-color);
+		margin-bottom: 0;
+	}
+
+	.tab-item :global(a) {
+		border: var(--tab-switcher-border-width) solid transparent;
+		border-radius: var(--tab-item-border-radius);
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: calc(0.5rem - var(--tab-switcher-border-width));
+		background-clip: padding-box;
+		line-height: var(--sl-line-height-headings);
+		text-decoration: none;
+		color: var(--tab-switcher-text-color);
+		font-weight: 600;
+	}
+
+	.tab-item :global(a:hover) {
+		color: var(--tab-switcher-text-color--active);
+		background-color: var(--tab-item-background-color--hover);
+	}
+
+	.tab-item :global(a[aria-selected='true']) {
+		border-color: var(--tab-switcher-border-color);
+		color: var(--tab-switcher-text-color--active);
+		background-color: var(--tab-item-background-color--active);
+	}
+
+	.icon {
+		margin: 0.25rem;
+		color: var(--tab-switcher-icon-color);
+	}
+
+	.tab-item :global(a:hover) .icon {
+		color: inherit;
+	}
+
+	.tab-item :global(a[aria-selected='true']) .icon {
+		color: var(--tab-switcher-icon-color--active);
+	}
+</style>
