@@ -142,14 +142,16 @@ async function writePage(
   filename: string,
   outputPath: string,
   title?: string,
-) {
+): Promise<string> {
   const filePath = path.join(dirPath, filename);
   logFileRead(filePath, "Page content");
   let contents = new Markdown(fs.readFileSync(filePath, "utf-8"), {});
+  const pageTitle = title ?? getTitle(contents.contents);
   contents.frontmatter = {
-    title: title ?? getTitle(contents.contents),
+    title: pageTitle,
   };
   writeFile(outputPath, contents.removeTitle().build());
+  return pageTitle;
 }
 
 async function writePagesToSiteStructure(
@@ -166,21 +168,21 @@ async function writePagesToSiteStructure(
   );
 
   for (var file of files) {
-    writePage(
+    const title = await writePage(
       path.join(dirPath, "pages/general"),
       file.name,
       path.join("src/content/docs", file.name),
     );
     const link = file.name.replace(".md", "");
-    addOverviewPage(siteStructure, { label: link, link });
+    addOverviewPage(siteStructure, { label: title, link });
   }
-  writePage(
+  const contributingTitle = await writePage(
     dirPath,
     "CONTRIBUTING.md",
     path.join("src/content/docs", "contributing.md"),
   );
   addOverviewPage(siteStructure, {
-    label: "contributing",
+    label: contributingTitle,
     link: "contributing",
   });
   return siteStructure;
