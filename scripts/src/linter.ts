@@ -239,25 +239,29 @@ export function writeRule(rule: ConsolidatedLinterRule, outputPath?: string) {
 }
 
 /**
- * Writes linter rules as JSON data file for Astro to consume
- * This allows Astro components to render the rules instead of pre-generating markdown
+ * Writes individual linter rules as separate markdown files
+ * Astro components will consolidate them at build time
  *
  * @param rules - Array of linter rules to write
- * @param outputPath - Path to write the JSON file
+ * @param outputDir - Directory to write the rule files
  */
-export function writeLinterRulesJSON(
+export function writeIndividualRules(
   rules: LinterRule[],
-  outputPath: string,
+  outputDir: string,
 ): void {
   // Ensure the directory exists
-  const dir = path.dirname(outputPath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  // Write the rules as JSON
-  writeFile(outputPath, JSON.stringify(rules, null, 2));
-  console.log(`✓ Wrote ${rules.length} linter rules to ${outputPath}`);
+  for (const rule of rules) {
+    const filePath = path.join(outputDir, rule.filename);
+    writeFile(filePath, rule.contents);
+  }
+
+  console.log(
+    `✓ Wrote ${rules.length} individual linter rules to ${outputDir}`,
+  );
 }
 
 /**

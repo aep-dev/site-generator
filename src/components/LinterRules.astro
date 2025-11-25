@@ -3,17 +3,17 @@
  * LinterRules Component
  *
  * Renders a list of linter rules in collapsible <details> elements.
- * This replaces the consolidation logic previously done in the generate script.
+ * Consolidates individual rule files at build time.
  *
  * Props:
- * - rules: Array of LinterRule objects to render
+ * - rules: Array of LinterRule objects to render (with Content component)
  * - preamble: Optional preamble text to display before the rules
  */
 
 export interface LinterRule {
   title: string;
   aep: string;
-  contents: string; // Markdown content with frontmatter
+  Content: any; // Astro component from render()
   filename: string;
   slug: string;
   preamble?: string;
@@ -28,11 +28,6 @@ const { rules, preamble } = Astro.props;
 
 // Extract preamble from first rule if available, otherwise use provided preamble
 const displayPreamble = rules[0]?.preamble || preamble || "";
-
-// Helper function to strip frontmatter from content
-function stripFrontmatter(content: string): string {
-  return content.replace(/---[\s\S]*?---/m, "").trim();
-}
 ---
 
 {displayPreamble && (
@@ -43,7 +38,9 @@ function stripFrontmatter(content: string): string {
   rules.map((rule) => (
     <details>
       <summary>{rule.title}</summary>
-      <div set:html={stripFrontmatter(rule.contents)} />
+      <div>
+        <rule.Content />
+      </div>
     </details>
   ))
 }
