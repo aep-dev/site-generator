@@ -1,50 +1,50 @@
 ---
 /**
  * Dynamic route for OpenAPI Linter rule pages
- * Reads individual rule files and consolidates them by AEP number
+ * Reads directly from external linter repo and consolidates by AEP number
  */
 
 import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
 import LinterRules from "../../../../components/LinterRules.astro";
-import { getCollection } from "astro:content";
+import { assembleOpenAPILinterRules } from "../../../../../scripts/src/linter";
+import { marked } from "marked";
+
+const AEP_OPENAPI_LINTER_LOC = process.env.AEP_OPENAPI_LINTER_LOC || "";
 
 export async function getStaticPaths() {
-  // Get all docs entries
-  const allDocs = await getCollection("docs");
+  const AEP_OPENAPI_LINTER_LOC = process.env.AEP_OPENAPI_LINTER_LOC || "";
 
-  // Filter for OpenAPI linter rules
-  const linterRules = allDocs.filter((doc) =>
-    doc.id.startsWith("tooling/openapi-linter/rules/"),
-  );
+  if (!AEP_OPENAPI_LINTER_LOC) {
+    console.warn(
+      "⚠️  AEP_OPENAPI_LINTER_LOC not set, skipping OpenAPI linter rules",
+    );
+    return [];
+  }
 
-  // Group rules by AEP number and render their content
+  // Read rules directly from external repo
+  const allRules = await assembleOpenAPILinterRules(AEP_OPENAPI_LINTER_LOC);
+
+  // Group rules by AEP number
   const rulesByAep: Record<string, any[]> = {};
-  for (const rule of linterRules) {
-    // Extract AEP number from the rule's data or filename
-    const pathParts = rule.id.split("/");
-    const filename = pathParts[pathParts.length - 1];
-
-    // Try to extract AEP from filename (format: {aep}-{slug})
-    // Or we can read it from the entry's data if available
-    const aep =
-      rule.data.aep ||
-      filename.split("-")[0] ||
-      pathParts[pathParts.length - 2];
-
-    if (!rulesByAep[aep]) {
-      rulesByAep[aep] = [];
+  for (const rule of allRules) {
+    if (!rulesByAep[rule.aep]) {
+      rulesByAep[rule.aep] = [];
     }
 
-    // Render the markdown content to HTML
-    const { Content } = await rule.render();
+    // Strip frontmatter and render markdown to HTML
+    const contentWithoutFrontmatter = rule.contents.replace(
+      /---[\s\S]*?---/m,
+      "",
+    );
+    const htmlContent = await marked(contentWithoutFrontmatter);
 
-    rulesByAep[aep].push({
-      title: rule.data.title,
-      aep: aep,
-      Content: Content,
-      filename: filename,
+    rulesByAep[rule.aep].push({
+      title: rule.title,
+      aep: rule.aep,
+      htmlContent: htmlContent,
+      filename: rule.filename,
       slug: rule.slug,
-      preamble: rule.data.preamble,
+      preamble: rule.preamble,
     });
   }
 

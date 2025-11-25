@@ -8,7 +8,6 @@ import { load, dump } from "js-yaml";
 import {
   assembleLinterRules,
   assembleOpenAPILinterRules,
-  writeIndividualRules,
   getUniqueAeps,
 } from "./src/linter";
 import {
@@ -366,11 +365,10 @@ if (AEP_LINTER_LOC != "") {
     "",
   );
 
-  // Write out individual linter rules for Astro to consolidate
-  // The rules are consolidated by Astro components at build time
-  // See: src/pages/tooling/linter/rules/[aep].astro and src/components/LinterRules.astro
+  // Scan linter rules to determine which AEPs have rules
+  // Astro will read these directly from the external repo at build time
+  // See: src/pages/tooling/linter/rules/[aep].astro
   let linter_rules = await assembleLinterRules(AEP_LINTER_LOC);
-  writeIndividualRules(linter_rules, "src/content/docs/tooling/linter/rules");
 
   // Add to site structure
   addLinterRules(siteStructure, getUniqueAeps(linter_rules));
@@ -396,15 +394,8 @@ if (AEP_OPENAPI_LINTER_LOC != "") {
       "OpenAPI Linter",
     );
 
-    // Write out individual OpenAPI linter rules for Astro to consolidate
-    // The rules are consolidated by Astro components at build time
-    // See: src/pages/tooling/openapi-linter/rules/[aep].astro and src/components/LinterRules.astro
-    writeIndividualRules(
-      openapiLinterRules,
-      "src/content/docs/tooling/openapi-linter/rules",
-    );
-
     // Add to site structure
+    // Astro will read these directly from the external repo at build time
     addOpenAPILinterRules(siteStructure, getUniqueAeps(openapiLinterRules));
 
     console.log("✅ OpenAPI linter integration complete\n");
