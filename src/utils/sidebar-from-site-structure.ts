@@ -111,6 +111,7 @@ function assembleToolingItems(siteStructure: SiteStructure): any[] {
   ) {
     items.push({
       label: "Protobuf Linter",
+      collapsed: true,
       items: [
         "tooling/linter",
         {
@@ -131,6 +132,7 @@ function assembleToolingItems(siteStructure: SiteStructure): any[] {
   ) {
     items.push({
       label: "OpenAPI Linter",
+      collapsed: true,
       items: [
         "tooling/openapi-linter",
         {
