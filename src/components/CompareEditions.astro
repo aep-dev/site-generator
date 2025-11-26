@@ -1,0 +1,65 @@
+---
+/**
+ * CompareEditions button - shows a button to compare the current AEP with other editions
+ */
+import { Icon } from '@astrojs/starlight/components'
+import editionsConfig from '../../aep-editions.json'
+import { getEditionFromPath, isVersionedPage } from '../utils/versions'
+
+const currentEdition = getEditionFromPath(editionsConfig, Astro.url.pathname)
+const showCompareButton = isVersionedPage(Astro.url.pathname)
+
+// Extract AEP ID from path
+const pathSegments = Astro.url.pathname.split('/').filter(Boolean)
+const aepId = pathSegments[pathSegments.length - 1]
+
+// Only show if we have multiple editions
+const hasMultipleEditions = editionsConfig.editions.length > 1
+---
+
+{showCompareButton && hasMultipleEditions && (
+  <div class="compare-editions">
+    <a href={`/diff/${aepId}`} class="compare-button" title="Compare editions">
+      <Icon name="github" class="icon" />
+      <span>Compare</span>
+    </a>
+  </div>
+)}
+
+<style>
+  .compare-editions {
+    display: flex;
+    align-items: center;
+  }
+
+  .compare-button {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--sl-color-gray-1);
+    text-decoration: none;
+    border-radius: 0.375rem;
+    background: transparent;
+    border: 1px solid var(--sl-color-gray-5);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .compare-button:hover {
+    color: var(--sl-color-white);
+    background: var(--sl-color-accent);
+    border-color: var(--sl-color-accent);
+  }
+
+  .icon {
+    font-size: 1rem;
+  }
+
+  @media (min-width: 50rem) {
+    .compare-button {
+      font-size: var(--sl-text-sm);
+    }
+  }
+</style>
