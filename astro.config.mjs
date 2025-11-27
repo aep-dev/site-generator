@@ -77,6 +77,7 @@ function transformSiteStructureToSidebar(siteStructure) {
   if (siteStructure.tooling.linterRules?.length > 0) {
     toolingItems.push({
       label: "Protobuf Linter",
+      collapsed: true,
       items: [
         "tooling/linter",
         {
@@ -94,6 +95,7 @@ function transformSiteStructureToSidebar(siteStructure) {
   if (siteStructure.tooling.openAPILinterRules?.length > 0) {
     toolingItems.push({
       label: "OpenAPI Linter",
+      collapsed: true,
       items: [
         "tooling/openapi-linter",
         {
