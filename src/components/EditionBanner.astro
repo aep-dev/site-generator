@@ -7,12 +7,29 @@ const latestEdition = editionsConfig.editions.find(e => isLatestEdition(e))
 
 const isOlderVersion = !isLatestEdition(currentEdition)
 const latestUrl = latestEdition ? getVersionedPath(editionsConfig, Astro.url.pathname, latestEdition) : null
+
+// Extract AEP ID from path for diff link
+const pathSegments = Astro.url.pathname.split('/').filter(Boolean)
+const aepId = pathSegments[pathSegments.length - 1]
+const isAEPPage = /^\d+$/.test(aepId)
 ---
 
 {
   isOlderVersion && (
     <div>
-      You are viewing {currentEdition.name}
+      You are viewing {currentEdition.name}.
+      {isAEPPage && latestEdition && (
+        <>
+          <a href={`/diff/${aepId}?from=${currentEdition?.name}&to=${latestEdition.name}`}>
+            See what changed
+          </a> or <a href={latestUrl}>view {latestEdition.name}</a>.
+        </>
+      )}
+      {!isAEPPage && latestUrl && (
+        <>
+          <a href={latestUrl}>View latest edition</a>.
+        </>
+      )}
     </div>
   )
 }

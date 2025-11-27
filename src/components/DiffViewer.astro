@@ -1,0 +1,283 @@
+---
+/**
+ * DiffViewer component - displays side-by-side or unified diff view
+ */
+import type { DiffLine } from "../utils/diff";
+
+interface Props {
+  diffLines: DiffLine[];
+  oldLabel?: string;
+  newLabel?: string;
+  viewMode?: "side-by-side" | "unified";
+}
+
+const {
+  diffLines,
+  oldLabel = "Original",
+  newLabel = "Modified",
+  viewMode = "side-by-side",
+} = Astro.props;
+
+// Calculate stats
+const stats = diffLines.reduce(
+  (acc, line) => {
+    if (line.type === "added") acc.additions++;
+    else if (line.type === "removed") acc.deletions++;
+    return acc;
+  },
+  { additions: 0, deletions: 0 }
+);
+---
+
+<div class="diff-viewer">
+  <div class="diff-header">
+    <div class="diff-stats">
+      <span class="stat-additions">+{stats.additions}</span>
+      <span class="stat-deletions">-{stats.deletions}</span>
+    </div>
+    <div class="diff-labels">
+      <span class="label-old">{oldLabel}</span>
+      <span class="label-arrow">→</span>
+      <span class="label-new">{newLabel}</span>
+    </div>
+  </div>
+
+  {
+    viewMode === "side-by-side" ? (
+      <div class="diff-content side-by-side">
+        <div class="diff-column old-column">
+          <div class="column-header">{oldLabel}</div>
+          {diffLines.map((line) => (
+            <div
+              class={`diff-line ${line.type}`}
+              data-line-num={line.oldLineNum}
+            >
+              {line.oldLineNum && (
+                <span class="line-number">{line.oldLineNum}</span>
+              )}
+              {line.type !== "added" && (
+                <span class="line-content">{line.oldContent || ""}</span>
+              )}
+            </div>
+          ))}
+        </div>
+        <div class="diff-column new-column">
+          <div class="column-header">{newLabel}</div>
+          {diffLines.map((line) => (
+            <div
+              class={`diff-line ${line.type}`}
+              data-line-num={line.newLineNum}
+            >
+              {line.newLineNum && (
+                <span class="line-number">{line.newLineNum}</span>
+              )}
+              {line.type !== "removed" && (
+                <span class="line-content">{line.newContent || ""}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div class="diff-content unified">
+        {diffLines.map((line) => (
+          <div class={`diff-line ${line.type}`}>
+            <span class="line-numbers">
+              {line.oldLineNum && <span class="old-num">{line.oldLineNum}</span>}
+              {line.newLineNum && <span class="new-num">{line.newLineNum}</span>}
+            </span>
+            <span class="line-prefix">
+              {line.type === "added" ? "+" : line.type === "removed" ? "-" : " "}
+            </span>
+            <span class="line-content">
+              {line.type === "removed" ? line.oldContent : line.newContent}
+            </span>
+          </div>
+        ))}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .diff-viewer {
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+    font-size: 0.875rem;
+    background: var(--sl-color-gray-6);
+  }
+
+  .diff-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--sl-color-gray-5);
+    border-bottom: 1px solid var(--sl-color-gray-4);
+  }
+
+  .diff-stats {
+    display: flex;
+    gap: 1rem;
+    font-weight: 600;
+  }
+
+  .stat-additions {
+    color: #22863a;
+  }
+
+  .stat-deletions {
+    color: #cb2431;
+  }
+
+  .diff-labels {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--sl-color-gray-2);
+  }
+
+  .label-arrow {
+    opacity: 0.5;
+  }
+
+  .label-new {
+    font-weight: 600;
+  }
+
+  /* Side-by-side view */
+  .diff-content.side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .diff-column {
+    overflow-x: auto;
+  }
+
+  .column-header {
+    padding: 0.5rem 1rem;
+    background: var(--sl-color-gray-5);
+    border-bottom: 1px solid var(--sl-color-gray-4);
+    font-weight: 600;
+    font-size: 0.8rem;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .old-column {
+    border-right: 1px solid var(--sl-color-gray-4);
+  }
+
+  /* Unified view */
+  .diff-content.unified {
+    overflow-x: auto;
+  }
+
+  .diff-line {
+    display: flex;
+    min-height: 1.5rem;
+    line-height: 1.5rem;
+  }
+
+  .diff-line.unchanged {
+    background: var(--sl-color-gray-6);
+  }
+
+  .diff-line.added {
+    background: #e6ffed;
+  }
+
+  .diff-line.removed {
+    background: #ffeef0;
+  }
+
+  :root[data-theme="dark"] .diff-line.added {
+    background: #0d4317;
+  }
+
+  :root[data-theme="dark"] .diff-line.removed {
+    background: #3d0915;
+  }
+
+  :root[data-theme="dark"] .diff-line.unchanged {
+    background: var(--sl-color-gray-6);
+  }
+
+  .line-number,
+  .line-numbers {
+    display: inline-block;
+    min-width: 3rem;
+    padding: 0 0.5rem;
+    text-align: right;
+    color: var(--sl-color-gray-3);
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .line-numbers {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .old-num,
+  .new-num {
+    display: inline-block;
+    min-width: 2.5rem;
+  }
+
+  .line-prefix {
+    display: inline-block;
+    width: 1.5rem;
+    text-align: center;
+    flex-shrink: 0;
+    font-weight: bold;
+  }
+
+  .diff-line.added .line-prefix {
+    color: #22863a;
+  }
+
+  .diff-line.removed .line-prefix {
+    color: #cb2431;
+  }
+
+  .line-content {
+    padding: 0 0.5rem;
+    white-space: pre;
+    flex: 1;
+    overflow-x: auto;
+  }
+
+  /* Empty line placeholder */
+  .diff-line:not(.unchanged):not(.added):not(.removed) {
+    opacity: 0.3;
+  }
+
+  /* Scrollbar styling */
+  .diff-content::-webkit-scrollbar,
+  .line-content::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .diff-content::-webkit-scrollbar-track,
+  .line-content::-webkit-scrollbar-track {
+    background: var(--sl-color-gray-5);
+  }
+
+  .diff-content::-webkit-scrollbar-thumb,
+  .line-content::-webkit-scrollbar-thumb {
+    background: var(--sl-color-gray-3);
+    border-radius: 4px;
+  }
+
+  .diff-content::-webkit-scrollbar-thumb:hover,
+  .line-content::-webkit-scrollbar-thumb:hover {
+    background: var(--sl-color-gray-2);
+  }
+</style>
