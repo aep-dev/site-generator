@@ -86,6 +86,11 @@ const showVersionSelect = isVersionedPage(Astro.url.pathname)
 </style>
 
 <script>
+  import editionsConfig from '../../aep-editions.json'
+  import { getEditionFromPath, getVersionedPath } from '../utils/versions'
+
+  const STORAGE_KEY = 'aep-preferred-edition'
+
   customElements.define(
     'aep-version-select',
     class AepVersionSelect extends HTMLElement {
@@ -95,8 +100,25 @@ const showVersionSelect = isVersionedPage(Astro.url.pathname)
         const select = this.querySelector('select')
         if (!select) return
 
+        // Check localStorage for preferred edition on page load
+        this.checkPreferredEdition(select)
+
         select?.addEventListener('change', (event) => {
           if (event.currentTarget instanceof HTMLSelectElement) {
+            // Find the selected edition name from the select option text
+            const selectedOption = event.currentTarget.options[event.currentTarget.selectedIndex]
+            const editionName = selectedOption?.textContent?.trim()
+
+            // Save the edition name to localStorage
+            if (editionName) {
+              try {
+                localStorage.setItem(STORAGE_KEY, editionName)
+              } catch (e) {
+                // Silently fail if localStorage is not available
+                console.warn('Failed to save edition preference:', e)
+              }
+            }
+
             globalThis.location.pathname = event.currentTarget.value
           }
         })
@@ -109,6 +131,28 @@ const showVersionSelect = isVersionedPage(Astro.url.pathname)
             select.selectedIndex = markupSelectedIndex ?? 0
           }
         })
+      }
+
+      checkPreferredEdition(select: HTMLSelectElement) {
+        try {
+          const preferredEdition = localStorage.getItem(STORAGE_KEY)
+          if (!preferredEdition) return
+
+          const currentPath = globalThis.location.pathname
+          const currentEdition = getEditionFromPath(editionsConfig, currentPath)
+
+          // Find the target edition by name
+          const targetEdition = editionsConfig.editions.find(e => e.name === preferredEdition)
+
+          // If we found a preferred edition and it's different from the current one, redirect
+          if (targetEdition && targetEdition.name !== currentEdition?.name) {
+            const newPath = getVersionedPath(editionsConfig, currentPath, targetEdition)
+            globalThis.location.pathname = newPath
+          }
+        } catch (e) {
+          // Silently fail if localStorage is not available
+          console.warn('Failed to load edition preference:', e)
+        }
       }
     },
   )
