@@ -1,0 +1,62 @@
+---
+// TODO: Make this banner configurable through a config file or CMS
+// Consider adding fields for:
+// - Banner text
+// - Link URL
+// - Enable/disable flag
+// - Expiration date
+// - Background color/theme
+---
+
+<div class="release-banner">
+  <a href="https://aep.dev/blog/aep-2026-release/" target="_blank" rel="noopener noreferrer">
+    🎉 aep-2026 has officially been released 🎉
+  </a>
+</div>
+
+<style>
+  .release-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: var(--sl-shadow-md);
+    margin-bottom: 2rem;
+    padding: 1rem 2rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  .release-banner a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 600;
+    display: block;
+    transition: opacity 0.2s ease;
+  }
+
+  .release-banner a:hover {
+    opacity: 0.9;
+    text-decoration: underline;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .release-banner a {
+      font-size: 1rem;
+    }
+
+    .release-banner {
+      padding: 0.75rem 1rem;
+    }
+  }
+</style>
