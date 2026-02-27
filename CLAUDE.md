@@ -127,13 +127,15 @@ npm run prettier:write
 3. Generator reads YAML configs and Jinja2 templates
 4. Transforms content through markdown pipeline
 5. Outputs MDX files and JSON configs
-6. Generates `public/llms.txt` with all AEP contents for LLM consumption
-7. Astro builds static site from generated content
+6. Generates `public/llms.txt` with AEP summaries and rules for LLM consumption
+7. Generates per-AEP `public/{id}/llms.txt` files with full Markdown content
+8. Astro builds static site from generated content
 
 ## Generated Files
 
 - `src/content/docs/` - Site content (MDX files)
 - `src/content/docs/aep-2026/` - AEP Edition 2026 content (MDX files, if `AEP_EDITION_2026` is set)
 - `generated/` - JSON configuration files (sidebar, redirects, etc.)
-- `public/llms.txt` - Consolidated AEP content for LLM training/reference
+- `public/llms.txt` - Site-wide AEP summaries and rules for LLM consumption
+- `public/{id}/llms.txt` - Per-AEP full Markdown content for LLM consumption
 - `public/json-schema/` - JSON schemas from components repo

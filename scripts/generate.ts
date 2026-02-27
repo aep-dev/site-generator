@@ -274,30 +274,159 @@ function buildRedirects(aeps: AEP[]): object {
   return Object.fromEntries(aeps.map((aep) => [`/${aep.slug}`, `/${aep.id}`]));
 }
 
+/**
+ * Cleans transformed MDX/JSX content back into plain Markdown
+ * suitable for LLM consumption.
+ */
+export function cleanContentForLLMs(content: string): string {
+  let cleaned = content;
+
+  // Remove import statements
+  cleaned = cleaned.replace(/import\s+.*from\s+['"].*['"];?\n?/g, "");
+
+  // Replace <b class="...">keyword</b> with **keyword** (restore rule identifiers)
+  cleaned = cleaned.replace(/<b class="[^"]*">(.*?)<\/b>/g, "**$1**");
+
+  // Replace <AepLink href="...">text</AepLink> with [text](href)
+  cleaned = cleaned.replace(
+    /<AepLink href="([^"]*)">(.*?)<\/AepLink>/g,
+    "[$2]($1)",
+  );
+  cleaned = cleaned.replace(/<AepLink>(.*?)<\/AepLink>/g, "$1");
+
+  // Replace <Aside> with markdown callout format
+  cleaned = cleaned.replace(
+    /<Aside[^>]*title="([^"]*)"[^>]*>\n?([\s\S]*?)\n?<\/Aside>/g,
+    (match, title, body) =>
+      `**${title}:** ${body
+        .split("\n")
+        .map((l: string) => l.trim())
+        .join("\n")}`,
+  );
+
+  // Handle Tabs/TabItem - convert to markdown sections
+  cleaned = cleaned.replace(/<Tabs[^>]*>\s*/g, "");
+  cleaned = cleaned.replace(/<\/Tabs>\s*/g, "");
+  cleaned = cleaned.replace(/<TabItem label="([^"]*)">\s*/g, "#### $1\n");
+  cleaned = cleaned.replace(/<\/TabItem>\s*/g, "");
+
+  // Remove <Sample> tags
+  cleaned = cleaned.replace(/<Sample[^>]*\/>/g, "");
+
+  // Remove remaining uppercase component tags (JSX)
+  cleaned = cleaned.replace(
+    /<[A-Z][^>]*\/?>[\s\S]*?<\/[A-Z][^>]*>|<[A-Z][^>]*\/>/gs,
+    "",
+  );
+
+  // Remove JSX comments
+  cleaned = cleaned.replace(/\{\/\*[\s\S]*?\*\/\}/g, "");
+
+  // Remove HTML comments
+  cleaned = cleaned.replace(/<!--[\s\S]*?-->/g, "");
+
+  // Unescape comparison operators
+  cleaned = cleaned.replace(/\\<=/g, "<=");
+  cleaned = cleaned.replace(/\\>=/g, ">=");
+
+  // Clean up excessive blank lines
+  cleaned = cleaned.replace(/\n{3,}/g, "\n\n");
+
+  return cleaned.trim();
+}
+
+/**
+ * Extracts the first paragraph from cleaned markdown content.
+ * Skips headings and blank lines, returns the first block of text.
+ */
+export function getFirstParagraph(content: string): string {
+  const paragraphs = content.split(/\n\n+/);
+  for (const para of paragraphs) {
+    const trimmed = para.trim();
+    if (trimmed && !trimmed.startsWith("#") && !trimmed.startsWith("---")) {
+      // Collapse to single line for summary use
+      return trimmed.replace(/\n/g, " ");
+    }
+  }
+  return "";
+}
+
+/**
+ * Extracts lines containing should/must/may rule keywords from cleaned content.
+ */
+export function extractRules(content: string): string[] {
+  const rules: string[] = [];
+  const lines = content.split("\n");
+  const ruleKeywords = /\*\*(must|must not|should|should not|may|may not)\*\*/i;
+
+  for (const line of lines) {
+    if (ruleKeywords.test(line)) {
+      let trimmed = line.trim();
+      if (trimmed) {
+        // Normalize bullet points
+        if (!trimmed.startsWith("-")) {
+          trimmed = `- ${trimmed}`;
+        }
+        rules.push(trimmed);
+      }
+    }
+  }
+
+  // Deduplicate
+  return [...new Set(rules)];
+}
+
+/**
+ * Builds a per-AEP llms.txt file with the full cleaned markdown content.
+ */
+export function buildPerAEPLLMsTxt(aep: AEP): string {
+  const cleaned = cleanContentForLLMs(aep.contents.contents);
+  return `# AEP-${aep.id}: ${aep.title}\n\n${cleaned}`;
+}
+
+/**
+ * Builds the site-wide llms.txt with a short description of each AEP
+ * and all should/must/may rules.
+ */
 export function buildLLMsTxt(aeps: AEP[]): string {
   // Sort AEPs by ID for consistent ordering
   const sortedAEPs = aeps.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-  const sections = sortedAEPs.map((aep) => {
-    // Get the raw markdown content without frontmatter and components
-    let content = aep.contents.contents;
+  const lines: string[] = [];
+  lines.push("# AEP - API Enhancement Proposals");
+  lines.push("");
+  lines.push(
+    "> API Enhancement Proposals (AEPs) are design documents that provide high-quality, consistent guidance for API development.",
+  );
+  lines.push("");
+  lines.push("## AEPs");
+  lines.push("");
 
-    // Remove any remaining component imports or JSX-style tags
-    content = content.replace(/import\s+.*from\s+['"].*['"];?\n?/g, "");
-    content = content.replace(
-      /<[A-Z][^>]*\/?>.*?<\/[A-Z][^>]*>|<[A-Z][^>]*\/>/gs,
-      "",
+  for (const aep of sortedAEPs) {
+    const cleaned = cleanContentForLLMs(aep.contents.contents);
+    const description = getFirstParagraph(cleaned);
+    lines.push(
+      `- [AEP-${aep.id}: ${aep.title}](/${aep.id}/llms.txt): ${description}`,
     );
+  }
 
-    // Clean up any remaining MDX artifacts
-    content = content.replace(/\{\/\*[\s\S]*?\*\/\}/g, ""); // Remove JSX comments
-    content = content.replace(/<!--[\s\S]*?-->/g, ""); // Remove HTML comments
-    content = content.trim();
+  lines.push("");
+  lines.push("## Rules");
 
-    return `# AEP-${aep.id} ${aep.title}\n\n${content}`;
-  });
+  for (const aep of sortedAEPs) {
+    const cleaned = cleanContentForLLMs(aep.contents.contents);
+    const rules = extractRules(cleaned);
+    if (rules.length > 0) {
+      lines.push("");
+      lines.push(`### AEP-${aep.id}: ${aep.title}`);
+      lines.push("");
+      for (const rule of rules) {
+        lines.push(rule);
+      }
+    }
+  }
 
-  return sections.join("\n\n---\n\n");
+  return lines.join("\n");
 }
 
 // Log folder detection status
@@ -333,7 +462,13 @@ if (AEP_LOC != "") {
 
   writeSidebar(buildRedirects(categorizedAEPs), "redirects.json");
 
-  // Generate llms.txt file with all AEP contents
+  // Generate per-AEP llms.txt files
+  for (const aep of categorizedAEPs) {
+    const perAEPContent = buildPerAEPLLMsTxt(aep);
+    writeFile(path.join("public", aep.id, "llms.txt"), perAEPContent);
+  }
+
+  // Generate site-wide llms.txt with summaries and rules
   const llmsTxtContent = buildLLMsTxt(categorizedAEPs);
   writeFile("public/llms.txt", llmsTxtContent);
 
