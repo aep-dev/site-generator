@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import * as fs from "fs";
-import rehypeMermaid from "rehype-mermaid";
+import { remarkMermaid } from "./src/plugins/remark-mermaid.js";
 import starlightBlog from "starlight-blog";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -134,7 +134,7 @@ export default defineConfig({
   redirects: redirects,
 
   markdown: {
-    rehypePlugins: [[rehypeMermaid, { dark: true }]],
+    remarkPlugins: [remarkMermaid],
   },
 
   integrations: [

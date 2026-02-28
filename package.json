@@ -22,12 +22,12 @@
     "astro": "^5.7.3",
     "jsonpath": "^1.1.1",
     "marked": "^14.1.2",
-    "playwright": "^1.49.0",
+    "mermaid": "^11.12.3",
     "rehype-graphviz": "^0.3.0",
-    "rehype-mermaid": "^3.0.0",
     "sharp": "^0.32.5",
     "starlight-blog": "^0.24.0",
     "tailwindcss": "^4.1.4",
+    "unist-util-visit": "^5.1.0",
     "vite-plugin-radar": "^0.9.6"
   },
   "devDependencies": {
@@ -41,6 +41,5 @@
     "ts-jest": "^29.4.5",
     "tsx": "^4.17.0",
     "typescript": "^5.5.4"
-  },
-  "postinstall": "playwright install chromium"
+  }
 }

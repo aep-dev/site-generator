@@ -28,6 +28,5 @@ if [ ! -d "${AEP_EDITION_2026}" ]; then
 fi
 
 npm install
-npx playwright install --with-deps chromium
 npm run generate
 npm run build
