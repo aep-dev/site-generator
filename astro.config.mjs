@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import * as fs from "fs";
-import { remarkMermaid } from "./src/plugins/remark-mermaid.js";
+import astroMermaid from "./src/plugins/astro-mermaid.js";
 import starlightBlog from "starlight-blog";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -133,11 +133,8 @@ export default defineConfig({
   site: "https://aep.dev",
   redirects: redirects,
 
-  markdown: {
-    remarkPlugins: [remarkMermaid],
-  },
-
   integrations: [
+    astroMermaid(),
     starlight({
       title: "AEP",
       customCss: [
