@@ -1,0 +1,267 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import DiffViewer from "../../components/DiffViewer.astro";
+import { getAEPContent, getAEPEditions } from "../../utils/aep-content";
+import { computeDiff } from "../../utils/diff";
+import * as fs from "fs";
+
+interface Edition {
+  name: string;
+  folder: string;
+}
+
+interface EditionsConfig {
+  editions: Edition[];
+}
+
+// Load editions config
+const editionsConfigPath = "aep-editions.json";
+const editionsConfig: EditionsConfig = JSON.parse(
+  fs.readFileSync(editionsConfigPath, "utf-8")
+);
+
+const { aepId } = Astro.params;
+
+// Get query parameters for editions to compare
+const url = new URL(Astro.request.url);
+const fromEditionName = url.searchParams.get("from");
+const toEditionName = url.searchParams.get("to");
+
+// Find editions
+const fromEdition = fromEditionName
+  ? editionsConfig.editions.find((e) => e.name === fromEditionName)
+  : null;
+const toEdition = toEditionName
+  ? editionsConfig.editions.find((e) => e.name === toEditionName)
+  : null;
+
+// Get available editions for this AEP
+const availableEditions = await getAEPEditions(aepId!, editionsConfig.editions);
+
+// If no editions specified, use the first two available editions
+let fromEd = fromEdition;
+let toEd = toEdition;
+
+if (!fromEd && availableEditions.length > 0) {
+  // Default: compare oldest to newest
+  fromEd = availableEditions[availableEditions.length - 1];
+}
+
+if (!toEd && availableEditions.length > 0) {
+  // Default: compare to latest (folder === ".")
+  toEd = availableEditions.find((e) => e.folder === ".") || availableEditions[0];
+}
+
+// Validation
+if (!fromEd || !toEd) {
+  throw new Error(
+    `Cannot compare editions. Available editions for AEP ${aepId}: ${availableEditions.map((e) => e.name).join(", ")}`
+  );
+}
+
+if (fromEd.name === toEd.name) {
+  throw new Error("Cannot compare an edition with itself");
+}
+
+// Fetch content from both editions
+const fromContent = await getAEPContent(aepId!, fromEd);
+const toContent = await getAEPContent(aepId!, toEd);
+
+if (!fromContent) {
+  throw new Error(`AEP ${aepId} not found in edition ${fromEd.name}`);
+}
+
+if (!toContent) {
+  throw new Error(`AEP ${aepId} not found in edition ${toEd.name}`);
+}
+
+// Compute diff
+const diffLines = computeDiff(fromContent.body, toContent.body);
+
+// Get AEP title from frontmatter
+const aepTitle =
+  toContent.frontmatter.title || fromContent.frontmatter.title || `AEP-${aepId}`;
+---
+
+<StarlightPage
+  frontmatter={{
+    title: `Diff: ${aepTitle}`,
+    description: `Compare ${aepTitle} between ${fromEd.name} and ${toEd.name}`,
+    tableOfContents: false,
+  }}
+  headings={[]}
+>
+  <div class="diff-page">
+    <div class="diff-page-header">
+      <h1>
+        {aepTitle}
+        <span class="aep-number">#{aepId}</span>
+      </h1>
+      <p class="diff-description">
+        Comparing editions:
+        <strong>{fromEd.name}</strong> → <strong>{toEd.name}</strong>
+      </p>
+
+      {
+        availableEditions.length > 2 && (
+          <div class="edition-selector">
+            <label>
+              Compare:
+              <select
+                id="from-edition"
+                value={fromEd.name}
+              >
+                {availableEditions.map((edition) => (
+                  <option value={edition.name}>{edition.name}</option>
+                ))}
+              </select>
+            </label>
+            <span class="arrow">→</span>
+            <label>
+              To:
+              <select
+                id="to-edition"
+                value={toEd.name}
+              >
+                {availableEditions.map((edition) => (
+                  <option value={edition.name}>{edition.name}</option>
+                ))}
+              </select>
+            </label>
+            <button id="update-diff">Update Diff</button>
+          </div>
+        )
+      }
+    </div>
+
+    <DiffViewer
+      diffLines={diffLines}
+      oldLabel={fromEd.name}
+      newLabel={toEd.name}
+      viewMode="side-by-side"
+    />
+
+    <div class="diff-actions">
+      <a href={`/${toEd.folder === "." ? "" : toEd.folder + "/"}${aepId}`} class="button">
+        View {toEd.name}
+      </a>
+      <a href={`/${fromEd.folder === "." ? "" : fromEd.folder + "/"}${aepId}`} class="button secondary">
+        View {fromEd.name}
+      </a>
+    </div>
+  </div>
+</StarlightPage>
+
+<style>
+  .diff-page {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .diff-page-header {
+    margin-bottom: 2rem;
+  }
+
+  .diff-page-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .aep-number {
+    color: var(--sl-color-gray-3);
+    font-size: 0.8em;
+    font-weight: normal;
+  }
+
+  .diff-description {
+    color: var(--sl-color-gray-2);
+    margin-bottom: 1rem;
+  }
+
+  .edition-selector {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: var(--sl-color-gray-6);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .edition-selector label {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .edition-selector select {
+    padding: 0.5rem;
+    border: 1px solid var(--sl-color-gray-4);
+    border-radius: 0.25rem;
+    background: var(--sl-color-bg);
+    color: var(--sl-color-text);
+  }
+
+  .edition-selector .arrow {
+    color: var(--sl-color-gray-3);
+  }
+
+  .edition-selector button {
+    padding: 0.5rem 1rem;
+    background: var(--sl-color-accent);
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .edition-selector button:hover {
+    background: var(--sl-color-accent-high);
+  }
+
+  .diff-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--sl-color-accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+
+  .button:hover {
+    background: var(--sl-color-accent-high);
+  }
+
+  .button.secondary {
+    background: var(--sl-color-gray-5);
+    color: var(--sl-color-text);
+  }
+
+  .button.secondary:hover {
+    background: var(--sl-color-gray-4);
+  }
+</style>
+
+<script>
+  // Handle edition selector updates
+  const updateButton = document.getElementById("update-diff");
+  const fromSelect = document.getElementById("from-edition") as HTMLSelectElement;
+  const toSelect = document.getElementById("to-edition") as HTMLSelectElement;
+
+  if (updateButton && fromSelect && toSelect) {
+    updateButton.addEventListener("click", () => {
+      const aepId = window.location.pathname.split("/").pop();
+      const from = fromSelect.value;
+      const to = toSelect.value;
+      window.location.href = `/diff/${aepId}?from=${from}&to=${to}`;
+    });
+  }
+</script>
